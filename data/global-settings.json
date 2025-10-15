@@ -1,0 +1,710 @@
+{
+  "navigation": {
+    "mainLinks": [
+      {
+        "id": "1",
+        "label": "Home",
+        "href": "/",
+        "external": false,
+        "icon": "home"
+      },
+      {
+        "id": "2",
+        "label": "Properties",
+        "href": "/properties",
+        "external": false,
+        "icon": "properties"
+      },
+      {
+        "id": "3",
+        "label": "Services",
+        "href": "/services",
+        "external": false,
+        "icon": "services"
+      },
+      {
+        "id": "4",
+        "label": "Agents",
+        "href": "/agents",
+        "external": false,
+        "icon": "agents"
+      },
+      {
+        "id": "5",
+        "label": "Contact",
+        "href": "/contact",
+        "external": false,
+        "icon": "contact"
+      }
+    ],
+    "additionalMenus": [
+      {
+        "id": "1",
+        "title": "Property Types",
+        "items": [
+          {
+            "id": "1-1",
+            "label": "Apartments",
+            "href": "/properties/apartments",
+            "external": false
+          },
+          {
+            "id": "1-2",
+            "label": "Villas",
+            "href": "/properties/villas",
+            "external": false
+          },
+          {
+            "id": "1-3",
+            "label": "Commercial",
+            "href": "/properties/commercial",
+            "external": false
+          },
+          {
+            "id": "1-4",
+            "label": "Luxury Homes",
+            "href": "/properties/luxury",
+            "external": false
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "Locations",
+        "items": [
+          {
+            "id": "2-1",
+            "label": "Downtown",
+            "href": "/locations/downtown",
+            "external": false
+          },
+          {
+            "id": "2-2",
+            "label": "Suburban",
+            "href": "/locations/suburban",
+            "external": false
+          },
+          {
+            "id": "2-3",
+            "label": "Waterfront",
+            "href": "/locations/waterfront",
+            "external": false
+          },
+          {
+            "id": "2-4",
+            "label": "Gated Communities",
+            "href": "/locations/gated-communities",
+            "external": false
+          }
+        ]
+      }
+    ],
+    "backgroundColor": "#ffffff",
+    "textColor": "#000000",
+    "sticky": true
+  },
+  "footer": {
+    "copyrightText": "© 2024 RealeEast Properties. All rights reserved.",
+    "sections": [
+      {
+        "id": "1",
+        "title": "Quick Links",
+        "links": [
+          {
+            "id": "1-1",
+            "label": "Home",
+            "href": "/",
+            "external": false
+          },
+          {
+            "id": "1-2",
+            "label": "Properties",
+            "href": "/properties",
+            "external": false
+          },
+          {
+            "id": "1-3",
+            "label": "Services",
+            "href": "/services",
+            "external": false
+          },
+          {
+            "id": "1-4",
+            "label": "Agents",
+            "href": "/agents",
+            "external": false
+          },
+          {
+            "id": "1-5",
+            "label": "Contact",
+            "href": "/contact",
+            "external": false
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "title": "Services",
+        "links": [
+          {
+            "id": "2-1",
+            "label": "Buying",
+            "href": "/services/buying",
+            "external": false
+          },
+          {
+            "id": "2-2",
+            "label": "Selling",
+            "href": "/services/selling",
+            "external": false
+          },
+          {
+            "id": "2-3",
+            "label": "Renting",
+            "href": "/services/renting",
+            "external": false
+          },
+          {
+            "id": "2-4",
+            "label": "Property Management",
+            "href": "/services/property-management",
+            "external": false
+          },
+          {
+            "id": "2-5",
+            "label": "Valuation",
+            "href": "/services/valuation",
+            "external": false
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "Support",
+        "links": [
+          {
+            "id": "3-1",
+            "label": "Contact",
+            "href": "/contact",
+            "external": false
+          },
+          {
+            "id": "3-2",
+            "label": "Help Center",
+            "href": "/help",
+            "external": false
+          },
+          {
+            "id": "3-3",
+            "label": "Privacy Policy",
+            "href": "/privacy",
+            "external": false
+          },
+          {
+            "id": "3-4",
+            "label": "Terms of Service",
+            "href": "/terms",
+            "external": false
+          },
+          {
+            "id": "3-5",
+            "label": "FAQ",
+            "href": "/faq",
+            "external": false
+          }
+        ]
+      }
+    ],
+    "socialLinks": [
+      {
+        "platform": "facebook",
+        "url": "https://facebook.com/realeastproperties",
+        "icon": "facebook"
+      },
+      {
+        "platform": "twitter",
+        "url": "https://twitter.com/realeastproperties",
+        "icon": "twitter"
+      },
+      {
+        "platform": "instagram",
+        "url": "https://instagram.com/realeastproperties",
+        "icon": "instagram"
+      },
+      {
+        "platform": "linkedin",
+        "url": "https://linkedin.com/company/realeastproperties",
+        "icon": "linkedin"
+      },
+      {
+        "platform": "youtube",
+        "url": "https://youtube.com/realeastproperties",
+        "icon": "youtube"
+      }
+    ],
+    "backgroundColor": "#0f172a",
+    "textColor": "#94a3b8",
+    "showSocialLinks": true
+  },
+  "logo": {
+    "imageUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+    "altText": "RealeEast Properties - Your Trusted Real Estate Partner",
+    "width": 180,
+    "height": 60
+  },
+  "meta": {
+    "title": "RealeEast Properties - Find Your Dream Home",
+    "description": "Discover premium properties with RealeEast. Expert real estate services for buying, selling, and renting luxury apartments, villas, and commercial spaces.",
+    "keywords": "real estate, properties for sale, luxury homes, apartments, villas, property management, real estate agents",
+    "author": "RealeEast Properties",
+    "ogImage": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80"
+  },
+  "homePage": {
+    "en": {
+      "hero": {
+        "title": "Find Your Dream Property",
+        "subtitle": "Discover premium real estate opportunities with expert guidance. Your perfect home is just a click away.",
+        "primaryButton": {
+          "text": "Browse Properties",
+          "link": "/properties",
+          "variant": "primary"
+        },
+        "secondaryButton": {
+          "text": "Meet Our Agents",
+          "link": "/agents",
+          "variant": "secondary"
+        },
+        "backgroundVideo": "https://utfs.io/f/bTjb8nFvO4Y3TBWQf8X13Z6VgfK0EzeGMoyb9asjNnmC8vHI",
+        "overlayColor": "rgba(15, 23, 42, 0.7)"
+      },
+      "banners": [
+        {
+          "id": "1",
+          "title": "Luxury Villa Collection",
+          "description": "Exclusive luxury villas with premium amenities and stunning views",
+          "image": "https://fhupmhxzhukzzqunrtur.supabase.co/storage/v1/object/public/images/1759287792164-qqgaylmv.jpeg",
+          "link": "/properties/luxury-villas",
+          "position": "top"
+        },
+        {
+          "id": "2",
+          "title": "Commercial Spaces Available",
+          "description": "Prime commercial properties in strategic business locations",
+          "image": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80",
+          "link": "/properties/commercial",
+          "position": "middle"
+        },
+        {
+          "id": "3",
+          "title": "24/7 Property Support",
+          "description": "Comprehensive property management and maintenance services",
+          "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
+          "link": "/services/property-management",
+          "position": "bottom"
+        }
+      ],
+      "whyUs": {
+        "title": "Why Choose RealeEast?",
+        "subtitle": "Trusted real estate expertise with personalized service and market knowledge",
+        "features": [
+          {
+            "id": "1",
+            "icon": "🏠",
+            "title": "Premium Properties",
+            "description": "Carefully curated selection of luxury and quality properties"
+          },
+          {
+            "id": "2",
+            "icon": "💎",
+            "title": "Expert Agents",
+            "description": "Professional real estate agents with local market expertise"
+          },
+          {
+            "id": "3",
+            "icon": "🔒",
+            "title": "Secure Transactions",
+            "description": "Safe and transparent property transactions with legal support"
+          },
+          {
+            "id": "4",
+            "icon": "📱",
+            "title": "Digital Solutions",
+            "description": "Advanced technology for virtual tours and online property management"
+          },
+          {
+            "id": "5",
+            "icon": "🔄",
+            "title": "Full Service",
+            "description": "End-to-end services from search to settlement and beyond"
+          },
+          {
+            "id": "6",
+            "icon": "💡",
+            "title": "Market Insight",
+            "description": "Deep understanding of market trends and property valuation"
+          }
+        ]
+      },
+      "testimonials": {
+        "title": "What Our Clients Say",
+        "subtitle": "Join hundreds of satisfied homeowners who found their dream property with us",
+        "testimonials": [
+          {
+            "id": "1",
+            "name": "Sarah Johnson",
+            "position": "Homeowner",
+            "company": "Downtown Residence",
+            "content": "RealeEast helped us find our perfect family home. Their attention to detail and market knowledge made the process smooth and stress-free.",
+            "avatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          },
+          {
+            "id": "2",
+            "name": "Michael Chen",
+            "position": "Business Owner",
+            "company": "Tech Innovations Inc.",
+            "content": "The commercial property we found through RealeEast has been perfect for our growing business. Professional service from start to finish.",
+            "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          },
+          {
+            "id": "3",
+            "name": "Emily Rodriguez",
+            "position": "Property Investor",
+            "company": "Global Investments",
+            "content": "Outstanding investment advice and property management services. They truly understand the real estate market.",
+            "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          },
+          {
+            "id": "4",
+            "name": "David Thompson",
+            "position": "Luxury Home Buyer",
+            "company": "Executive Residence",
+            "content": "Found our dream luxury villa through RealeEast. Their exclusive listings and personalized service are unmatched.",
+            "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          }
+        ]
+      },
+      "aboutUs": {
+        "title": "About RealeEast Properties",
+        "content": "Founded with a vision to transform real estate experiences, RealeEast Properties has been connecting people with their dream properties since 2010. Our team of dedicated professionals combines deep market knowledge with personalized service to deliver exceptional results.\n\nWe believe in building lasting relationships with our clients, understanding their unique needs, and providing comprehensive real estate solutions that exceed expectations. From first-time home buyers to seasoned investors, we're committed to making every property journey successful.",
+        "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+        "stats": [
+          {
+            "id": "1",
+            "value": "1000+",
+            "label": "Happy Clients"
+          },
+          {
+            "id": "2",
+            "value": "500+",
+            "label": "Properties Sold"
+          },
+          {
+            "id": "3",
+            "value": "25+",
+            "label": "Expert Agents"
+          },
+          {
+            "id": "4",
+            "value": "99%",
+            "label": "Client Satisfaction"
+          }
+        ]
+      },
+      "contactUs": {
+        "title": "Ready to Find Your Dream Property?",
+        "subtitle": "Let's discuss your real estate needs and find the perfect solution",
+        "description": "Contact our expert team for a free consultation. We'll help you navigate the market and find properties that match your criteria and budget.",
+        "enabled": true,
+        "email": "info@realeast.com",
+        "phone": "+1 (555) 123-REAL",
+        "address": "123 Property District, Suite 300, New York, NY 10001",
+        "formEnabled": true,
+        "contactInfo": {
+          "address": "123 Property District, Suite 300, New York, NY 10001",
+          "phone": "+1 (555) 123-REAL",
+          "email": "info@realeast.com",
+          "workingHours": "Monday - Friday: 9:00 AM - 6:00 PM EST"
+        },
+        "form": {
+          "enabled": true,
+          "fields": [
+            {
+              "name": "name",
+              "label": "Full Name",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "name": "email",
+              "label": "Email Address",
+              "required": true,
+              "type": "email"
+            },
+            {
+              "name": "phone",
+              "label": "Phone Number",
+              "required": false,
+              "type": "tel"
+            },
+            {
+              "name": "property_type",
+              "label": "Property Type Interest",
+              "required": false,
+              "type": "select"
+            },
+            {
+              "name": "budget",
+              "label": "Budget Range",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "name": "message",
+              "label": "Property Requirements",
+              "required": true,
+              "type": "textarea"
+            }
+          ]
+        },
+        "map": {
+          "enabled": true,
+          "embedCode": "<iframe src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3023.9503398796587!2d-74.00594948459418!3d40.71278367933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a4c13a0c5a5%3A0x3e2ee3d9a6a5a5a5!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sus!4v1234567890' width='100%' height='300' style='border:0;' allowfullscreen='' loading='lazy'></iframe>"
+        }
+      },
+      "partners": [
+        {
+          "id": "1759107453914",
+          "src": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+          "alt": "Real Estate Partners"
+        }
+      ]
+    },
+    "ar": {
+      "hero": {
+        "title": "ابحث عن عقار أحلامك",
+        "subtitle": "اكتشف فرص عقارية مميزة مع إرشاد الخبراء. منزلك المثالي على بعد نقرة واحدة.",
+        "primaryButton": {
+          "text": "تصفح العقارات",
+          "link": "/properties",
+          "variant": "primary"
+        },
+        "secondaryButton": {
+          "text": "قابل وكلائنا",
+          "link": "/agents",
+          "variant": "secondary"
+        },
+        "backgroundVideo": "https://utfs.io/f/bTjb8nFvO4Y3TBWQf8X13Z6VgfK0EzeGMoyb9asjNnmC8vHI",
+        "overlayColor": "rgba(15, 23, 42, 0.7)"
+      },
+      "banners": [
+        {
+          "id": "1",
+          "title": "مجموعة الفلل الفاخرة",
+          "description": "فلل فاخرة حصرية مع وسائل راحة متميزة وإطلالات خلابة",
+          "image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+          "link": "/properties/luxury-villas",
+          "position": "top"
+        },
+        {
+          "id": "2",
+          "title": "مساحات تجارية متاحة",
+          "description": "عقارات تجارية رئيسية في مواقع استراتيجية للأعمال",
+          "image": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80",
+          "link": "/properties/commercial",
+          "position": "middle"
+        },
+        {
+          "id": "3",
+          "title": "دعم عقاري 24/7",
+          "description": "خدمات شاملة للإدارة العقارية والصيانة",
+          "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
+          "link": "/services/property-management",
+          "position": "bottom"
+        }
+      ],
+      "whyUs": {
+        "title": "لماذا تختار ريال إيست؟",
+        "subtitle": "خبرة عقارية موثوقة مع خدمة مخصصة ومعرفة بالسوق",
+        "features": [
+          {
+            "id": "1",
+            "icon": "🏠",
+            "title": "عقارات متميزة",
+            "description": "اختيار مدقق بعناية من العقارات الفاخرة والجودة"
+          },
+          {
+            "id": "2",
+            "icon": "💎",
+            "title": "وكلاء خبراء",
+            "description": "وكلاء عقاريون محترفون مع خبرة في السوق المحلي"
+          },
+          {
+            "id": "3",
+            "icon": "🔒",
+            "title": "معاملات آمنة",
+            "description": "معاملات عقارية آمنة وشفافة مع دعم قانوني"
+          },
+          {
+            "id": "4",
+            "icon": "📱",
+            "title": "حلول رقمية",
+            "description": "تكنولوجيا متقدمة للجولات الافتراضية والإدارة العقارية عبر الإنترنت"
+          },
+          {
+            "id": "5",
+            "icon": "🔄",
+            "title": "خدمة شاملة",
+            "description": "خدمات من البداية إلى النهاية ومن البحث إلى التسوية وما بعدها"
+          },
+          {
+            "id": "6",
+            "icon": "💡",
+            "title": "رؤية السوق",
+            "description": "فهم عميق لاتجاهات السوق وتقييم العقارات"
+          }
+        ]
+      },
+      "testimonials": {
+        "title": "ماذا يقول عملاؤنا",
+        "subtitle": "انضم إلى المئات من مالكي المنازل الراضين الذين وجدوا عقار أحلامهم معنا",
+        "testimonials": [
+          {
+            "id": "1",
+            "name": "أحمد محمد",
+            "position": "مالك منزل",
+            "company": "سكن وسط المدينة",
+            "content": "ساعدتنا ريال إيست في العثور على منزل عائلتنا المثالي. اهتمامهم بالتفاصيل ومعرفة السوق جعلت العملية سلسة وخالية من الإجهاد.",
+            "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          },
+          {
+            "id": "2",
+            "name": "فاطمة علي",
+            "position": "صاحبة عمل",
+            "company": "الشركة التقنية المتطورة",
+            "content": "العقار التجاري الذي وجدناه عبر ريال إيست كان مثاليًا لأعمالنا المتوسعة. خدمة احترافية من البداية إلى النهاية.",
+            "avatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          },
+          {
+            "id": "3",
+            "name": "خالد سالم",
+            "position": "مستثمر عقاري",
+            "company": "الاستثمارات العالمية",
+            "content": "نصيحة استثمارية استثنائية وخدمات إدارة عقارية. إنهم يفهمون حقًا سوق العقارات.",
+            "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          },
+          {
+            "id": "4",
+            "name": "نورة عبدالله",
+            "position": "مشترية منزل فاخر",
+            "company": "سكن تنفيذي",
+            "content": "وجدنا فيلا أحلامنا الفاخرة عبر ريال إيست. قوائمهم الحصرية وخدمتهم المخصصة لا مثيل لها.",
+            "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+            "rating": 5
+          }
+        ]
+      },
+      "aboutUs": {
+        "title": "عن ريال إيست للعقارات",
+        "content": "تأسست برؤية لتحويل التجارب العقارية، تربط ريال إيست للعقارات الناس بعقارات أحلامهم منذ عام 2010. يجمع فريقنا من المحترفين المتفانين بين المعرفة العميقة بالسوق والخدمة المخصصة لتقديم نتائج استثنائية.\n\nنؤمن ببناء علاقات دائمة مع عملائنا، وفهم احتياجاتهم الفريدة، وتقديم حلول عقارية شاملة تتجاوز التوقعات. من مشتري المنازل لأول مرة إلى المستثمرين ذوي الخبرة، نحن ملتزمون بجعل كل رحلة عقارية ناجحة.",
+        "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+        "stats": [
+          {
+            "id": "1",
+            "value": "1000+",
+            "label": "عميل سعيد"
+          },
+          {
+            "id": "2",
+            "value": "500+",
+            "label": "عقار مباع"
+          },
+          {
+            "id": "3",
+            "value": "25+",
+            "label": "وكيل محترف"
+          },
+          {
+            "id": "4",
+            "value": "99%",
+            "label": "رضا العملاء"
+          }
+        ]
+      },
+      "contactUs": {
+        "title": "مستعد للعثور على عقار أحلامك؟",
+        "subtitle": "دعونا نناقش احتياجاتك العقارية ونجد الحل المثالي",
+        "description": "اتصل بفريقنا الخبير للحصول على استشارة مجانية. سنساعدك في التنقل في السوق والعثور على عقارات تطابق معاييرك وميزانيتك.",
+        "enabled": true,
+        "email": "info@realeast.com",
+        "phone": "+966 5X XXX XXXX",
+        "address": "الرياض، المملكة العربية السعودية",
+        "formEnabled": true,
+        "contactInfo": {
+          "address": "الرياض، المملكة العربية السعودية",
+          "phone": "+966 5X XXX XXXX",
+          "email": "info@realeast.com",
+          "workingHours": "الأحد - الخميس: 9:00 ص - 6:00 م"
+        },
+        "form": {
+          "enabled": true,
+          "fields": [
+            {
+              "name": "name",
+              "label": "الاسم الكامل",
+              "required": true,
+              "type": "text"
+            },
+            {
+              "name": "email",
+              "label": "البريد الإلكتروني",
+              "required": true,
+              "type": "email"
+            },
+            {
+              "name": "phone",
+              "label": "رقم الهاتف",
+              "required": false,
+              "type": "tel"
+            },
+            {
+              "name": "property_type",
+              "label": "نوع العقار المطلوب",
+              "required": false,
+              "type": "select"
+            },
+            {
+              "name": "budget",
+              "label": "نطاق الميزانية",
+              "required": false,
+              "type": "text"
+            },
+            {
+              "name": "message",
+              "label": "متطلبات العقار",
+              "required": true,
+              "type": "textarea"
+            }
+          ]
+        },
+        "map": {
+          "enabled": true,
+          "embedCode": "<iframe src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.367123399758!2d46.67541531500035!3d24.813265584076725!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2ee3d9a6a5a5a5%3A0x3e2ee3d9a6a5a5a5!2sRiyadh%2C%20Saudi%20Arabia!5e0!3m2!1sen!2sus!4v1234567890' width='100%' height='300' style='border:0;' allowfullscreen='' loading='lazy'></iframe>"
+        }
+      },
+      "partners": [
+        {
+          "id": "1758942991385",
+          "src": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80",
+          "alt": "شركاء عقاريون"
+        }
+      ]
+    }
+  }
+}

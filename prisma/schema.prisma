@@ -1,0 +1,302 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  createdAt         DateTime @default(now()) @map(name: "created_at")
+  updatedAt         DateTime @default(now()) @map(name: "updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map(name: "accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map(name: "sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  role          UserRole  @default(USER)
+
+  accounts Account[]
+  sessions Session[]
+
+  @@map(name: "users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map(name: "verification_tokens")
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  // Language-specific fields
+  titleEn     String
+  titleAr     String
+  descriptionEn String?
+  descriptionAr String?
+  // Basic property fields
+  price       Float
+  type        PropertyType
+  status      PropertyStatus @default(AVAILABLE)
+  city        String
+  district    String?
+  bedrooms    Int
+  bathrooms   Int
+  area        Int
+  parking     Int @default(0)
+  features    String[]
+  images      String[]
+  
+  // Enhanced property details
+  yearBuilt   Int?
+  floors      Int @default(1)
+  furnished   Boolean @default(false)
+  petFriendly Boolean @default(false)
+  smokingAllowed Boolean @default(false)
+  
+  // Location amenities
+  nearSchools Boolean @default(false)
+  nearHospitals Boolean @default(false)
+  nearShopping Boolean @default(false)
+  nearTransport Boolean @default(false)
+  
+  // Property features
+  balcony     Boolean @default(false)
+  garden      Boolean @default(false)
+  pool        Boolean @default(false)
+  gym         Boolean @default(false)
+  security    Boolean @default(false)
+  concierge   Boolean @default(false)
+  elevator    Boolean @default(false)
+  
+  // Parking and utilities
+  parkingType ParkingType @default(STREET)
+  heating     HeatingType @default(CENTRAL)
+  cooling     CoolingType @default(CENTRAL)
+  
+  // Appliances and utilities
+  waterHeater Boolean @default(false)
+  internet    Boolean @default(false)
+  cableTV     Boolean @default(false)
+  dishwasher  Boolean @default(false)
+  washingMachine Boolean @default(false)
+  dryer       Boolean @default(false)
+  microwave   Boolean @default(false)
+  refrigerator Boolean @default(false)
+  oven        Boolean @default(false)
+  
+  // Contact information
+  contactName String?
+  contactPhone String?
+  contactEmail String?
+  contactWhatsapp String?
+  
+  // Media and additional info
+  virtualTour String?
+  videoUrl    String?
+  floorPlan   String?
+  energyRating EnergyRating @default(C)
+  
+  // Financial information
+  propertyTax Float @default(0)
+  maintenanceFee Float @default(0)
+  hoaFee      Float @default(0)
+  insurance   Float @default(0)
+  
+  // Additional arrays for complex data
+  utilities   String[]
+  nearbyAmenities String[]
+  transportation String[]
+  schools     String[]
+  hospitals   String[]
+  shopping    String[]
+  restaurants String[]
+  entertainment String[]
+  
+  // Statistics
+  views       Int @default(0)
+  favorites   Int @default(0)
+  shares      Int @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("properties")
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  OFFICE
+  SHOP
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  RENTED
+  SOLD
+}
+
+enum ParkingType {
+  STREET
+  GARAGE
+  COVERED
+  UNDERGROUND
+}
+
+enum HeatingType {
+  CENTRAL
+  INDIVIDUAL
+  NONE
+}
+
+enum CoolingType {
+  CENTRAL
+  INDIVIDUAL
+  NONE
+}
+
+enum EnergyRating {
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  excerpt     String?
+  headerImage String?
+  thumbnail   String?
+  status      PostStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("posts")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+
+model Contact {
+  id          String   @id @default(cuid())
+  name        String
+  phoneNumber String
+  message     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+// Single-row JSON-backed site settings
+model SiteSettings {
+  id        String   @id // use a stable id like "default"
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+// About page content stored as JSON
+model AboutPage {
+  id        String   @id // use a stable id like "default"
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_page")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String
+  features    String[] // Array of features
+  order       Int      @default(0)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
+
+model ServicesPage {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String
+  heroImage String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("services_page")
+}
+
+// About settings content stored as JSON
+model AboutSettings {
+  id        String   @id // use a stable id like "default"
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_settings")
+}

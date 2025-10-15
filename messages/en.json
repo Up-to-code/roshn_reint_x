@@ -1,0 +1,422 @@
+{
+  "HomePage": {
+    "title": "Hello World!",
+    "contact": "Contact Me"
+  },
+  "nav": {
+    "projects": "Projects",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "signin": "Sign In",
+    "dashboard": "Dashboard",
+    "blog": "Blog",
+    "services": "Services"
+
+  },
+  "sidebar": {
+    "menu": "Menu",
+    "global": "Global",
+    "options": "Options",
+    "adminPanel": "Admin Panel",
+    "charts": "Charts",
+    "orders": "Orders",
+    "projects": "Projects",
+    "forms": "Forms",
+    "blogs": "Blogs",
+    "media": "Media",
+    "settings": "Settings",
+    "homepage": "Homepage",
+    "documentation": "Documentation",
+    "support": "Support",
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "properties": "Properties",
+    "addProperty": "Add Property",
+    "users": "Users",
+    "services": "Services"
+  },
+  "SaveModal": {
+    "title": {
+      "idle": "Save Changes",
+      "saving": "Saving...",
+      "success": "Success!",
+      "error": "Error"
+    },
+    "description": {
+      "idle": "Do you want to save changes in general settings?",
+      "saving": "Please wait while saving settings.",
+      "success": "Changes saved successfully.",
+      "error": "Failed to save settings. Please try again."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "close": "Close",
+      "retry": "Try Again"
+    }
+  },
+  "properties": {
+    "title": "Properties",
+    "subtitle": "Manage your property portfolio",
+    "stats": {
+      "total": "Total Properties",
+      "available": "Available",
+      "rented": "Rented",
+      "sold": "Sold"
+    },
+    "search": {
+      "placeholder": "Search properties..."
+    },
+    "searchPlaceholder": "Search properties...",
+    "filters": {
+      "all": "All Status"
+    },
+    "status": {
+      "available": "Available",
+      "rented": "Rented",
+      "sold": "Sold"
+    },
+    "types": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "office": "Office",
+      "shop": "Shop"
+    },
+    "badges": {
+      "featured": "Featured"
+    },
+    "actions": {
+      "addProperty": "Add Property",
+      "add": "Add Property",
+      "moreFilters": "More Filters",
+      "view": "View Details",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "empty": {
+      "title": "No properties found",
+      "description": "Try adjusting your search or filter criteria"
+    },
+    "createFirst": "Create your first property to get started",
+    "noProperties": "No properties match your search criteria",
+    "currency": "SAR"
+  },
+  "property": {
+    "title": "Add New Property",
+    "subtitle": "Add all property details easily",
+    "tabs": {
+      "basic": "Basic Info",
+      "details": "Details",
+      "features": "Features",
+      "images": "Images"
+    },
+    "sections": {
+      "basic": "Basic Information",
+      "details": "Property Details",
+      "features": "Features & Amenities",
+      "images": "Property Images"
+    },
+    "form": {
+      "title": "Property Title",
+      "description": "Description",
+      "price": "Price",
+      "type": "Property Type",
+      "city": "City",
+      "district": "District",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "area": "Area",
+      "parking": "Parking"
+    },
+    "placeholders": {
+      "title": "Luxury Apartment in City",
+      "description": "Detailed property description...",
+      "city": "Enter city",
+      "district": "Enter district"
+    },
+    "types": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "office": "Office",
+      "shop": "Shop"
+    },
+    "features": {
+      "list": [
+        "Parking",
+        "Security",
+        "AC",
+        "Pool",
+        "Gym",
+        "Internet",
+        "Kitchen",
+        "Balcony",
+        "Elevator"
+      ],
+      "selected": "{{count}} features selected"
+    },
+    "images": {
+      "upload": "Click to upload images",
+      "requirements": "PNG, JPG, GIF up to 10MB"
+    },
+    "actions": {
+      "preview": "Preview",
+      "save": "Save Property"
+    },
+    "summary": {
+      "title": "Quick Summary",
+      "price": "Price",
+      "bedrooms": "Bedrooms",
+      "area": "Area (m²)",
+      "images": "Images"
+    },
+    "success": "Property saved successfully!"
+  },
+  "navigation": {
+    "switchToArabic": "Switch to Arabic",
+    "switchToEnglish": "Switch to English"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK"
+  },
+  "propertyForm": {
+    "createTitle": "Create New Property",
+    "editTitle": "Edit Property",
+    "subtitle": "Fill in the details below to create a new property",
+    "editSubtitle": "Update the property details below",
+    "images": "Property Images",
+    "uploadImage": "Upload Image",
+    "basicInfo": "Basic Information",
+    "content": "Content",
+    "types": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "office": "Office",
+      "shop": "Shop"
+    },
+    "labels": {
+      "price": "Price",
+      "type": "Property Type",
+      "city": "City",
+      "district": "District",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "area": "Area (m²)",
+      "parking": "Parking Spaces",
+      "title": "Property Title",
+      "description": "Description"
+    },
+    "actions": {
+      "back": "Back to Properties",
+      "cancel": "Cancel",
+      "create": "Create Property",
+      "update": "Update Property"
+    }
+  },
+  "GlobalSettings": {
+    "title": "Global Settings",
+    "description": "Configure your website's global settings",
+    "loading": "Loading settings...",
+    "resetConfirmation": "Are you sure you want to reset all settings to default?",
+    "resetButton": "Reset Settings",
+    "saveButton": "Save Settings",
+    "tabs": {
+      "navigation": "Navigation",
+      "footer": "Footer",
+      "logo": "Logo",
+      "meta": "Meta"
+    }
+  },
+  "propertyDetail": {
+    "actions": {
+      "backToProperties": "Back to Properties",
+      "save": "Save",
+      "share": "Share",
+      "print": "Print",
+      "contactAgent": "Contact Agent",
+      "sendMessage": "Send Message",
+      "whatsapp": "WhatsApp",
+      "chat": "Chat",
+      "call": "Call",
+      "viewAllSimilar": "View All Similar Properties"
+    },
+    "badges": {
+      "featured": "Featured",
+      "available": "Available",
+      "rented": "Rented",
+      "sold": "Sold"
+    },
+    "sections": {
+      "propertyOverview": "Property Overview",
+      "description": "Description",
+      "featuresAmenities": "Features & Amenities",
+      "propertyDetails": "Property Details",
+      "locationMap": "Location & Map",
+      "agentInformation": "Agent Information",
+      "propertyStatistics": "Property Statistics",
+      "similarProperties": "Similar Properties"
+    },
+    "details": {
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "area": "m²",
+      "parking": "Parking",
+      "propertyType": "Property Type",
+      "status": "Status",
+      "location": "Location",
+      "listedDate": "Listed Date",
+      "lastUpdated": "Last Updated",
+      "propertyId": "Property ID",
+      "views": "Views",
+      "favorites": "Favorites",
+      "shares": "Shares",
+      "daysOnMarket": "Days on Market"
+    },
+    "amenities": {
+      "wifi": "WiFi",
+      "security": "Security",
+      "garden": "Garden",
+      "gym": "Gym",
+      "pool": "Pool",
+      "parking": "Parking",
+      "kitchen": "Kitchen",
+      "cableTV": "Cable TV",
+      "internet": "Internet"
+    },
+    "location": {
+      "nearSchools": "Near Schools",
+      "nearHospitals": "Near Hospitals",
+      "nearShopping": "Near Shopping",
+      "publicTransport": "Public Transport",
+      "interactiveMap": "Interactive Map",
+      "clickToViewFullMap": "Click to view full map"
+    },
+    "agent": {
+      "title": "Senior Real Estate Agent",
+      "phone": "+1 (555) 123-4567",
+      "email": "john@realestate.com"
+    },
+    "similar": {
+      "description": "Properties with similar features in the same area",
+      "property": "Similar Property"
+    },
+    "stats": {
+      "views": "views",
+      "listed": "Listed",
+      "updated": "Updated"
+    }
+  },
+  "aboutEditor": {
+    "editorTitle": "Editor Title",
+    "preview": "Preview",
+    "reset": "Reset",
+    "save": "Save",
+    "tabs": {
+      "hero": "Hero",
+      "story": "Story",
+      "stats": "Statistics",
+      "values": "Values",
+      "team": "Team",
+      "cta": "Call to Action"
+    },
+    "sections": {
+      "hero": {
+        "title": "Hero Title",
+        "badge": "Badge",
+        "subtitle": "Subtitle"
+      },
+      "story": {
+        "title": "Story Title",
+        "storyTitle": "Main Story Title",
+        "paragraph1": "Paragraph 1",
+        "paragraph2": "Paragraph 2",
+        "paragraph3": "Paragraph 3",
+        "image": "Image",
+        "uploadImage": "Upload Image",
+        "yearsInBusiness": "Years in Business"
+      },
+      "stats": {
+        "title": "Statistics Title",
+        "addStat": "Add Statistic",
+        "value": "Value",
+        "label": "Label"
+      },
+      "values": {
+        "title": "Values Title",
+        "addValue": "Add Value",
+        "description": "Description"
+      },
+      "team": {
+        "title": "Team Title",
+        "addMember": "Add Member",
+        "name": "Name",
+        "role": "Role",
+        "avatar": "Avatar",
+        "uploadAvatar": "Upload Avatar",
+        "description": "Description"
+      },
+      "cta": {
+        "title": "Call to Action Title",
+        "ctaTitle": "CTA Title",
+        "subtitle": "Subtitle"
+      },
+      "contact": {
+        "title": "Contact Title",
+        "address": "Address",
+        "phone": "Phone",
+        "email": "Email"
+      }
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "A brief introduction",
+    "emailUs": "Email Us",
+    "contactUs": "Contact Us",
+    "complitet": "Completed",
+    "callUs": "Call Us",
+    "visitUs": "Visit Us",
+    "badge": "Completed",
+    "viewProperties": "View Properties",
+    "teamTitle": "Team",
+    "teamSubtitle": "The team managing this project",
+    "ourStory": "Our Story",
+    "storyTitle": "Our Story",
+    "storyParagraph1": "Story paragraph one",
+    "storyParagraph2": "Story paragraph two",
+    "storyParagraph3": "Story paragraph three",
+    "valuesTitle": "Work Values",
+    "ourValues": "Our Values",
+    "ourTeam": "Our Team",
+    "achievements": "Achievements",
+    "yearsInBusiness": "Years in Business",
+    "ctaTitle": "Ready to take the next step?",
+    "ctaSubtitle": "Let's work together to achieve your real estate goals"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "users": "Users",
+    "properties": "Properties",
+    "posts": "Posts",
+    "contacts": "Contacts"
+  }
+}

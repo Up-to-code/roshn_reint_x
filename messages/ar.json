@@ -1,0 +1,431 @@
+{
+  "HomePage": {
+    "title": "مرحبا بالعالم!",
+    "contact": "اتصل بي"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "projects": "نمشاريعنا",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "signin": "تسجيل الدخول",
+    "dashboard": "لوحة التحكم",
+    "blog": "المدونة",
+    "goToDashboard": "انتقل إلى لوحة التحكم",
+    "services": "خدماتنا"
+  },
+  "sidebar": {
+    "menu": "القائمة",
+    "global": "عام",
+    "options": "خيارات",
+    "adminPanel": "لوحة الإدارة",
+    "charts": "الرسوم البيانية",
+    "orders": "الطلبات",
+    "projects": "المشاريع",
+    "forms": "النماذج",
+    "blogs": "المدونات",
+    "media": "الوسائط",
+    "settings": "الإعدادات",
+    "homepage": "الصفحة الرئيسية",
+    "documentation": "التوثيق",
+    "support": "الدعم",
+    "dashboard": "لوحة التحكم",
+    "home": "الرئيسية",
+    "properties": "العقارات",
+    "addProperty": "إضافة عقار",
+    "about": "عننا",
+    "blog": "المدونة",
+    "users": "المستخدمين",
+    "services": "خدماتنا"
+   },
+  "SaveModal": {
+    "title": {
+      "idle": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "success": "تم بنجاح!",
+      "error": "خطأ"
+    },
+    "description": {
+      "idle": "هل تريد حفظ التغييرات في الإعدادات العامة؟",
+      "saving": "يرجى الانتظار أثناء حفظ الإعدادات.",
+      "success": "تم حفظ التغييرات بنجاح.",
+      "error": "فشل في حفظ الإعدادات. يرجى المحاولة مرة أخرى."
+    },
+    "buttons": {
+      "cancel": "إلغاء",
+      "save": "حفظ التغييرات",
+      "close": "إغلاق",
+      "retry": "محاولة مرة أخرى"
+    }
+  },
+  "properties": {
+    "title": "العقارات",
+    "subtitle": "إدارة محفظة عقاراتك",
+    "stats": {
+      "total": "إجمالي العقارات",
+      "available": "متاحة",
+      "rented": "مؤجرة",
+      "sold": "مبيعة"
+    },
+    "search": {
+      "placeholder": "ابحث في العقارات..."
+    },
+    "searchPlaceholder": "ابحث في العقارات...",
+    "filters": {
+      "all": "جميع الحالات"
+    },
+    "status": {
+      "available": "متاح",
+      "rented": "مؤجر",
+      "sold": "مباع"
+    },
+    "types": {
+      "apartment": "شقة",
+      "villa": "فيلا",
+      "office": "مكتب",
+      "shop": "محل"
+    },
+    "badges": {
+      "featured": "مميز"
+    },
+    "actions": {
+      "addProperty": "إضافة عقار",
+      "add": "إضافة عقار",
+      "moreFilters": "المزيد من الفلاتر",
+      "view": "عرض التفاصيل",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "empty": {
+      "title": "لم يتم العثور على عقارات",
+      "description": "حاول تعديل بحثك أو معايير الفلترة"
+    },
+    "createFirst": "أنشئ عقارك الأول للبدء",
+    "noProperties": "لا توجد عقارات تطابق معايير البحث الخاصة بك",
+    "currency": "ريال"
+  },
+  "property": {
+    "title": "إضافة عقار جديد",
+    "subtitle": "أضف جميع تفاصيل العقار بسهولة",
+    "tabs": {
+      "basic": "المعلومات الأساسية",
+      "details": "التفاصيل",
+      "features": "المميزات",
+      "images": "الصور"
+    },
+    "sections": {
+      "basic": "المعلومات الأساسية",
+      "details": "تفاصيل العقار",
+      "features": "المميزات والمرافق",
+      "images": "صور العقار"
+    },
+    "form": {
+      "title": "عنوان العقار",
+      "description": "الوصف",
+      "price": "السعر",
+      "type": "نوع العقار",
+      "city": "المدينة",
+      "district": "الحي",
+      "bedrooms": "غرف النوم",
+      "bathrooms": "دورات المياه",
+      "area": "المساحة",
+      "parking": "مواقف السيارات"
+    },
+    "placeholders": {
+      "title": "شقة فاخرة في المدينة",
+      "description": "وصف مفصل للعقار...",
+      "city": "أدخل المدينة",
+      "district": "أدخل الحي"
+    },
+    "types": {
+      "apartment": "شقة",
+      "villa": "فيلا",
+      "office": "مكتب",
+      "shop": "محل"
+    },
+    "features": {
+      "list": [
+        "مواقف سيارات",
+        "حراسة أمنية",
+        "تكييف",
+        "مسبح",
+        "صالة رياضية",
+        "انترنت",
+        "مطبخ",
+        "بلكونة",
+        "مصعد"
+      ],
+      "selected": "تم اختيار {{count}} ميزة"
+    },
+    "images": {
+      "upload": "انقر لرفع الصور",
+      "requirements": "PNG, JPG, GIF حتى 10MB"
+    },
+    "actions": {
+      "preview": "معاينة",
+      "save": "حفظ العقار"
+    },
+    "summary": {
+      "title": "ملخص سريع",
+      "price": "السعر",
+      "bedrooms": "غرف النوم",
+      "area": "المساحة (م²)",
+      "images": "الصور"
+    },
+    "success": "تم حفظ العقار بنجاح!"
+  },
+  "navigation": {
+    "switchToArabic": "التبديل إلى العربية",
+    "switchToEnglish": "Switch to English"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "confirmDelete": "هل أنت متأكد من حذف هذا العنصر؟",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "submit": "إرسال",
+    "reset": "إعادة تعيين",
+    "search": "بحث",
+    "filter": "فلترة",
+    "clear": "مسح",
+    "yes": "نعم",
+    "no": "لا",
+    "ok": "موافق"
+  },
+  "propertyForm": {
+    "createTitle": "إنشاء عقار جديد",
+    "editTitle": "تعديل العقار",
+    "subtitle": "املأ التفاصيل أدناه لإنشاء عقار جديد",
+    "editSubtitle": "قم بتحديث تفاصيل العقار أدناه",
+    "images": "صور العقار",
+    "uploadImage": "رفع صورة",
+    "basicInfo": "المعلومات الأساسية",
+    "content": "المحتوى",
+    "types": {
+      "apartment": "شقة",
+      "villa": "فيلا",
+      "office": "مكتب",
+      "shop": "محل"
+    },
+    "labels": {
+      "price": "السعر",
+      "type": "نوع العقار",
+      "city": "المدينة",
+      "district": "الحي",
+      "bedrooms": "غرف النوم",
+      "bathrooms": "دورات المياه",
+      "area": "المساحة (م²)",
+      "parking": "مواقف السيارات",
+      "title": "عنوان العقار",
+      "description": "الوصف"
+    },
+    "actions": {
+      "back": "رجوع إلى العقارات",
+      "cancel": "إلغاء",
+      "create": "إنشاء العقار",
+      "update": "تحديث العقار"
+    }
+  },
+  "GlobalSettings": {
+    "title": "الإعدادات العامة",
+    "description": "قم بتكوين الإعدادات العامة لموقعك",
+    "loading": "جاري تحميل الإعدادات...",
+    "resetConfirmation": "هل أنت متأكد من إعادة تعيين جميع الإعدادات إلى الافتراضي؟",
+    "resetButton": "إعادة تعيين الإعدادات",
+    "saveButton": "حفظ الإعدادات",
+    "tabs": {
+      "navigation": "التنقل",
+      "footer": "التذييل",
+      "logo": "الشعار",
+      "meta": "البيانات الوصفية"
+    }
+  },
+  "propertyDetail": {
+    "actions": {
+      "backToProperties": "العودة إلى العقارات",
+      "save": "حفظ",
+      "share": "مشاركة",
+      "print": "طباعة",
+      "contactAgent": "اتصل بالوكيل",
+      "sendMessage": "إرسال رسالة",
+      "whatsapp": "واتساب",
+      "chat": "محادثة",
+      "call": "اتصال",
+      "viewAllSimilar": "عرض جميع العقارات المشابهة"
+    },
+    "badges": {
+      "featured": "مميز",
+      "available": "متاح",
+      "rented": "مؤجر",
+      "sold": "مباع"
+    },
+    "sections": {
+      "propertyOverview": "نظرة عامة على العقار",
+      "description": "الوصف",
+      "featuresAmenities": "المميزات والمرافق",
+      "propertyDetails": "تفاصيل العقار",
+      "locationMap": "الموقع والخريطة",
+      "agentInformation": "معلومات الوكيل",
+      "propertyStatistics": "إحصائيات العقار",
+      "similarProperties": "عقارات مشابهة"
+    },
+    "details": {
+      "bedrooms": "غرف النوم",
+      "bathrooms": "دورات المياه",
+      "area": "م²",
+      "parking": "مواقف السيارات",
+      "propertyType": "نوع العقار",
+      "status": "الحالة",
+      "location": "الموقع",
+      "listedDate": "تاريخ الإدراج",
+      "lastUpdated": "آخر تحديث",
+      "propertyId": "رقم العقار",
+      "views": "المشاهدات",
+      "favorites": "المفضلة",
+      "shares": "المشاركات",
+      "daysOnMarket": "أيام في السوق"
+    },
+    "amenities": {
+      "wifi": "واي فاي",
+      "security": "أمان",
+      "garden": "حديقة",
+      "gym": "صالة رياضية",
+      "pool": "مسبح",
+      "parking": "مواقف سيارات",
+      "kitchen": "مطبخ",
+      "cableTV": "تلفزيون كابل",
+      "internet": "إنترنت"
+    },
+    "location": {
+      "nearSchools": "قريب من المدارس",
+      "nearHospitals": "قريب من المستشفيات",
+      "nearShopping": "قريب من التسوق",
+      "publicTransport": "النقل العام",
+      "interactiveMap": "خريطة تفاعلية",
+      "clickToViewFullMap": "انقر لعرض الخريطة الكاملة"
+    },
+    "agent": {
+      "title": "وكيل عقاري أول",
+      "phone": "+1 (555) 123-4567",
+      "email": "john@realestate.com"
+    },
+    "similar": {
+      "description": "عقارات بمميزات مشابهة في نفس المنطقة",
+      "property": "عقار مشابه"
+    },
+    "stats": {
+      "views": "مشاهدات",
+      "listed": "مدرج",
+      "updated": "محدث"
+    }
+  },
+   "about": {
+    "title": "عن نحن",
+    "subtitle": "نبذة مختصرة عنا",
+    "emailUs"  : "البريد الإلكتروني",
+    "contactUs": "اتصل بنا",
+  "complitet": "تم الاكتمال",
+   "callUs": "اتصل بنا",
+    "visitUs": "زيارة نا",
+    "badge": "تم الاكتمال",
+    "viewProperties" : "عرض العقارات",
+    "teamTitle": "الفريق",
+     "teamSubtitle": "الفريق الذي يتم إدارة هذا المشروع",
+     "ourStory": "مقالنا",
+     "storyTitle": "مقالنا",
+     "storyParagraph1": "الفقرة الأولى من القصة",
+     "storyParagraph2": "الفقرة الثانية من القصة",
+     "storyParagraph3": "الفقرة الثالثة من القصة",
+     "valuesTitle": "قيم العمل",
+     "ourValues": "قيمنا",
+     "ourTeam": "فريقنا",
+     "achievements": "النجاح",
+     "yearsInBusiness": "سنوات في العمل",
+     "ctaTitle": "هل أنت مستعد لاتخاذ الخطوة التالية؟",
+     "ctaSubtitle": "دعنا نعمل معًا لتحقيق أحلامك العقارية"
+  },
+
+    "aboutEditor": {
+      "editorTitle": "عنوان المحرر",
+      "preview": "معاينة",
+      "reset": "إعادة تعيين",
+      "save": "حفظ",
+      "saveError": "فشل حفظ بيانات من نحن",
+      "tabs": {
+        "hero": "البطل",
+        "story": "القصة",
+        "stats": "الإحصائيات",
+        "values": "القيم",
+        "team": "الفريق",
+        "cta": "دعوة للعمل"
+      },
+      "sections": {
+        "hero": {
+          "title": "عنوان البطل",
+          "badge": "شارة",
+          "subtitle": "عنوان فرعي",
+          "badgePlaceholder": "أدخل الشارة",
+          "titlePlaceholder": "أدخل العنوان",
+          "subtitlePlaceholder": "أدخل العنوان الفرعي"
+        },
+        "story": {
+          "title": "عنوان القصة",
+          "storyTitle": "عنوان القصة الرئيسي",
+          "paragraph1": "الفقرة الأولى",
+          "paragraph2": "الفقرة الثانية",
+          "paragraph3": "الفقرة الثالثة",
+          "image": "صورة",
+          "uploadImage": "رفع صورة",
+          "yearsInBusiness": "سنوات في العمل"
+        },
+        "stats": {
+          "title": "عنوان الإحصائيات",
+          "addStat": "إضافة إحصائية",
+          "value": "القيمة",
+          "label": "التسمية"
+        },
+        "values": {
+          "title": "عنوان القيم",
+          "addValue": "إضافة قيمة",
+          "description": "الوصف"
+        },
+        "team": {
+          "title": "عنوان الفريق",
+          "addMember": "إضافة عضو",
+          "name": "الاسم",
+          "role": "الدور",
+          "avatar": "الصورة الرمزية",
+          "uploadAvatar": "رفع الصورة الرمزية",
+          "description": "الوصف"
+        },
+        "cta": {
+          "title": "عنوان دعوة العمل",
+          "ctaTitle": "عنوان الدعوة",
+          "subtitle": "عنوان فرعي"
+        },
+        "contact": {
+          "title": "عنوان الاتصال",
+          "address": "العنوان",
+          "phone": "الهاتف",
+          "email": "البريد الإلكتروني"
+        }
+      }
+    },
+ 
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "users": "المستخدمين",
+      "properties": "المتاحة",
+      "posts": "المدونات",
+      "contacts": "الاتصالات"
+    }
+}
