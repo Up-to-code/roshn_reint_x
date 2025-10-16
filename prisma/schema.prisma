@@ -300,3 +300,13 @@ model AboutSettings {
 
   @@map("about_settings")
 }
+
+model Interest {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String
+  message     String?
+  propertyTitle String
+  createdAt   DateTime @default(now())
+}

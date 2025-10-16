@@ -105,7 +105,7 @@ function InterestButton({ mobile, onClick, isRTL }: { mobile?: boolean; onClick?
   };
 
   return (
-    <Button onClick={handleClick} className={cn("rounded-2xl p-5 px-16", mobile && "w-full")} size={mobile ? "lg" : "default"}>
+    <Button onClick={handleClick} className={cn("rounded-2xl p-5 px-8", mobile && "w-full")} size={mobile ? "lg" : "default"}>
       {isRTL ? "التسجيل في الإهتمام" : "Register Interest"}
     </Button>
   );
@@ -166,9 +166,9 @@ export function NavBar() {
     <>
       <DashboardBanner session={session} t={t} isRTL={isRTL} />
 
-      <header className={cn("fixed z-40 w-full px-4", session ? "top-10" : "top-6")}>
+      <header className={cn("fixed z-40 w-full px-4", session ? "top-12" : "top-6")}>
         <div className="mx-auto max-w-7xl">
-          <nav className="rounded-xl border border-gray-600 bg-[#424242] text-white" dir={isRTL ? "rtl" : "ltr"}>
+          <nav className="rounded-xl   bg-[#424242] text-white" dir={isRTL ? "rtl" : "ltr"}>
             {/* Main Navigation Bar */}
             <div className="flex h-20 items-center justify-between px-6">
               <Logo onClick={() => setMobileOpen(false)} />

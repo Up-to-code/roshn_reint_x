@@ -1,205 +1,130 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { Property, PropertyStatus } from '@prisma/client';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  Heart, 
-  Building
-} from 'lucide-react';
-import Link from 'next/link';
 
-interface RealEstateListingsProps {
-  properties: Property[];
+import { useState, useEffect, useMemo, useCallback, useTransition } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Building } from "lucide-react";
+
+interface Property {
+  id: string;
+  titleEn: string;
+  titleAr: string;
+  images: string[];
+  title?: string;
+}
+
+interface HomePropertiesGridProps {
   locale: string;
 }
 
-export default function RealEstateListings({ properties, locale }: RealEstateListingsProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [imageErrors, setImageErrors] = useState<{[key: string]: boolean}>({});
-  const isRTL = locale === 'ar';
+export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const isRTL = locale === "ar";
+
+  // Fetch properties
+  const fetchProperties = useCallback(async () => {
+    try {
+      const res = await fetch("/api/properties", );
+      if (!res.ok) throw new Error("Failed to load properties");
+
+      const data: Property[] = await res.json();
+
+      const localizedData = data.map((item) => ({
+        ...item,
+        title:
+          locale === "ar"
+            ? item.titleAr || item.titleEn
+            : item.titleEn || item.titleAr,
+      }));
+
+      setProperties(localizedData);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
+  }, [locale]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
+    startTransition(() => {
+      fetchProperties();
+    });
+  }, [fetchProperties]);
 
-  const toggleFavorite = (id: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setFavorites(prev => 
-      prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id]
-    );
-  };
+  const visibleProperties = useMemo(
+    () => properties.slice(0, 6),
+    [properties]
+  );
 
-  const handleImageError = (propertyId: string) => {
-    setImageErrors(prev => ({ ...prev, [propertyId]: true }));
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US').format(price);
-  };
-
-  const getStatusText = (status: PropertyStatus) => {
-    const statusMap = {
-      [PropertyStatus.AVAILABLE]: locale === 'ar' ? 'متاح' : 'Available',
-      [PropertyStatus.RENTED]: locale === 'ar' ? 'مؤجر' : 'Rented',
-      [PropertyStatus.SOLD]: locale === 'ar' ? 'مباع' : 'Sold'
-    };
-    return statusMap[status] || status;
-  };
-
-  const getLocalizedTitle = (property: Property): string => {
-    return locale === 'ar' ? property.titleAr : property.titleEn;
-  };
-
-  const safeProperties = properties || [];
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-screen bg-white">
-        <div className="container mx-auto max-w-7xl px-4 py-12">
-          {/* Header Skeleton */}
-          <div className="mb-12 text-center">
-            <Skeleton className="mx-auto mb-4 h-10 w-96" />
-            <Skeleton className="mx-auto h-6 w-64" />
-          </div>
-
-          {/* Grid Skeleton */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, index) => (
-              <Card key={index} className="overflow-hidden border">
-                <Skeleton className="h-96 w-full" />
-                <CardContent className="p-4">
-                  <Skeleton className="mb-2 h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+  const SkeletonCard = () => (
+    <div className="animate-pulse overflow-hidden rounded-2xl bg-white shadow-sm">
+      <div className="aspect-[1/1.4] w-full bg-slate-200" />
+      <div className="p-4">
+        <div className="h-5 w-3/4 rounded bg-slate-200" />
       </div>
-    );
-  }
+    </div>
+  );
+
+  const isLoading = isPending || properties.length === 0;
 
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'} className="my-40 min-h-screen bg-white py-12">
-      <div className="container mx-auto max-w-7xl px-4">
+    <section
+      dir={isRTL ? "rtl" : "ltr"}
+      className="bg-gradient-to-br from-slate-50 to-slate-100 py-20"
+    >
+      <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="mb-12 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-gray-900">
-            {locale === 'ar' ? 'المشاريع المتاحة' : 'Available Projects'}
-          </h1>
-          <p className="text-gray-600">
-            {safeProperties.length} {locale === 'ar' ? 'مشروع متاح' : 'projects available'}
+        <div className="mb-10 text-center">
+          <h2 className="mb-2 text-3xl font-bold text-slate-900">
+            {locale === "ar" ? "عقارات مميزة" : "Featured Properties"}
+          </h2>
+          <p className="text-lg text-slate-600">
+            {locale === "ar"
+              ? "استكشف أحدث العقارات لدينا"
+              : "Explore our latest listings"}
           </p>
         </div>
 
-        {/* Grid Layout */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {safeProperties.map((property) => (
-            <Link 
-              href={`/${locale}/p/${property.id}`}
-              key={property.id} 
-              className="group block overflow-hidden border"
-            >
-              {/* Image Section - Very Vertical */}
-              <div className="relative h-96 w-full overflow-hidden">
-                {property.images && property.images.length > 0 && !imageErrors[property.id] ? (
-                  <img 
-                    src={property.images[0]} 
-                    alt={getLocalizedTitle(property)}
-                    className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    onError={() => handleImageError(property.id)}
-                  />
-                ) : (
-                  <div className="flex size-full items-center justify-center bg-gray-100">
-                    <Building className="size-16 text-gray-400" />
-                  </div>
-                )}
-                
-                {/* Status Badge */}
-                <div className="absolute left-3 top-3">
-                  <Badge className="border bg-white text-gray-700">
-                    {getStatusText(property.status)}
-                  </Badge>
-                </div>
-                
-                {/* Favorite Button */}
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="absolute right-3 top-3 size-8 bg-white/80 hover:bg-white"
-                  onClick={(e) => toggleFavorite(property.id, e)}
+        {/* Grid */}
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            : visibleProperties.map((property) => (
+                <Link
+                  href={`/${locale}/p/${property.id}`}
+                  key={property.id}
+                  className="group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl"
                 >
-                  <Heart 
-                    className={`size-4 ${
-                      favorites.includes(property.id) 
-                        ? 'fill-red-500 text-red-500' 
-                        : 'text-gray-600'
-                    }`} 
-                  />
-                </Button>
-              </div>
+                  {/* Image */}
+                  <div className="relative aspect-[1/1.4] w-full overflow-hidden">
+                    {property.images?.length > 0 ? (
+                      <Image
+                        src={property.images[0]}
+                        alt={property.title || "Property"}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        priority
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center bg-slate-200">
+                        <Building className="size-16 text-slate-400" />
+                      </div>
+                    )}
 
-              {/* Content Section */}
-              <CardContent className="p-4">
-                {/* Title */}
-                <h3 className="mb-2 line-clamp-2 text-lg font-medium text-gray-900">
-                  {getLocalizedTitle(property)}
-                </h3>
+                    {/* Full smooth shadow overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/40" />
 
-                {/* Price */}
-                <p className="text-xl font-bold text-gray-900">
-                  {formatPrice(property.price)}
-                  <span className="ml-2 text-sm font-normal text-gray-600">
-                    {locale === 'ar' ? 'ريال' : 'SAR'}
-                  </span>
-                </p>
-              </CardContent>
-            </Link>
-          ))}
+                    {/* Title */}
+                    <div className="absolute bottom-5 left-5 right-5 z-20">
+                      <h3 className="line-clamp-1 text-lg font-semibold text-white drop-shadow-lg">
+                        {property.title}
+                      </h3>
+                    </div>
+                  </div>
+                </Link>
+              ))}
         </div>
-
-        {/* Load More */}
-        {safeProperties.length > 0 && (
-          <div className="mt-12 flex justify-center">
-            <Button 
-              variant="outline" 
-              className="px-8"
-            >
-              {locale === 'ar' ? 'عرض المزيد' : 'Load More'}
-            </Button>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {safeProperties.length === 0 && (
-          <Card className="mx-auto max-w-md border py-16 text-center">
-            <CardContent>
-              <Building className="mx-auto mb-4 size-16 text-gray-400" />
-              <h3 className="mb-3 text-xl font-semibold text-gray-900">
-                {locale === 'ar' ? 'لا توجد مشاريع' : 'No projects'}
-              </h3>
-              <p className="mb-8 text-gray-600">
-                {locale === 'ar' 
-                  ? 'تفقد لاحقاً' 
-                  : 'Check back later'
-                }
-              </p>
-              <Button>
-                {locale === 'ar' ? 'استكشاف' : 'Explore'}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
       </div>
-    </div>
+    </section>
   );
 }
