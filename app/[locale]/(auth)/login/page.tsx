@@ -8,33 +8,33 @@ import { UserAuthForm } from "@/components/forms/user-auth-form";
 import { Icons } from "@/components/shared/icons";
 
 export const metadata: Metadata = {
-  title: "Login",
-  description: "Login to your account",
+  title: "تسجيل الدخول",
+  description: "سجل الدخول إلى حسابك",
 };
 
 export default function LoginPage() {
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+    <div className="container flex h-screen w-screen flex-col items-center justify-center" dir="rtl">
       <Link
         href="/"
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
-          "absolute left-4 top-4 md:left-8 md:top-8",
+          "absolute right-4 top-4 md:right-8 md:top-8",
         )}
       >
         <>
-          <Icons.chevronLeft className="mr-2 size-4" />
-          Back
+          <Icons.chevronLeft className="ml-2 size-4" />
+          العودة
         </>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <Icons.logo className="mx-auto size-6" />
           <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome back
+            مرحباً بعودتك
           </h1>
           <p className="text-sm text-muted-foreground">
-            Enter your email to sign in to your account
+            أدخل بريدك الإلكتروني وكلمة المرور لتسجيل الدخول إلى حسابك
           </p>
         </div>
         <Suspense>
@@ -45,7 +45,7 @@ export default function LoginPage() {
             href="/register"
             className="hover:text-brand underline underline-offset-4"
           >
-            Don&apos;t have an account? Sign Up
+            ليس لديك حساب؟ سجل الآن
           </Link>
         </p>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -30,38 +30,100 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
     resolver: zodResolver(userAuthSchema),
   });
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   async function onSubmit(data: FormData) {
     setIsLoading(true);
 
-    const signInResult = await signIn("resend", {
-      email: data.email.toLowerCase(),
-      redirect: false,
-      callbackUrl: searchParams?.get("from") || "/dashboard",
-    });
+    try {
+      if (type === "register") {
+        // Handle registration separately
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+            name: data.email.split('@')[0], // Use email prefix as name
+          }),
+        });
 
-    setIsLoading(false);
+        const result = await response.json();
 
-    if (!signInResult?.ok) {
-      return toast.error("Something went wrong.", {
-        description: "Your sign in request failed. Please try again."
-      });
+        if (!response.ok) {
+          throw new Error(result.error || "Registration failed");
+        }
+
+        // After successful registration, sign in
+        const signInResult = await signIn("credentials", {
+          email: data.email.toLowerCase(),
+          password: data.password,
+          redirect: false,
+        });
+
+        if (signInResult?.error) {
+          toast.error("فشل تسجيل الدخول بعد التسجيل", {
+            description: "تم إنشاء الحساب ولكن فشل تسجيل الدخول. يرجى المحاولة مرة أخرى."
+          });
+        } else {
+          toast.success("تم إنشاء الحساب بنجاح!", {
+            description: "تم إنشاء حسابك وتسجيل الدخول بنجاح.",
+          });
+          const callbackUrl = searchParams?.get("from") || "/dashboard";
+          router.push(callbackUrl);
+        }
+      } else {
+        // Handle login
+        const signInResult = await signIn("credentials", {
+          email: data.email.toLowerCase(),
+          password: data.password,
+          redirect: false,
+        });
+
+        if (signInResult?.error) {
+          toast.error("فشل تسجيل الدخول", {
+            description: "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى."
+          });
+        } else {
+          toast.success("مرحباً بعودتك!", {
+            description: "تم تسجيل الدخول بنجاح.",
+          });
+          const callbackUrl = searchParams?.get("from") || "/dashboard";
+          router.push(callbackUrl);
+        }
+      }
+    } catch (error: any) {
+      console.error("Auth error:", error);
+      
+      // Handle specific error cases
+      if (error.message.includes("User already exists")) {
+        toast.error("فشل التسجيل", {
+          description: "هذا البريد الإلكتروني مستخدم بالفعل. يرجى استخدام بريد إلكتروني مختلف."
+        });
+      } else if (error.message.includes("Registration failed")) {
+        toast.error("فشل إنشاء الحساب", {
+          description: "تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى."
+        });
+      } else {
+        toast.error("حدث خطأ ما", {
+          description: "فشل طلب المصادقة. يرجى المحاولة مرة أخرى."
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    return toast.success("Check your email", {
-      description: "We sent you a login link. Be sure to check your spam too.",
-    });
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-6", className)} {...props} dir="rtl">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid gap-2">
-          <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="email">
-              Email
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="email">
+              البريد الإلكتروني
             </Label>
             <Input
               id="email"
@@ -70,7 +132,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              disabled={isLoading || isGoogleLoading}
+              disabled={isLoading}
               {...register("email")}
             />
             {errors?.email && (
@@ -79,40 +141,38 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
               </p>
             )}
           </div>
-          <button className={cn(buttonVariants())} disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 size-4 animate-spin" />
+          
+          <div className="grid gap-2">
+            <Label htmlFor="password">
+              كلمة المرور
+            </Label>
+            <Input
+              id="password"
+              placeholder="أدخل كلمة المرور"
+              type="password"
+              autoComplete={type === "register" ? "new-password" : "current-password"}
+              disabled={isLoading}
+              {...register("password")}
+            />
+            {errors?.password && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.password.message}
+              </p>
             )}
-            {type === "register" ? "Sign Up with Email" : "Sign In with Email"}
+          </div>
+
+          <button 
+            className={cn(buttonVariants())} 
+            disabled={isLoading}
+            type="submit"
+          >
+            {isLoading && (
+              <Icons.spinner className="ml-2 size-4 animate-spin" />
+            )}
+            {type === "register" ? "إنشاء حساب" : "تسجيل الدخول"}
           </button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <button
-        type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
-        onClick={() => {
-          setIsGoogleLoading(true);
-          signIn("google");
-        }}
-        disabled={isLoading || isGoogleLoading}
-      >
-        {isGoogleLoading ? (
-          <Icons.spinner className="mr-2 size-4 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 size-4" />
-        )}{" "}
-        Google
-      </button>
     </div>
   );
 }

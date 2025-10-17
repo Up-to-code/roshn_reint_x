@@ -1,22 +1,46 @@
 import type { NextAuthConfig } from "next-auth";
-import Google from "next-auth/providers/google";
-import Resend from "next-auth/providers/resend";
-
- 
-// import { siteConfig } from "@/config/site"
-// import { getUserByEmail } from "@/lib/user";
-// import MagicLinkEmail from "@/emails/magic-link-email"
-// import { prisma } from "@/lib/db"
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { LoginSchema } from "@/schemas";
+import { prisma } from "@/lib/db"; // Make sure this import is correct
 
 export default {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    Resend({
-      apiKey: process.env.RESEND_API_KEY,
-      from: "Next Template App <onboarding@resend.dev>",
-    }),
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        const validatedFields = LoginSchema.safeParse(credentials);
+
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
+
+          // Find user by email
+          const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() }
+          });
+
+          if (!user || !user.password) return null;
+
+          // Verify password
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+
+          if (passwordsMatch) {
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              role: user.role,
+            };
+          }
+        }
+
+        return null;
+      }
+    })
   ],
 } satisfies NextAuthConfig;
