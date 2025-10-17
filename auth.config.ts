@@ -1,26 +1,22 @@
+import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
-import Email from "next-auth/providers/email";
-import { Resend } from "resend";
+import Resend from "next-auth/providers/resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+ 
+// import { siteConfig } from "@/config/site"
+// import { getUserByEmail } from "@/lib/user";
+// import MagicLinkEmail from "@/emails/magic-link-email"
+// import { prisma } from "@/lib/db"
 
-const authConfig = {
+export default {
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Email({
-      async sendVerificationRequest({ identifier, url }) {
-        await resend.emails.send({
-          from: "Next App <onboarding@resend.dev>",
-          to: identifier,
-          subject: "Sign in to Next App",
-          html: `<p>Click <a href="${url}">here</a> to sign in.</p>`,
-        });
-      },
+    Resend({
+      apiKey: process.env.RESEND_API_KEY,
+      from: "Next Template App <onboarding@resend.dev>",
     }),
   ],
-};
-
-export default authConfig;
+} satisfies NextAuthConfig;

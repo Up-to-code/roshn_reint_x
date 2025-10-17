@@ -38,6 +38,93 @@ export async function generateMetadata({
   }
 }
 
+// Function to clean and format HTML description
+function formatDescription(html: string, isRTL: boolean): string {
+  if (!html) return "";
+
+  // Remove inline styles and classes
+  let cleaned = html
+    .replace(/ style="[^"]*"/g, "")
+    .replace(/ class="[^"]*"/g, "")
+    .replace(/<br\s*\/?>/g, "\n")
+    .replace(/<span[^>]*>/g, "")
+    .replace(/<\/span>/g, "")
+    .replace(/<div[^>]*>/g, "")
+    .replace(/<\/div>/g, "\n")
+    .trim();
+
+  // Convert bullet points to proper list items
+  cleaned = cleaned.replace(/•\s*/g, "• ");
+
+  return cleaned;
+}
+
+// Component to render formatted description
+function DescriptionContent({
+  description,
+  isRTL,
+}: {
+  description: string | null;
+  isRTL: boolean;
+}) {
+  if (!description) {
+    return (
+      <p className="text-gray-500 italic">
+        {isRTL ? "لا يوجد وصف متاح." : "No description available."}
+      </p>
+    );
+  }
+
+  const formattedText = formatDescription(description, isRTL);
+
+  return (
+    <div
+      className={`prose prose-sm max-w-none text-gray-700 leading-relaxed ${
+        isRTL ? "text-right" : "text-left"
+      }`}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      {/* Render with proper line breaks */}
+      {formattedText.split("\n").map((paragraph, index) => {
+        if (!paragraph.trim()) return <br key={index} />;
+
+        // Check if it's a bullet point
+        if (paragraph.trim().startsWith("•")) {
+          return (
+            <div key={index} className="flex items-start gap-2 mb-1">
+              <span className="text-gray-600 mt-1">•</span>
+              <span>{paragraph.replace("•", "").trim()}</span>
+            </div>
+          );
+        }
+
+        // Check if it's a heading (contains specific keywords)
+        const isHeading = /(موقع متميز|مميزات ومواصفات|تفاصيل الشقه|خلفية)/.test(
+          paragraph
+        );
+
+        if (isHeading) {
+          return (
+            <h3
+              key={index}
+              className="font-semibold text-gray-900 mt-4 mb-2 text-lg"
+            >
+              {paragraph}
+            </h3>
+          );
+        }
+
+        // Regular paragraph
+        return (
+          <p key={index} className="mb-3">
+            {paragraph}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 // ✅ Page
 export default async function PropertyDetailPage({
   params,
@@ -58,25 +145,33 @@ export default async function PropertyDetailPage({
   const description = PropertyUtils.getLocalizedDescription(property, locale);
 
   return (
-    <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-white px-4 py-16">
-      <div className="mx-auto max-w-4xl space-y-10">
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      className="min-h-screen bg-white px-4 py-8 my-16"
+    >
+      <div className="mx-auto max-w-4xl space-y-6">
         {/* Back Button */}
         <div>
-          <Button variant="ghost" asChild className="text-gray-700 hover:underline">
+          <Button
+            variant="ghost"
+            asChild
+            className="text-gray-700 hover:underline"
+          >
             <Link href={`/${locale}/p`} className="flex items-center gap-2">
               <ArrowLeft className="size-4" />
-              {locale === "ar" ? "العودة" : "Back"}
+              {isRTL ? "العودة" : "Back"}
             </Link>
           </Button>
         </div>
 
         {/* Title + City */}
         <div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">{title}</h1>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900">{title}</h1>
           <div className="flex items-center text-sm text-gray-600">
             <MapPin className={`size-4 ${isRTL ? "ml-1" : "mr-1"}`} />
             <span>
-              {property.city}, {property.district}
+              {property.city}
+              {property.district && `, ${property.district}`}
             </span>
           </div>
         </div>
@@ -91,16 +186,11 @@ export default async function PropertyDetailPage({
         </div>
 
         {/* Description */}
-        <div>
-          <h2 className="mb-2 text-lg font-semibold text-gray-800">
-            {locale === "ar" ? "الوصف" : "Description"}
+        <div className="bg-gray-50 rounded-lg p-6">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            {isRTL ? "الوصف" : "Description"}
           </h2>
-          <p className="text-sm leading-relaxed text-gray-700">
-            {description ||
-              (locale === "ar"
-                ? "لا يوجد وصف متاح."
-                : "No description available.")}
-          </p>
+          <DescriptionContent description={description} isRTL={isRTL} />
         </div>
 
         {/* Contact / Interest Form */}

@@ -5,7 +5,6 @@ import { PropertiesService } from '@/lib/api/properties-service';
 import { Property } from '@prisma/client';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
- 
 
 export default function PropertiesDashboard() {
   const t = useTranslations('properties');
@@ -48,25 +47,18 @@ export default function PropertiesDashboard() {
     return locale === 'ar' ? property.titleAr : property.titleEn;
   };
 
+  const getDisplayLocation = (property: Property) => {
+    if (property.district) {
+      return `${property.city}, ${property.district}`;
+    }
+    return property.city;
+  };
+
   const filteredProperties = properties.filter(p => {
     const title = getLocalizedTitle(p).toLowerCase();
     const searchTerm = search.toLowerCase();
     return title.includes(searchTerm) || p.city.toLowerCase().includes(searchTerm);
   });
-
-  const statusColors = {
-    AVAILABLE: 'bg-green-500',
-    RENTED: 'bg-blue-500', 
-    SOLD: 'bg-gray-500'
-  };
-
-  const getStatusText = (status: string) => {
-    return t(`status.${status.toLowerCase()}`);
-  };
-
-  const getTypeText = (type: string) => {
-    return t(`types.${type.toLowerCase()}`);
-  };
 
   if (loading) {
     return (
@@ -125,33 +117,35 @@ export default function PropertiesDashboard() {
                   alt={getLocalizedTitle(property)}
                   className="h-48 w-full object-cover"
                 />
-                <div className={`absolute right-3 top-3 rounded-full px-3 py-1 text-sm text-white ${statusColors[property.status]}`}>
-                  {getStatusText(property.status)}
+                <div className="absolute right-3 top-3 rounded-full bg-blue-500 px-3 py-1 text-sm text-white">
+                  {property.images.length} {isRTL ? 'صورة' : 'images'}
                 </div>
               </div>
               
               <div className="p-4">
                 <div className={`mb-3 flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span className="text-text-secondary bg-background-alt rounded px-2 py-1 text-sm capitalize">
-                    {getTypeText(property.type)}
+                  <span className="text-text-secondary bg-background-alt rounded px-2 py-1 text-sm">
+                    {new Date(property.createdAt).toLocaleDateString(locale)}
                   </span>
                   <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Link 
                       href={`/${locale}/dashboard/p/edit/${property.id}`}
                       className="hover:text-primary-dark p-1 text-primary"
+                      title={isRTL ? 'تعديل' : 'Edit'}
                     >
                       ✏️
                     </Link>
                     <button 
                       onClick={() => handleDelete(property.id)}
                       className="text-error p-1 hover:text-red-700"
+                      title={isRTL ? 'حذف' : 'Delete'}
                     >
                       🗑️
                     </button>
                   </div>
                 </div>
 
-                <h3 className={`text-text-primary mb-2 text-lg font-semibold ${isRTL ? 'text-right' : ''}`}>
+                <h3 className={`text-text-primary mb-2 line-clamp-2 text-lg font-semibold ${isRTL ? 'text-right' : ''}`}>
                   {getLocalizedTitle(property)}
                 </h3>
                 
@@ -159,32 +153,26 @@ export default function PropertiesDashboard() {
                   isRTL ? 'flex-row-reverse' : ''
                 }`}>
                   <span className={`${isRTL ? 'ml-2' : 'mr-2'}`}>📍</span>
-                  <span className="text-sm">{property.city}</span>
+                  <span className="text-sm">{getDisplayLocation(property)}</span>
                 </div>
 
-                <div className={`mb-4 flex items-center justify-between ${
-                  isRTL ? 'flex-row-reverse' : ''
-                }`}>
-                  <span className="text-text-primary text-xl font-bold">
-                    ${property.price.toLocaleString()}
-                  </span>
-                </div>
+                {/* Description preview */}
+                {property.descriptionEn || property.descriptionAr ? (
+                  <p className={`text-text-secondary mb-3 line-clamp-2 text-sm ${isRTL ? 'text-right' : ''}`}>
+                    {locale === 'ar' ? property.descriptionAr : property.descriptionEn}
+                  </p>
+                ) : (
+                  <p className={`text-text-secondary mb-3 text-sm italic ${isRTL ? 'text-right' : ''}`}>
+                    {isRTL ? 'لا يوجد وصف' : 'No description'}
+                  </p>
+                )}
 
-                <div className={`text-text-secondary flex justify-between border-t border-border pt-3 text-sm ${
-                  isRTL ? 'flex-row-reverse' : ''
+                {/* Last updated */}
+                <div className={`text-text-secondary border-t border-border pt-3 text-xs ${
+                  isRTL ? 'text-right' : ''
                 }`}>
-                  <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span>🛏️</span>
-                    <span>{property.bedrooms}</span>
-                  </div>
-                  <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span>🚿</span>
-                    <span>{property.bathrooms}</span>
-                  </div>
-                  <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span>📐</span>
-                    <span>{property.area}m²</span>
-                  </div>
+                  {isRTL ? 'آخر تحديث:' : 'Last updated:'}{' '}
+                  {new Date(property.updatedAt).toLocaleDateString(locale)}
                 </div>
               </div>
             </div>

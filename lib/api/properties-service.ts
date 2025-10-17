@@ -1,4 +1,4 @@
-import { Property, PropertyType, PropertyStatus } from "@prisma/client"
+import { Property } from "@prisma/client"
 
 // lib/properties-service.ts
 export interface CreatePropertyData {
@@ -6,16 +6,8 @@ export interface CreatePropertyData {
   titleAr: string
   descriptionEn?: string
   descriptionAr?: string
-  price: number
-  type: PropertyType
-  status?: PropertyStatus
   city: string
   district?: string
-  bedrooms: number
-  bathrooms: number
-  area: number
-  parking?: number
-  features: string[]
   images: string[]
 }
 
@@ -67,10 +59,7 @@ export class PropertiesService {
         headers: { 
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...data,
-          status: data.status || PropertyStatus.AVAILABLE
-        })
+        body: JSON.stringify(data)
       })
       
       if (!response.ok) {
@@ -85,23 +74,26 @@ export class PropertiesService {
     }
   }
 
-  static async update(id: string, data: CreatePropertyData) {
-    const response = await fetch(`/api/properties/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...data,
-        images: data.images, // Explicitly include images array
-      }),
-    });
+  static async update(id: string, data: UpdatePropertyData): Promise<Property> {
+    try {
+      const response = await fetch(`/api/properties/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to update property');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Request failed' }))
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(`Failed to update property ${id}:`, error)
+      throw error instanceof Error ? error : new Error('Unable to update property')
     }
-
-    return response.json();
   }
 
   static async delete(id: string): Promise<void> {
@@ -120,23 +112,6 @@ export class PropertiesService {
     } catch (error) {
       console.error(`Failed to delete property ${id}:`, error)
       throw new Error('Unable to delete property')
-    }
-  }
-
-  // Additional useful methods
-  static async updateStatus(id: string, status: PropertyStatus): Promise<Property> {
-    try {
-      const response = await fetch(`/api/properties/${id}/status`, {
-        method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status })
-      })
-      return this.handleResponse<Property>(response)
-    } catch (error) {
-      console.error(`Failed to update status for property ${id}:`, error)
-      throw new Error('Unable to update property status')
     }
   }
 
@@ -163,34 +138,34 @@ export const PropertyUtils = {
   },
 
   getLocalizedDescription(property: Property, locale: string): string | null {
-    return locale === 'ar' ? property.descriptionAr : property.descriptionEn
+    const description = locale === 'ar' ? property.descriptionAr : property.descriptionEn
+    return description || null
   },
 
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  },
-
-  getStatusColor(status: PropertyStatus): string {
-    const colors = {
-      [PropertyStatus.AVAILABLE]: 'bg-green-500',
-      [PropertyStatus.RENTED]: 'bg-blue-500',
-      [PropertyStatus.SOLD]: 'bg-gray-500'
+  // Helper to get display location
+  getDisplayLocation(property: Property): string {
+    if (property.district) {
+      return `${property.city}, ${property.district}`
     }
-    return colors[status] || 'bg-gray-500'
+    return property.city
   },
 
-  getTypeLabel(type: PropertyType, t: (key: string) => string): string {
-    const typeMap = {
-      [PropertyType.APARTMENT]: t('types.apartment'),
-      [PropertyType.VILLA]: t('types.villa'),
-      [PropertyType.OFFICE]: t('types.office'),
-      [PropertyType.SHOP]: t('types.shop')
-    }
-    return typeMap[type] || type
+  // Check if property has images
+  hasImages(property: Property): boolean {
+    return property.images && property.images.length > 0
+  },
+
+  // Get first image or placeholder
+  getFirstImage(property: Property): string | null {
+    return property.images && property.images.length > 0 ? property.images[0] : null
+  },
+
+  // Format date for display
+  formatDate(date: Date, locale: string = 'en'): string {
+    return new Intl.DateTimeFormat(locale, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(new Date(date))
   }
 }

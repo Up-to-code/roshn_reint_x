@@ -2,7 +2,7 @@
 /* eslint-disable tailwindcss/classnames-order */
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { PropertiesService, type CreatePropertyData } from '@/lib/api/properties-service';
@@ -12,46 +12,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, 
   X, 
   Image as ImageIcon, 
-  MapPin, 
-  Bed, 
-  Bath, 
-  Square, 
-  Car,
-  Home,
-  Building,
-  Plus,
-  Minus,
-  Upload,
-  CheckCircle2,
+  MapPin,
   Building2,
   Eye,
   AlertCircle,
-  CheckCircle,
+  CheckCircle2,
   Languages
 } from 'lucide-react';
 
-// Define the form data interface - including all required fields from CreatePropertyData
-interface CreatePropertyFormData extends CreatePropertyData {
-  // Includes all fields from CreatePropertyData
-}
+// Define the form data interface based on schema
+interface CreatePropertyFormData extends CreatePropertyData {}
 
-// Translations object - simplified for schema fields only
+// Translations object
 const translations = {
   en: {
     createTitle: "Create New Property",
     steps: {
       basicInfo: "Basic Information",
-      details: "Property Details", 
       media: "Photos & Media",
       current: (current: number, total: number) => `Step ${current} of ${total}`
     },
@@ -71,10 +57,6 @@ const translations = {
       titleAr: "Property Title (Arabic)",
       descriptionEn: "Description (English)",
       descriptionAr: "Description (Arabic)",
-      bedrooms: "Bedrooms",
-      bathrooms: "Bathrooms",
-      area: "Area (m²)",
-      parking: "Parking",
       uploadedImages: (count: number) => `Uploaded Images (${count})`,
       location: "Location Details",
       images: "images",
@@ -89,13 +71,9 @@ const translations = {
       descriptionAr: "صف عقارك باللغة العربية..."
     },
     validation: {
-      requiredFields: "Please fill in all required fields",
       requiredField: (field: string) => `${field} is required`,
       invalidCity: "Please enter a valid city",
-      invalidTitles: "Please enter both English and Arabic titles",
-      invalidArea: "Please enter a valid area",
-      invalidBedrooms: "Please enter number of bedrooms",
-      invalidBathrooms: "Please enter number of bathrooms"
+      invalidTitles: "Please enter both English and Arabic titles"
     },
     success: {
       created: "Property created successfully!",
@@ -115,7 +93,6 @@ const translations = {
     createTitle: "إنشاء عقار جديد",
     steps: {
       basicInfo: "المعلومات الأساسية",
-      details: "تفاصيل العقار", 
       media: "الصور والوسائط",
       current: (current: number, total: number) => `الخطوة ${current} من ${total}`
     },
@@ -135,10 +112,6 @@ const translations = {
       titleAr: "عنوان العقار (العربية)",
       descriptionEn: "الوصف (الإنجليزية)",
       descriptionAr: "الوصف (العربية)",
-      bedrooms: "غرف النوم",
-      bathrooms: "الحمامات",
-      area: "المساحة (م²)",
-      parking: "مواقف السيارات",
       uploadedImages: (count: number) => `الصور المرفوعة (${count})`,
       location: "تفاصيل الموقع",
       images: "الصور",
@@ -153,13 +126,9 @@ const translations = {
       descriptionAr: "صف عقارك باللغة العربية..."
     },
     validation: {
-      requiredFields: "يرجى ملء جميع الحقول المطلوبة",
       requiredField: (field: string) => `${field} مطلوب`,
       invalidCity: "يرجى إدخال مدينة صحيحة",
-      invalidTitles: "يرجى إدخال العنوان باللغتين الإنجليزية والعربية",
-      invalidArea: "يرجى إدخال مساحة صحيحة",
-      invalidBedrooms: "يرجى إدخال عدد غرف النوم",
-      invalidBathrooms: "يرجى إدخال عدد الحمامات"
+      invalidTitles: "يرجى إدخال العنوان باللغتين الإنجليزية والعربية"
     },
     success: {
       created: "تم إنشاء العقار بنجاح!",
@@ -177,52 +146,28 @@ const translations = {
   }
 };
 
-// Default form data with all required fields from CreatePropertyData
+// Default form data matching schema
 const defaultFormData: CreatePropertyFormData = {
   titleEn: '',
   titleAr: '',
   descriptionEn: '',
   descriptionAr: '',
-  price: 0, // Required by CreatePropertyData
-  type: 'APARTMENT', // Required by CreatePropertyData
-  status: 'AVAILABLE', // Required by CreatePropertyData
   city: '',
   district: '',
-  bedrooms: 1,
-  bathrooms: 1,
-  area: 0,
-  parking: 0,
-  features: [], // Required by CreatePropertyData
   images: [],
 };
 
-// Required fields configuration - only schema fields we want to validate
+// Required fields configuration based on schema
 const requiredFields = {
   titleEn: true,
   titleAr: true,
   city: true,
-  bedrooms: true,
-  bathrooms: true,
-  area: true,
-  parking: true,
 };
 
-// Loading component
-function CreatePropertySkeleton() {
-  return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <Skeleton className="h-12 w-64" />
-        <Skeleton className="h-4 w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-48 rounded-lg" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+// Required field indicator component
+const RequiredIndicator = () => (
+  <span className="text-destructive ml-1">*</span>
+);
 
 // Client component
 function CreatePropertyForm({ locale }: { locale: string }) {
@@ -230,15 +175,14 @@ function CreatePropertyForm({ locale }: { locale: string }) {
   
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [formData, setFormData] = useState<CreatePropertyFormData>(defaultFormData);
   const [currentLang, setCurrentLang] = useState<'en' | 'ar'>(locale as 'en' | 'ar' || 'ar');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const t = translations[currentLang];
 
-  // Progress calculation - now 3 steps instead of 5
-  const progress = (currentStep / 3) * 100;
+  // Progress calculation
+  const progress = (currentStep / 2) * 100;
 
   const updateFormData = (field: keyof CreatePropertyFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -276,7 +220,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
   const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
     const errors: Record<string, string> = {};
 
-    // Required field validation - only schema fields
+    // Required field validation based on schema
     if (requiredFields.titleEn && !formData.titleEn.trim()) {
       errors.titleEn = t.validation.requiredField(currentLang === 'en' ? 'English title' : 'العنوان بالإنجليزية');
     }
@@ -286,15 +230,6 @@ function CreatePropertyForm({ locale }: { locale: string }) {
     if (requiredFields.city && !formData.city.trim()) {
       errors.city = t.validation.invalidCity;
     }
-    if (requiredFields.area && (!formData.area || formData.area <= 0)) {
-      errors.area = t.validation.invalidArea;
-    }
-    if (requiredFields.bedrooms && (!formData.bedrooms || formData.bedrooms <= 0)) {
-      errors.bedrooms = t.validation.invalidBedrooms;
-    }
-    if (requiredFields.bathrooms && (!formData.bathrooms || formData.bathrooms <= 0)) {
-      errors.bathrooms = t.validation.invalidBathrooms;
-    }
 
     setFieldErrors(errors);
     return { isValid: Object.keys(errors).length === 0, errors };
@@ -303,15 +238,14 @@ function CreatePropertyForm({ locale }: { locale: string }) {
   const validateCurrentStep = (): boolean => {
     const stepValidations: Record<number, (keyof CreatePropertyFormData)[]> = {
       1: ['titleEn', 'titleAr', 'city'],
-      2: ['bedrooms', 'bathrooms', 'area', 'parking'],
-      3: [], // Images are optional
+      2: [], // Images are optional
     };
 
     const currentStepFields = stepValidations[currentStep] || [];
     const errors: Record<string, string> = {};
 
     currentStepFields.forEach(field => {
-      if (requiredFields[field as keyof typeof requiredFields]) {
+      if (requiredFields[field]) {
         if (field === 'titleEn' && !formData.titleEn.trim()) {
           errors.titleEn = t.validation.requiredField(currentLang === 'en' ? 'English title' : 'العنوان بالإنجليزية');
         }
@@ -320,15 +254,6 @@ function CreatePropertyForm({ locale }: { locale: string }) {
         }
         if (field === 'city' && !formData.city.trim()) {
           errors.city = t.validation.invalidCity;
-        }
-        if (field === 'area' && (!formData.area || formData.area <= 0)) {
-          errors.area = t.validation.invalidArea;
-        }
-        if (field === 'bedrooms' && (!formData.bedrooms || formData.bedrooms <= 0)) {
-          errors.bedrooms = t.validation.invalidBedrooms;
-        }
-        if (field === 'bathrooms' && (!formData.bathrooms || formData.bathrooms <= 0)) {
-          errors.bathrooms = t.validation.invalidBathrooms;
         }
       }
     });
@@ -356,7 +281,6 @@ function CreatePropertyForm({ locale }: { locale: string }) {
     
     const promise = new Promise(async (resolve, reject) => {
       try {
-        // Pass the entire formData since it now matches CreatePropertyData
         await PropertiesService.create(formData);
         resolve(true);
       } catch (error) {
@@ -382,18 +306,10 @@ function CreatePropertyForm({ locale }: { locale: string }) {
     });
   };
 
-  const toggleLanguage = () => {
-    setCurrentLang(prev => prev === 'en' ? 'ar' : 'en');
-    toast.info(currentLang === 'en' ? "تم التبديل إلى اللغة العربية" : "Switched to English", {
-      icon: <Languages className="h-4 w-4" />
-    });
-  };
-
-  // Steps configuration - reduced to 3 steps
+  // Steps configuration - simplified to 2 steps
   const steps = [
     { number: 1, title: t.steps.basicInfo, icon: Building2, description: currentLang === 'en' ? 'Basic property information' : 'المعلومات الأساسية للعقار' },
-    { number: 2, title: t.steps.details, icon: Home, description: currentLang === 'en' ? 'Specifications and details' : 'المواصفات والتفاصيل' },
-    { number: 3, title: t.steps.media, icon: ImageIcon, description: currentLang === 'en' ? 'Photos and visual content' : 'الصور والمحتوى المرئي' }
+    { number: 2, title: t.steps.media, icon: ImageIcon, description: currentLang === 'en' ? 'Photos and visual content' : 'الصور والمحتوى المرئي' }
   ];
 
   const nextStep = () => {
@@ -417,15 +333,17 @@ function CreatePropertyForm({ locale }: { locale: string }) {
     }
   };
 
-  // Required field indicator component
-  const RequiredIndicator = () => (
-    <span className="text-destructive ml-1">*</span>
-  );
+  const toggleLanguage = () => {
+    setCurrentLang(prev => prev === 'en' ? 'ar' : 'en');
+    toast.info(currentLang === 'en' ? "تم التبديل إلى اللغة العربية" : "Switched to English", {
+      icon: <Languages className="h-4 w-4" />
+    });
+  };
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-background to-muted/20 ${currentLang === 'ar' ? 'font-arabic' : ''}`}>
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
-        {/* Modern Header */}
+        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
@@ -450,62 +368,22 @@ function CreatePropertyForm({ locale }: { locale: string }) {
               </div>
             </div>
             
-            {/* Language and View Controls */}
-            <div className="flex items-center gap-4">
-              {/* Language Toggle */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={toggleLanguage}
-                className="gap-2 h-9"
-              >
-                <Languages className="h-4 w-4" />
-                {t.labels.language}
-                <Badge variant="secondary" className="ml-1">
-                  {currentLang.toUpperCase()}
-                </Badge>
-              </Button>
-
-              {/* View Controls */}
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
-                  <Button
-                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => {
-                      setViewMode('grid');
-                      toast.info(currentLang === 'en' ? "Switched to grid view" : "تم التبديل إلى العرض الشبكي");
-                    }}
-                    className="h-8 w-8 p-0"
-                  >
-                    <div className="h-4 w-4 grid grid-cols-2 gap-0.5">
-                      <div className="bg-current rounded-sm" />
-                      <div className="bg-current rounded-sm" />
-                      <div className="bg-current rounded-sm" />
-                      <div className="bg-current rounded-sm" />
-                    </div>
-                  </Button>
-                  <Button
-                    variant={viewMode === 'list' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => {
-                      setViewMode('list');
-                      toast.info(currentLang === 'en' ? "Switched to list view" : "تم التبديل إلى العرض القائم");
-                    }}
-                    className="h-8 w-8 p-0"
-                  >
-                    <div className="h-4 w-4 flex flex-col gap-0.5">
-                      <div className="bg-current h-1 rounded-sm" />
-                      <div className="bg-current h-1 rounded-sm" />
-                      <div className="bg-current h-1 rounded-sm" />
-                    </div>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            {/* Language Control */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleLanguage}
+              className="gap-2 h-9"
+            >
+              <Languages className="h-4 w-4" />
+              {t.labels.language}
+              <Badge variant="secondary" className="ml-1">
+                {currentLang.toUpperCase()}
+              </Badge>
+            </Button>
           </div>
 
-          {/* Modern Progress Bar */}
+          {/* Progress Bar */}
           <div className="space-y-4 mb-8">
             <Progress value={progress} className="h-2" />
             <div className={`flex ${currentLang === 'ar' ? 'flex-row-reverse' : ''} justify-between items-center`}>
@@ -534,7 +412,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                       }}
                     >
                       {isCompleted ? (
-                        <CheckCircle className="h-4 w-4" />
+                        <CheckCircle2 className="h-4 w-4" />
                       ) : (
                         step.number
                       )}
@@ -577,7 +455,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                         <MapPin className="h-5 w-5 text-red-500" />
                         {t.labels.location}
                       </Label>
-                      <div className={`grid gap-4 ${viewMode === 'list' ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
+                      <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="city">{t.labels.city} <RequiredIndicator /></Label>
                           <Input
@@ -701,20 +579,16 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Bedrooms' : 'غرف النوم'}</span>
-                        <span className="font-semibold">{formData.bedrooms}</span>
+                        <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'English Title' : 'العنوان بالإنجليزية'}</span>
+                        <span className="font-semibold text-sm text-right truncate max-w-[120px]">
+                          {formData.titleEn || '-'}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Bathrooms' : 'الحمامات'}</span>
-                        <span className="font-semibold">{formData.bathrooms}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Area' : 'المساحة'}</span>
-                        <span className="font-semibold">{formData.area}m²</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Parking' : 'مواقف السيارات'}</span>
-                        <span className="font-semibold">{formData.parking}</span>
+                        <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Arabic Title' : 'العنوان بالعربية'}</span>
+                        <span className="font-semibold text-sm text-right truncate max-w-[120px]">
+                          {formData.titleAr || '-'}
+                        </span>
                       </div>
                     </div>
                     <Separator />
@@ -757,10 +631,6 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                         <li>{t.labels.city}</li>
                         <li>{t.labels.titleEn}</li>
                         <li>{t.labels.titleAr}</li>
-                        <li>{t.labels.bedrooms}</li>
-                        <li>{t.labels.bathrooms}</li>
-                        <li>{t.labels.area}</li>
-                        <li>{t.labels.parking}</li>
                       </ul>
                     </div>
                   </CardContent>
@@ -769,86 +639,8 @@ function CreatePropertyForm({ locale }: { locale: string }) {
             </div>
           )}
 
-          {/* Step 2: Property Details */}
+          {/* Step 2: Media */}
           {currentStep === 2 && (
-            <Card className="border-l-4 border-l-primary">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Home className="h-5 w-5 text-primary" />
-                  {t.steps.details}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-8">
-                {/* Property Specifications Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {[
-                    { key: 'bedrooms', label: t.labels.bedrooms, icon: Bed, value: formData.bedrooms, required: true },
-                    { key: 'bathrooms', label: t.labels.bathrooms, icon: Bath, value: formData.bathrooms, required: true },
-                    { key: 'area', label: t.labels.area, icon: Square, value: formData.area, required: true },
-                    { key: 'parking', label: t.labels.parking, icon: Car, value: formData.parking, required: true }
-                  ].map((spec) => {
-                    const Icon = spec.icon;
-                    return (
-                      <div key={spec.key} className="text-center p-4 rounded-lg bg-muted/50">
-                        <Label className="text-sm font-semibold flex items-center justify-center gap-2 mb-3">
-                          <Icon className="h-4 w-4 text-primary" />
-                          {spec.label}
-                          {spec.required && <RequiredIndicator />}
-                        </Label>
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={() => {
-                              const newValue = Math.max(0, (formData[spec.key as keyof CreatePropertyFormData] as number) - 1);
-                              updateFormData(spec.key as keyof CreatePropertyFormData, newValue);
-                              toast.info(`${spec.label} ${currentLang === 'en' ? 'set to' : 'تم تعيين إلى'} ${newValue}`);
-                            }}
-                            className="h-8 w-8 rounded-full"
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <Input
-                            type="number"
-                            value={formData[spec.key as keyof CreatePropertyFormData] as number}
-                            onChange={(e) => updateFormData(spec.key as keyof CreatePropertyFormData, parseInt(e.target.value) || 0)}
-                            className={`w-20 text-center text-lg font-semibold border-2 ${
-                              fieldErrors[spec.key] ? 'border-destructive' : ''
-                            }`}
-                            min="0"
-                            dir="ltr"
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={() => {
-                              const newValue = (formData[spec.key as keyof CreatePropertyFormData] as number) + 1;
-                              updateFormData(spec.key as keyof CreatePropertyFormData, newValue);
-                              toast.info(`${spec.label} ${currentLang === 'en' ? 'set to' : 'تم تعيين إلى'} ${newValue}`);
-                            }}
-                            className="h-8 w-8 rounded-full"
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        {fieldErrors[spec.key] && (
-                          <p className="text-destructive text-sm mt-2 flex items-center justify-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {fieldErrors[spec.key]}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 3: Media */}
-          {currentStep === 3 && (
             <Card className="border-l-4 border-l-primary">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-xl">
@@ -859,7 +651,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
               <CardContent className="space-y-8">
                 {/* Upload Area */}
                 <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center bg-muted/20 hover:bg-muted/40 transition-colors">
-                  <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">{t.actions.uploadImages}</h3>
                   <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                     {currentLang === 'en' 
@@ -896,9 +688,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                         {formData.images.length} / 12 {t.labels.images}
                       </Badge>
                     </div>
-                    <div className={`grid gap-4 ${
-                      viewMode === 'list' ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3'
-                    }`}>
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                       {formData.images.map((url, idx) => (
                         <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                           <img 
