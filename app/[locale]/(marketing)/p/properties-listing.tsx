@@ -69,7 +69,7 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
   return (
     <section
       dir={isRTL ? "rtl" : "ltr"}
-      className="bg-gradient-to-br from-slate-50 to-slate-100 py-20"
+      className=" py-20 my-40"
     >
       <div className="container mx-auto px-4">
         {/* Header */}

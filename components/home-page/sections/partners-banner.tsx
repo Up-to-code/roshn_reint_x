@@ -21,18 +21,12 @@ export function PartnersBanner({
   const logosToShow = logos || [];
 
   if (!mounted) {
-    return <div className="h-20 bg-orange-500" />;
+    return null; // Return nothing during SSR and initial client render
   }
 
-  // If no logos provided, don't render anything or show a message
+  // If no logos provided, don't render anything
   if (logosToShow.length === 0) {
-    return (
-      <section className="w-full bg-orange-500 px-4 py-8">
-        <div className="text-center text-white">
-          No partner logos available
-        </div>
-      </section>
-    );
+    return null; // Completely hide the component when no data
   }
 
   return (
