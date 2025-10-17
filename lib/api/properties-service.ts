@@ -12,7 +12,6 @@ export interface CreatePropertyData {
 }
 
 export interface UpdatePropertyData extends Partial<CreatePropertyData> {}
-
 export class PropertiesService {
   private static async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
