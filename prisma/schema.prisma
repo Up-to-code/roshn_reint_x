@@ -75,142 +75,21 @@ model VerificationToken {
 }
 
 model Property {
-  id          String   @id @default(cuid())
+  id            String   @id @default(cuid())
   // Language-specific fields
-  titleEn     String
-  titleAr     String
+  titleEn       String
+  titleAr       String
   descriptionEn String?
   descriptionAr String?
   // Basic property fields
-  price       Float
-  type        PropertyType
-  status      PropertyStatus @default(AVAILABLE)
-  city        String
-  district    String?
-  bedrooms    Int
-  bathrooms   Int
-  area        Int
-  parking     Int @default(0)
-  features    String[]
-  images      String[]
+  city          String
+  district      String?
+  images        String[]
   
-  // Enhanced property details
-  yearBuilt   Int?
-  floors      Int @default(1)
-  furnished   Boolean @default(false)
-  petFriendly Boolean @default(false)
-  smokingAllowed Boolean @default(false)
-  
-  // Location amenities
-  nearSchools Boolean @default(false)
-  nearHospitals Boolean @default(false)
-  nearShopping Boolean @default(false)
-  nearTransport Boolean @default(false)
-  
-  // Property features
-  balcony     Boolean @default(false)
-  garden      Boolean @default(false)
-  pool        Boolean @default(false)
-  gym         Boolean @default(false)
-  security    Boolean @default(false)
-  concierge   Boolean @default(false)
-  elevator    Boolean @default(false)
-  
-  // Parking and utilities
-  parkingType ParkingType @default(STREET)
-  heating     HeatingType @default(CENTRAL)
-  cooling     CoolingType @default(CENTRAL)
-  
-  // Appliances and utilities
-  waterHeater Boolean @default(false)
-  internet    Boolean @default(false)
-  cableTV     Boolean @default(false)
-  dishwasher  Boolean @default(false)
-  washingMachine Boolean @default(false)
-  dryer       Boolean @default(false)
-  microwave   Boolean @default(false)
-  refrigerator Boolean @default(false)
-  oven        Boolean @default(false)
-  
-  // Contact information
-  contactName String?
-  contactPhone String?
-  contactEmail String?
-  contactWhatsapp String?
-  
-  // Media and additional info
-  virtualTour String?
-  videoUrl    String?
-  floorPlan   String?
-  energyRating EnergyRating @default(C)
-  
-  // Financial information
-  propertyTax Float @default(0)
-  maintenanceFee Float @default(0)
-  hoaFee      Float @default(0)
-  insurance   Float @default(0)
-  
-  // Additional arrays for complex data
-  utilities   String[]
-  nearbyAmenities String[]
-  transportation String[]
-  schools     String[]
-  hospitals   String[]
-  shopping    String[]
-  restaurants String[]
-  entertainment String[]
-  
-  // Statistics
-  views       Int @default(0)
-  favorites   Int @default(0)
-  shares      Int @default(0)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("properties")
-}
-
-enum PropertyType {
-  APARTMENT
-  VILLA
-  OFFICE
-  SHOP
-}
-
-enum PropertyStatus {
-  AVAILABLE
-  RENTED
-  SOLD
-}
-
-enum ParkingType {
-  STREET
-  GARAGE
-  COVERED
-  UNDERGROUND
-}
-
-enum HeatingType {
-  CENTRAL
-  INDIVIDUAL
-  NONE
-}
-
-enum CoolingType {
-  CENTRAL
-  INDIVIDUAL
-  NONE
-}
-
-enum EnergyRating {
-  A
-  B
-  C
-  D
-  E
-  F
-  G
 }
 
 model Post {

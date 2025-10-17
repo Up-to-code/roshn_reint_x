@@ -1,17 +1,27 @@
-// @ts-ignore - NextAuth middleware helper is exported from our local setup
-import { auth } from "auth";
+// FILE: middleware.ts
+import { withAuth } from "next-auth/middleware";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 
-// Compose auth with i18n middleware in a single default export
+// 👇 إعداد i18n middleware
 const i18n = createMiddleware(routing);
 
-export default auth((req) => {
-  return i18n(req);
-});
+// 👇 دمج المصادقة مع i18n بشكل آمن لـ Edge runtime
+const auth = withAuth(
+  (req) => i18n(req),
+  {
+    pages: {
+      signIn: "/api/auth/signin", // أو المسار اللي عندك
+    },
+  }
+);
 
+export default auth;
 
-// Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
+// 👇 إعداد matcher
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)" , "/(en|ar)/:path*"],
-}
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/(en|ar)/:path*",
+  ],
+};
