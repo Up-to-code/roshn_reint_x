@@ -7,21 +7,21 @@ import { UserAuthForm } from "@/components/forms/user-auth-form"
 import { Suspense } from "react"
 
 export const metadata = {
-  title: "Create an account",
-  description: "Create an account to get started.",
+  title: "إنشاء حساب",
+  description: "إنشاء حساب جديد للبدء",
 }
 
 export default function RegisterPage() {
   return (
-    <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0" dir="rtl">
       <Link
         href="/login"
         className={cn(
           buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-8 md:top-8"
+          "absolute left-4 top-4 md:left-8 md:top-8"
         )}
       >
-        Login
+        تسجيل الدخول
       </Link>
       <div className="hidden h-full bg-muted lg:block" />
       <div className="lg:p-8">
@@ -29,29 +29,29 @@ export default function RegisterPage() {
           <div className="flex flex-col space-y-2 text-center">
             <Icons.logo className="mx-auto size-6" />
             <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
+              إنشاء حساب جديد
             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email below to create your account
+              أدخل بريدك الإلكتروني وكلمة المرور لإنشاء حسابك
             </p>
           </div>
           <Suspense>
             <UserAuthForm type="register" />
           </Suspense>
           <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{" "}
+            بالضغط على متابعة، فإنك توافق على{" "}
             <Link
               href="/terms"
               className="hover:text-brand underline underline-offset-4"
             >
-              Terms of Service
+              شروط الخدمة
             </Link>{" "}
-            and{" "}
+            و{" "}
             <Link
               href="/privacy"
               className="hover:text-brand underline underline-offset-4"
             >
-              Privacy Policy
+              سياسة الخصوصية
             </Link>
             .
           </p>

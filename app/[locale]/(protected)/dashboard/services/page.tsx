@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Edit, Save, X, GripVertical, AlertCircle, ImageIcon } from "lucide-react";
+import { Plus, Trash2, Edit, Save, X, ImageIcon } from "lucide-react";
 import { CustomUploader } from "@/components/shared/custom-uploader";
 
 interface Service {
@@ -30,8 +30,8 @@ interface ServicesPageData {
 export default function ServicesEditor() {
   const [servicesPage, setServicesPage] = useState<ServicesPageData>({
     id: "",
-    title: "Our Services",
-    subtitle: "Comprehensive solutions to transform your digital presence",
+    title: "خدماتنا",
+    subtitle: "حلول شاملة لتحسين وجودك الرقمي",
     heroImage: "",
     enabled: true
   });
@@ -40,7 +40,6 @@ export default function ServicesEditor() {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [isEditingHero, setIsEditingHero] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -48,14 +47,10 @@ export default function ServicesEditor() {
 
   const fetchData = async () => {
     try {
-      setError(null);
       const [pageResponse, servicesResponse] = await Promise.all([
         fetch('/api/services-page'),
         fetch('/api/services')
       ]);
-
-      if (!pageResponse.ok) throw new Error('Failed to fetch page data');
-      if (!servicesResponse.ok) throw new Error('Failed to fetch services');
 
       const pageData = await pageResponse.json();
       const servicesData = await servicesResponse.json();
@@ -64,7 +59,6 @@ export default function ServicesEditor() {
       setServices(servicesData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError('Failed to load data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -72,36 +66,24 @@ export default function ServicesEditor() {
 
   const saveServicesPage = async () => {
     try {
-      setError(null);
       const response = await fetch('/api/services-page', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(servicesPage),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save page');
-      }
 
       const updatedPage = await response.json();
       setServicesPage(updatedPage);
       setIsEditingHero(false);
-      alert('Services page updated successfully!');
     } catch (error) {
       console.error('Error saving services page:', error);
-      setError(error instanceof Error ? error.message : 'Failed to save page');
     }
   };
 
-  // Handle hero image upload
   const handleHeroImageUpload = (url: string) => {
     setServicesPage(prev => ({ ...prev, heroImage: url }));
   };
 
-  // Handle service image upload
   const handleServiceImageUpload = (url: string) => {
     if (editingService) {
       setEditingService(prev => prev ? { ...prev, image: url } : null);
@@ -111,10 +93,10 @@ export default function ServicesEditor() {
   const addService = () => {
     const newService: Service = {
       id: '',
-      title: 'New Service',
-      description: 'Service description',
+      title: 'خدمة جديدة',
+      description: 'وصف الخدمة',
       image: '',
-      features: ['Feature 1', 'Feature 2'],
+      features: ['ميزة 1', 'ميزة 2'],
       order: services.length,
       enabled: true
     };
@@ -125,50 +107,30 @@ export default function ServicesEditor() {
     if (!editingService) return;
 
     try {
-      setError(null);
       const url = editingService.id ? `/api/services/${editingService.id}` : '/api/services';
       const method = editingService.id ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingService),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save service');
-      }
-
       await fetchData();
       setEditingService(null);
-      alert('Service saved successfully!');
     } catch (error) {
       console.error('Error saving service:', error);
-      setError(error instanceof Error ? error.message : 'Failed to save service');
     }
   };
 
   const deleteService = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this service?')) return;
+    if (!confirm('هل أنت متأكد من حذف هذه الخدمة؟')) return;
 
     try {
-      const response = await fetch(`/api/services/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete service');
-      }
-
+      await fetch(`/api/services/${id}`, { method: 'DELETE' });
       await fetchData();
-      alert('Service deleted successfully!');
     } catch (error) {
       console.error('Error deleting service:', error);
-      setError(error instanceof Error ? error.message : 'Failed to delete service');
     }
   };
 
@@ -176,7 +138,7 @@ export default function ServicesEditor() {
     if (editingService) {
       setEditingService({
         ...editingService,
-        features: [...editingService.features, 'New Feature']
+        features: [...editingService.features, 'ميزة جديدة']
       });
     }
   };
@@ -185,168 +147,119 @@ export default function ServicesEditor() {
     if (editingService) {
       const updatedFeatures = [...editingService.features];
       updatedFeatures[index] = value;
-      setEditingService({
-        ...editingService,
-        features: updatedFeatures
-      });
+      setEditingService({ ...editingService, features: updatedFeatures });
     }
   };
 
   const removeFeature = (index: number) => {
     if (editingService) {
       const updatedFeatures = editingService.features.filter((_, i) => i !== index);
-      setEditingService({
-        ...editingService,
-        features: updatedFeatures
-      });
+      setEditingService({ ...editingService, features: updatedFeatures });
     }
   };
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-lg">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-gray-50" dir="rtl">
+        <div className="text-lg">جاري التحميل...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
+    <div className="min-h-screen p-6" dir="rtl">
+      <div className="mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-gray-900">Services Editor</h1>
-          <p className="text-gray-600">Manage your services page content and offerings</p>
+        <div className="mb-8 text-right">
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">محرر الخدمات</h1>
+          <p className="text-gray-600">إدارة محتوى صفحة الخدمات والعروض</p>
         </div>
 
-        {/* Error Display */}
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-            <div className="flex items-center gap-2 text-red-700">
-              <AlertCircle className="size-5" />
-              <span>{error}</span>
-            </div>
-          </div>
-        )}
-
         {/* Hero Section Editor */}
-        <Card className="mb-8">
+        <Card className="mb-6">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Hero Section</CardTitle>
+            <CardTitle className="text-right">القسم الرئيسي</CardTitle>
             <Button
               onClick={() => isEditingHero ? saveServicesPage() : setIsEditingHero(true)}
               className={isEditingHero ? "bg-green-600 hover:bg-green-700" : ""}
-              disabled={isEditingHero && (!servicesPage.title || !servicesPage.subtitle)}
             >
-              {isEditingHero ? <Save className="mr-2 size-4" /> : <Edit className="mr-2 size-4" />}
-              {isEditingHero ? "Save Changes" : "Edit Hero"}
+              {isEditingHero ? <Save className="ml-2 size-4" /> : <Edit className="ml-2 size-4" />}
+              {isEditingHero ? "حفظ التغييرات" : "تعديل القسم"}
             </Button>
           </CardHeader>
           <CardContent>
             {isEditingHero ? (
-              <div className="space-y-6">
+              <div className="space-y-4 text-right">
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Title *
+                    العنوان *
                   </label>
                   <Input
                     value={servicesPage.title}
                     onChange={(e) => setServicesPage({ ...servicesPage, title: e.target.value })}
-                    placeholder="Enter hero title"
+                    placeholder="أدخل العنوان الرئيسي"
                     required
                   />
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Subtitle *
+                    الوصف *
                   </label>
                   <Textarea
                     value={servicesPage.subtitle}
                     onChange={(e) => setServicesPage({ ...servicesPage, subtitle: e.target.value })}
-                    placeholder="Enter hero subtitle"
-                    rows={3}
+                    placeholder="أدخل الوصف الفرعي"
+                    rows={2}
                     required
                   />
                 </div>
                 
                 {/* Hero Image Uploader */}
                 <div>
-                  <label className="mb-4 block text-sm font-medium text-gray-700">
-                    Hero Image
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                    صورة القسم الرئيسي
                   </label>
-                  <div className="space-y-4">
-                    {/* Current Hero Image Preview */}
-                    {servicesPage.heroImage && (
-                      <div className="flex items-center gap-4 rounded-lg border bg-gray-50 p-4">
-                        <div className="relative size-20 overflow-hidden rounded bg-gray-200">
-                          <img 
-                            src={servicesPage.heroImage} 
-                            alt="Current hero" 
-                            className="size-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">Current Hero Image</p>
-                          <p className="truncate text-xs text-gray-500">{servicesPage.heroImage}</p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Custom Uploader for Hero Image */}
-                    <CustomUploader
-                      bucket="IMAGES"
-                      onUploadComplete={handleHeroImageUpload}
-                      buttonText="Upload Hero Image"
-                      acceptedFileTypes="image"
-                      multiple={false}
-                      maxSize={20}
-                      className="rounded-lg border-2 border-dashed border-gray-300 p-4"
-                    />
-                  </div>
+                  <CustomUploader
+                    bucket="IMAGES"
+                    onUploadComplete={handleHeroImageUpload}
+                    buttonText="رفع صورة القسم"
+                    acceptedFileTypes="image"
+                    multiple={false}
+                  />
                 </div>
 
                 <div className="flex gap-2 pt-4">
                   <Button 
                     onClick={saveServicesPage} 
                     className="bg-green-600 hover:bg-green-700"
-                    disabled={!servicesPage.title || !servicesPage.subtitle}
                   >
-                    <Save className="mr-2 size-4" />
-                    Save Changes
+                    <Save className="ml-2 size-4" />
+                    حفظ التغييرات
                   </Button>
                   <Button variant="outline" onClick={() => setIsEditingHero(false)}>
-                    <X className="mr-2 size-4" />
-                    Cancel
+                    <X className="ml-2 size-4" />
+                    إلغاء
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="space-y-4 text-right">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <p><strong>Title:</strong> {servicesPage.title}</p>
-                    <p><strong>Subtitle:</strong> {servicesPage.subtitle}</p>
+                    <p><strong>العنوان:</strong> {servicesPage.title}</p>
+                    <p><strong>الوصف:</strong> {servicesPage.subtitle}</p>
                   </div>
                   <div className="space-y-2">
-                    <p><strong>Hero Image:</strong></p>
-                    <div className="relative flex size-32 w-full items-center justify-center overflow-hidden rounded-lg bg-gray-200">
+                    <p><strong>صورة القسم:</strong></p>
+                    <div className="flex size-24 items-center justify-center overflow-hidden rounded-lg bg-gray-200">
                       {servicesPage.heroImage ? (
                         <img 
                           src={servicesPage.heroImage} 
-                          alt="Hero preview" 
+                          alt="معاينة الصورة" 
                           className="size-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
                         />
                       ) : (
-                        <div className="text-center text-gray-500">
-                          <ImageIcon className="mx-auto mb-2 size-8" />
-                          <p className="text-sm">No image set</p>
-                        </div>
+                        <ImageIcon className="size-6 text-gray-400" />
                       )}
                     </div>
                   </div>
@@ -359,33 +272,28 @@ export default function ServicesEditor() {
         {/* Services Editor */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Services ({services.length})</CardTitle>
+            <CardTitle className="text-right">الخدمات ({services.length})</CardTitle>
             <Button onClick={addService}>
-              <Plus className="mr-2 size-4" />
-              Add Service
+              <Plus className="ml-2 size-4" />
+              إضافة خدمة
             </Button>
           </CardHeader>
           <CardContent>
             {/* Services List */}
-            <div className="mb-6 space-y-4">
-              {services.map((service, index) => (
+            <div className="mb-6 space-y-3">
+              {services.map((service) => (
                 <div
                   key={service.id}
-                  className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4"
+                  className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 text-right"
                 >
-                  <GripVertical className="size-5 cursor-move text-gray-400" />
                   <div className="flex-1">
                     <div className="flex items-start gap-4">
-                      {/* Service Image Preview */}
                       <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                         {service.image ? (
                           <img 
                             src={service.image} 
                             alt={service.title}
                             className="size-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
                           />
                         ) : (
                           <ImageIcon className="size-6 text-gray-400" />
@@ -395,18 +303,18 @@ export default function ServicesEditor() {
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{service.title}</h3>
                         <p className="line-clamp-2 text-sm text-gray-600">{service.description}</p>
-                        <div className="mt-2 flex gap-2">
+                        <div className="mt-2 flex gap-2 flex-wrap">
                           {service.features.slice(0, 3).map((feature, i) => (
                             <span
                               key={i}
-                              className="rounded bg-orange-100 px-2 py-1 text-xs text-orange-800"
+                              className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800"
                             >
                               {feature}
                             </span>
                           ))}
                           {service.features.length > 3 && (
                             <span className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">
-                              +{service.features.length - 3} more
+                              +{service.features.length - 3} أكثر
                             </span>
                           )}
                         </div>
@@ -425,7 +333,7 @@ export default function ServicesEditor() {
                       variant="outline"
                       size="sm"
                       onClick={() => deleteService(service.id)}
-                      className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                      className="text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -436,90 +344,62 @@ export default function ServicesEditor() {
 
             {/* Service Editor Form */}
             {editingService && (
-              <Card className="border-orange-200 bg-orange-50">
+              <Card className="border-blue-200 bg-blue-50">
                 <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    {editingService.id ? 'Edit Service' : 'New Service'}
+                  <CardTitle className="flex items-center justify-between text-right">
+                    {editingService.id ? 'تعديل الخدمة' : 'خدمة جديدة'}
                     <Button variant="outline" size="sm" onClick={() => setEditingService(null)}>
                       <X className="size-4" />
                     </Button>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4 text-right">
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Title *
+                      العنوان *
                     </label>
                     <Input
                       value={editingService.title}
                       onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
-                      placeholder="Service title"
+                      placeholder="عنوان الخدمة"
                       required
                     />
                   </div>
                   
                   <div>
                     <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Description *
+                      الوصف *
                     </label>
                     <Textarea
                       value={editingService.description}
                       onChange={(e) => setEditingService({ ...editingService, description: e.target.value })}
-                      placeholder="Service description"
-                      rows={3}
+                      placeholder="وصف الخدمة"
+                      rows={2}
                       required
                     />
                   </div>
                   
                   {/* Service Image Uploader */}
                   <div>
-                    <label className="mb-4 block text-sm font-medium text-gray-700">
-                      Service Image
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                      صورة الخدمة
                     </label>
-                    <div className="space-y-4">
-                      {/* Current Image Preview */}
-                      {editingService.image && (
-                        <div className="flex items-center gap-4 rounded-lg border bg-white p-4">
-                          <div className="relative flex size-20 items-center justify-center overflow-hidden rounded-lg bg-gray-200">
-                            <img 
-                              src={editingService.image} 
-                              alt="Current service" 
-                              className="size-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
-                            {!editingService.image && (
-                              <ImageIcon className="size-6 text-gray-400" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">Current Service Image</p>
-                            <p className="truncate text-xs text-gray-500">{editingService.image}</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Custom Uploader for Service Image */}
-                      <CustomUploader
-                        bucket="IMAGES"
-                        onUploadComplete={handleServiceImageUpload}
-                        buttonText="Upload Service Image"
-                        acceptedFileTypes="image"
-                        multiple={false}
-                        maxSize={10}
-                        className="rounded-lg border-2 border-dashed border-gray-300 p-4"
-                      />
-                    </div>
+                    <CustomUploader
+                      bucket="IMAGES"
+                      onUploadComplete={handleServiceImageUpload}
+                      buttonText="رفع صورة الخدمة"
+                      acceptedFileTypes="image"
+                      multiple={false}
+                    />
                   </div>
                   
                   {/* Features Editor */}
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <label className="block text-sm font-medium text-gray-700">Features</label>
+                      <label className="block text-sm font-medium text-gray-700">الميزات</label>
                       <Button type="button" size="sm" onClick={addFeature}>
-                        <Plus className="mr-1 size-4" />
-                        Add Feature
+                        <Plus className="ml-1 size-4" />
+                        إضافة ميزة
                       </Button>
                     </div>
                     <div className="space-y-2">
@@ -528,7 +408,7 @@ export default function ServicesEditor() {
                           <Input
                             value={feature}
                             onChange={(e) => updateFeature(index, e.target.value)}
-                            placeholder="Feature description"
+                            placeholder="وصف الميزة"
                           />
                           <Button
                             type="button"
@@ -548,13 +428,12 @@ export default function ServicesEditor() {
                     <Button 
                       onClick={saveService} 
                       className="bg-green-600 hover:bg-green-700"
-                      disabled={!editingService.title || !editingService.description}
                     >
-                      <Save className="mr-2 size-4" />
-                      Save Service
+                      <Save className="ml-2 size-4" />
+                      حفظ الخدمة
                     </Button>
                     <Button variant="outline" onClick={() => setEditingService(null)}>
-                      Cancel
+                      إلغاء
                     </Button>
                   </div>
                 </CardContent>

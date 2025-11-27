@@ -108,9 +108,7 @@ export function UsersTable({ initialUsers }: UsersTableProps) {
                   </SelectContent>
                 </Select>
               </TableCell>
-              <TableCell className="text-right">
-                {new Date(user.createdAt).toLocaleDateString()}
-              </TableCell>
+             
             </TableRow>
           ))}
         </TableBody>

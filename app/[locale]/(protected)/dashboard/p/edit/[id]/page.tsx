@@ -1,243 +1,41 @@
-/* eslint-disable tailwindcss/no-contradicting-classname */
-/* eslint-disable tailwindcss/classnames-order */
 "use client";
-
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import { PropertiesService, type CreatePropertyData } from '@/lib/api/properties-service';
+import { CustomUploader } from '@/components/shared/custom-uploader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, 
   X, 
   Image as ImageIcon, 
   MapPin,
-  Upload,
-  CheckCircle2,
   Building2,
   Eye,
   AlertCircle,
-  CheckCircle,
-  Languages,
+  CheckCircle2,
+  Save,
   RotateCcw
 } from 'lucide-react';
+import { Property } from '@prisma/client';
 
-// Fixed dynamic imports - handle both default and named exports properly
-const CustomUploader = React.lazy(() =>
-  import('@/components/shared/custom-uploader').then(module => ({
-    default: module.CustomUploader ?? (() => <div>Loading Uploader...</div>)
-  }))
-);
+// Use the basic CreatePropertyData interface since we removed all extra fields
+interface EditPropertyFormData extends CreatePropertyData {}
 
-const RichTextEditor = React.lazy(() =>
-  import('@/components/ui/rich-text-editor').then(module => ({
-    default: module.RichTextEditor ?? (() => <div>Loading Editor...</div>)
-  }))
-);
-interface EditPropertyFormData {
-  titleEn: string;
-  titleAr: string;
-  descriptionEn?: string;
-  descriptionAr?: string;
-  city: string;
-  district?: string;
-  images: string[];
-  // Required by CreatePropertyData but not in your schema - set defaults
-  price: number;
-  type: 'APARTMENT' | 'HOUSE' | 'COMMERCIAL' | 'LAND';
-  status: 'AVAILABLE' | 'SOLD' | 'RENTED';
-  bedrooms: number;
-  bathrooms: number;
-  area: number;
-  parking: number;
-  features: string[];
-}
-
-// Translations object
-const translations = {
-  en: {
-    editTitle: "Edit Property",
-    steps: {
-      basicInfo: "Basic Information",
-      media: "Photos & Media",
-      current: (current: number, total: number) => `Step ${current} of ${total}`
-    },
-    actions: {
-      back: "Back to Properties",
-      previous: "Previous Step",
-      next: "Next Step",
-      cancel: "Cancel",
-      updating: "Updating Property...",
-      update: "Update Property Listing",
-      uploadImages: "Upload Property Images",
-      resetChanges: "Reset Changes"
-    },
-    labels: {
-      city: "City",
-      district: "District/Area",
-      titleEn: "Property Title (English)",
-      titleAr: "Property Title (Arabic)",
-      descriptionEn: "Description (English)",
-      descriptionAr: "Description (Arabic)",
-      uploadedImages: (count: number) => `Uploaded Images (${count})`,
-      location: "Location Details",
-      images: "images",
-      language: "Language"
-    },
-    placeholders: {
-      city: "Enter city name",
-      district: "Enter district or area",
-      titleEn: "Beautiful apartment in city center",
-      titleAr: "شقة رائعة في وسط المدينة",
-      descriptionEn: "Describe your property in English...",
-      descriptionAr: "صف عقارك باللغة العربية..."
-    },
-    validation: {
-      requiredFields: "Please fill in all required fields",
-      requiredField: (field: string) => `${field} is required`,
-      invalidCity: "Please enter a valid city",
-      invalidTitles: "Please enter both English and Arabic titles"
-    },
-    success: {
-      updated: "Property updated successfully!",
-      imageUploaded: "Images uploaded successfully",
-      imageRemoved: "Image removed successfully",
-      changesReset: "Changes reset successfully"
-    },
-    errors: {
-      updateFailed: "Failed to update property",
-      uploadFailed: "Failed to upload images",
-      generic: "An error occurred",
-      notFound: "Property not found"
-    },
-    alt: {
-      propertyImage: (number: number) => `Property image ${number}`
-    },
-    status: {
-      unsavedChanges: "You have unsaved changes",
-      allChangesSaved: "All changes saved"
-    }
-  },
-  ar: {
-    editTitle: "تعديل العقار",
-    steps: {
-      basicInfo: "المعلومات الأساسية",
-      media: "الصور والوسائط",
-      current: (current: number, total: number) => `الخطوة ${current} من ${total}`
-    },
-    actions: {
-      back: "العودة إلى العقارات",
-      previous: "الخطوة السابقة",
-      next: "التالي",
-      cancel: "إلغاء",
-      updating: "جاري تحديث العقار...",
-      update: "تحديث قائمة العقار",
-      uploadImages: "رفع صور العقار",
-      resetChanges: "إعادة التعيين"
-    },
-    labels: {
-      city: "المدينة",
-      district: "المنطقة/الحي",
-      titleEn: "عنوان العقار (الإنجليزية)",
-      titleAr: "عنوان العقار (العربية)",
-      descriptionEn: "الوصف (الإنجليزية)",
-      descriptionAr: "الوصف (العربية)",
-      uploadedImages: (count: number) => `الصور المرفوعة (${count})`,
-      location: "تفاصيل الموقع",
-      images: "الصور",
-      language: "اللغة"
-    },
-    placeholders: {
-      city: "أدخل اسم المدينة",
-      district: "أدخل المنطقة أو الحي",
-      titleEn: "شقة جميلة في وسط المدينة",
-      titleAr: "شقة رائعة في وسط المدينة",
-      descriptionEn: "صف عقارك باللغة الإنجليزية...",
-      descriptionAr: "صف عقارك باللغة العربية..."
-    },
-    validation: {
-      requiredFields: "يرجى ملء جميع الحقول المطلوبة",
-      requiredField: (field: string) => `${field} مطلوب`,
-      invalidCity: "يرجى إدخال مدينة صحيحة",
-      invalidTitles: "يرجى إدخال العنوان باللغتين الإنجليزية والعربية"
-    },
-    success: {
-      updated: "تم تحديث العقار بنجاح!",
-      imageUploaded: "تم رفع الصور بنجاح",
-      imageRemoved: "تم إزالة الصورة بنجاح",
-      changesReset: "تم إعادة التعيين بنجاح"
-    },
-    errors: {
-      updateFailed: "فشل في تحديث العقار",
-      uploadFailed: "فشل في رفع الصور",
-      generic: "حدث خطأ",
-      notFound: "العقار غير موجود"
-    },
-    alt: {
-      propertyImage: (number: number) => `صورة العقار ${number}`
-    },
-    status: {
-      unsavedChanges: "لديك تغييرات غير محفوظة",
-      allChangesSaved: "تم حفظ جميع التغييرات"
-    }
-  }
-};
-
-// Required fields configuration - based on schema
-const requiredFields = {
-  titleEn: true,
-  titleAr: true,
-  city: true,
-};
-
-// Loading component
-function EditPropertySkeleton() {
-  return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <Skeleton className="h-12 w-64" />
-        <Skeleton className="h-4 w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-48 rounded-lg" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Default form data with all required fields
-const defaultFormData: EditPropertyFormData = {
-  titleEn: '',
-  titleAr: '',
-  descriptionEn: '',
-  descriptionAr: '',
-  city: '',
-  district: '',
-  images: [],
-  // Default values for required CreatePropertyData fields
-  price: 0,
-  type: 'APARTMENT',
-  status: 'AVAILABLE',
-  bedrooms: 0,
-  bathrooms: 0,
-  area: 0,
-  parking: 0,
-  features: [],
-};
-
-// Main form component
-function EditPropertyForm({ locale }: { locale: string }) {
+export default function EditPropertyPage() {
+  const t = useTranslations('propertyForm');
+  const commonT = useTranslations('common');
+  const locale = useLocale();
+  const isRTL = locale === 'ar';
   const router = useRouter();
   const params = useParams();
   const propertyId = params.id as string;
@@ -245,18 +43,27 @@ function EditPropertyForm({ locale }: { locale: string }) {
   const [loading, setLoading] = useState(false);
   const [loadingProperty, setLoadingProperty] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
-  const [currentLang, setCurrentLang] = useState<'en' | 'ar'>(locale as 'en' | 'ar' || 'ar');
-  const [formData, setFormData] = useState<EditPropertyFormData>(defaultFormData);
+  const [hasChanges, setHasChanges] = useState(false);
   const [originalData, setOriginalData] = useState<EditPropertyFormData | null>(null);
+  const [formData, setFormData] = useState<EditPropertyFormData>({
+    titleEn: '',
+    titleAr: '',
+    descriptionEn: '',
+    descriptionAr: '',
+    city: '',
+    district: '',
+    images: [],
+  });
+
+  // Required fields configuration based on schema
+  const requiredFields = {
+    titleEn: true,
+    titleAr: true,
+    city: true,
+  };
+
+  // Field errors state
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-  const t = translations[currentLang];
-
-  // Progress calculation - 2 steps now (basic info and media)
-  const progress = (currentStep / 2) * 100;
-
-  // Check if there are unsaved changes
-  const hasChanges = originalData && JSON.stringify(formData) !== JSON.stringify(originalData);
 
   useEffect(() => {
     if (propertyId) {
@@ -267,18 +74,17 @@ function EditPropertyForm({ locale }: { locale: string }) {
   const loadProperty = async () => {
     try {
       setLoadingProperty(true);
+      console.log('Loading property with ID:', propertyId);
       const property = await PropertiesService.getById(propertyId);
       
       if (!property) {
-        toast.error(t.errors.notFound, {
-          icon: <AlertCircle className="h-4 w-4" />
-        });
-        setTimeout(() => {
-          router.push(`/${locale}/dashboard/p`);
-        }, 2000);
+        console.error('Property not found');
+        alert('Property not found');
         return;
       }
-
+      
+      console.log('Property loaded:', property);
+      
       const editData: EditPropertyFormData = {
         titleEn: property.titleEn,
         titleAr: property.titleAr,
@@ -287,24 +93,13 @@ function EditPropertyForm({ locale }: { locale: string }) {
         city: property.city,
         district: property.district || '',
         images: property.images,
-        // Default values for required CreatePropertyData fields
-        price: 0,
-        type: 'APARTMENT',
-        status: 'AVAILABLE',
-        bedrooms: 0,
-        bathrooms: 0,
-        area: 0,
-        parking: 0,
-        features: [],
       };
       
       setFormData(editData);
       setOriginalData(editData);
     } catch (error) {
       console.error('Error loading property:', error);
-      toast.error(t.errors.generic, {
-        description: error instanceof Error ? error.message : t.errors.updateFailed
-      });
+      alert(`Error loading property: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoadingProperty(false);
     }
@@ -312,6 +107,7 @@ function EditPropertyForm({ locale }: { locale: string }) {
 
   const updateFormData = (field: keyof EditPropertyFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    setHasChanges(true);
     
     // Clear field error when user starts typing
     if (fieldErrors[field]) {
@@ -328,9 +124,8 @@ function EditPropertyForm({ locale }: { locale: string }) {
       ...prev,
       images: [...prev.images, ...urls]
     }));
-    toast.success(t.success.imageUploaded, {
-      description: `${urls.length} ${currentLang === 'en' ? 'images added successfully' : 'تم إضافة الصور بنجاح'}`
-    });
+    setHasChanges(true);
+    toast.success(isRTL ? 'تم رفع الصور بنجاح' : 'Images uploaded successfully');
   };
 
   const removeImage = (index: number) => {
@@ -338,33 +133,36 @@ function EditPropertyForm({ locale }: { locale: string }) {
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
     }));
-    toast.success(t.success.imageRemoved, {
-      description: currentLang === 'en' ? "Image removed from your property" : "تم إزالة الصورة من عقارك"
-    });
+    setHasChanges(true);
+    toast.success(isRTL ? 'تم إزالة الصورة بنجاح' : 'Image removed successfully');
   };
 
   const resetToOriginal = () => {
     if (originalData) {
       setFormData(originalData);
+      setHasChanges(false);
       setFieldErrors({});
-      toast.success(t.success.changesReset, {
-        icon: <RotateCcw className="h-4 w-4" />
-      });
+      toast.info(isRTL ? 'تم إعادة التعيين إلى القيم الأصلية' : 'Reset to original values');
     }
   };
+
+  // Required field indicator component
+  const RequiredIndicator = () => (
+    <span className="ml-1 text-destructive">*</span>
+  );
 
   const validateForm = (): { isValid: boolean; errors: Record<string, string> } => {
     const errors: Record<string, string> = {};
 
-    // Required field validation - only schema fields
+    // Required field validation based on schema
     if (requiredFields.titleEn && !formData.titleEn.trim()) {
-      errors.titleEn = t.validation.requiredField(currentLang === 'en' ? 'English title' : 'العنوان بالإنجليزية');
+      errors.titleEn = isRTL ? 'العنوان بالإنجليزية مطلوب' : 'English title is required';
     }
     if (requiredFields.titleAr && !formData.titleAr.trim()) {
-      errors.titleAr = t.validation.requiredField(currentLang === 'en' ? 'Arabic title' : 'العنوان بالعربية');
+      errors.titleAr = isRTL ? 'العنوان بالعربية مطلوب' : 'Arabic title is required';
     }
     if (requiredFields.city && !formData.city.trim()) {
-      errors.city = t.validation.invalidCity;
+      errors.city = isRTL ? 'يرجى إدخال مدينة صحيحة' : 'Please enter a valid city';
     }
 
     setFieldErrors(errors);
@@ -381,15 +179,15 @@ function EditPropertyForm({ locale }: { locale: string }) {
     const errors: Record<string, string> = {};
 
     currentStepFields.forEach(field => {
-      if (requiredFields[field as keyof typeof requiredFields]) {
+      if (requiredFields[field]) {
         if (field === 'titleEn' && !formData.titleEn.trim()) {
-          errors.titleEn = t.validation.requiredField(currentLang === 'en' ? 'English title' : 'العنوان بالإنجليزية');
+          errors.titleEn = isRTL ? 'العنوان بالإنجليزية مطلوب' : 'English title is required';
         }
         if (field === 'titleAr' && !formData.titleAr.trim()) {
-          errors.titleAr = t.validation.requiredField(currentLang === 'en' ? 'Arabic title' : 'العنوان بالعربية');
+          errors.titleAr = isRTL ? 'العنوان بالعربية مطلوب' : 'Arabic title is required';
         }
         if (field === 'city' && !formData.city.trim()) {
-          errors.city = t.validation.invalidCity;
+          errors.city = isRTL ? 'يرجى إدخال مدينة صحيحة' : 'Please enter a valid city';
         }
       }
     });
@@ -404,42 +202,48 @@ function EditPropertyForm({ locale }: { locale: string }) {
     const validation = validateForm();
     if (!validation.isValid) {
       const errorCount = Object.keys(validation.errors).length;
-      toast.error(currentLang === 'en' ? "Validation Error" : "خطأ في التحقق", {
-        description: currentLang === 'en' 
-          ? `Please fix ${errorCount} error${errorCount > 1 ? 's' : ''} in the form`
-          : `يرجى تصحيح ${errorCount} خطأ${errorCount > 1 ? 'ء' : ''} في النموذج`,
-        icon: <AlertCircle className="h-4 w-4" />
+      toast.error(isRTL ? "خطأ في التحقق" : "Validation Error", {
+        description: isRTL 
+          ? `يرجى تصحيح ${errorCount} خطأ${errorCount > 1 ? 'ء' : ''} في النموذج`
+          : `Please fix ${errorCount} error${errorCount > 1 ? 's' : ''} in the form`
       });
       return;
     }
 
     setLoading(true);
     
-    try {
-      await PropertiesService.update(propertyId, formData);
-      setOriginalData(formData);
-      toast.success(t.success.updated);
-      setTimeout(() => router.push(`/${locale}/dashboard/p`), 1000);
-    } catch (error) {
-      console.error('Error updating property:', error);
-      const errorMessage = error instanceof Error ? error.message : t.errors.generic;
-      toast.error(`${t.errors.updateFailed}: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const promise = new Promise(async (resolve, reject) => {
+      try {
+        await PropertiesService.update(propertyId, formData);
+        setHasChanges(false);
+        resolve(true);
+      } catch (error) {
+        console.error('Error updating property:', error);
+        reject(error);
+      }
+    });
 
-  const toggleLanguage = () => {
-    setCurrentLang(prev => prev === 'en' ? 'ar' : 'en');
-    toast.info(currentLang === 'en' ? "تم التبديل إلى اللغة العربية" : "Switched to English", {
-      icon: <Languages className="h-4 w-4" />
+    toast.promise(promise, {
+      loading: isRTL ? 'جاري تحديث العقار...' : 'Updating property...',
+      success: () => {
+        setLoading(false);
+        setTimeout(() => {
+          router.push(`/${locale}/dashboard/p`);
+        }, 1000);
+        return isRTL ? 'تم تحديث العقار بنجاح!' : 'Property updated successfully!';
+      },
+      error: (error) => {
+        setLoading(false);
+        const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+        return `${isRTL ? 'فشل في تحديث العقار' : 'Failed to update property'}: ${errorMessage}`;
+      }
     });
   };
 
-  // Steps configuration - 2 steps now
+  // Simplified steps configuration
   const steps = [
-    { number: 1, title: t.steps.basicInfo, icon: Building2, description: currentLang === 'en' ? 'Basic property information' : 'المعلومات الأساسية للعقار' },
-    { number: 2, title: t.steps.media, icon: ImageIcon, description: currentLang === 'en' ? 'Photos and visual content' : 'الصور والمحتوى المرئي' }
+    { number: 1, title: isRTL ? 'المعلومات الأساسية' : 'Basic Information', icon: Building2, description: isRTL ? 'المعلومات الأساسية للعقار' : 'Basic property information' },
+    { number: 2, title: isRTL ? 'الصور والوسائط' : 'Images & Media', icon: ImageIcon, description: isRTL ? 'الصور والمحتوى المرئي' : 'Photos and visual content' }
   ];
 
   const nextStep = () => {
@@ -448,11 +252,10 @@ function EditPropertyForm({ locale }: { locale: string }) {
         setCurrentStep(currentStep + 1);
       }
     } else {
-      toast.error(currentLang === 'en' ? "Validation Error" : "خطأ في التحقق", {
-        description: currentLang === 'en' 
-          ? "Please fill in all required fields correctly"
-          : "يرجى ملء جميع الحقول المطلوبة بشكل صحيح",
-        icon: <AlertCircle className="h-4 w-4" />
+      toast.error(isRTL ? "خطأ في التحقق" : "Validation Error", {
+        description: isRTL 
+          ? "يرجى ملء جميع الحقول المطلوبة بشكل صحيح"
+          : "Please fill in all required fields correctly"
       });
     }
   };
@@ -463,365 +266,59 @@ function EditPropertyForm({ locale }: { locale: string }) {
     }
   };
 
-  // Required field indicator component
-  const RequiredIndicator = () => (
-    <span className="text-destructive ml-1">*</span>
-  );
+  // Progress calculation
+  const progress = (currentStep / steps.length) * 100;
 
   if (loadingProperty) {
-    return <EditPropertySkeleton />;
+    return (
+      <div className="min-h-screen bg-background px-4 py-8 text-foreground" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="mx-auto max-w-6xl">
+          <div className="py-12 text-center">
+            <div className="text-lg text-muted-foreground">{commonT('loading')}</div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-6">
-              <Card className="border-l-4 border-l-primary">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Building2 className="h-5 w-5 text-primary" />
-                    {t.steps.basicInfo}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Location */}
-                  <div className="space-y-4">
-                    <Label className="text-sm font-semibold flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-red-500" />
-                      {t.labels.location}
-                    </Label>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="city">{t.labels.city} <RequiredIndicator /></Label>
-                        <Input
-                          id="city"
-                          value={formData.city}
-                          onChange={(e) => updateFormData('city', e.target.value)}
-                          placeholder={t.placeholders.city}
-                          className={`h-11 ${fieldErrors.city ? 'border-destructive' : ''}`}
-                          required
-                          dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-                        />
-                        {fieldErrors.city && (
-                          <p className="text-destructive text-sm flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {fieldErrors.city}
-                          </p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="district">{t.labels.district}</Label>
-                        <Input
-                          id="district"
-                          value={formData.district}
-                          onChange={(e) => updateFormData('district', e.target.value)}
-                          placeholder={t.placeholders.district}
-                          className="h-11"
-                          dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Titles and Descriptions */}
-                  <Tabs defaultValue="english" className="space-y-4">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="english">English</TabsTrigger>
-                      <TabsTrigger value="arabic">العربية</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="english" className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="titleEn">{t.labels.titleEn} <RequiredIndicator /></Label>
-                        <Input
-                          id="titleEn"
-                          value={formData.titleEn}
-                          onChange={(e) => updateFormData('titleEn', e.target.value)}
-                          placeholder={t.placeholders.titleEn}
-                          className={fieldErrors.titleEn ? 'border-destructive' : ''}
-                          required
-                          dir="ltr"
-                        />
-                        {fieldErrors.titleEn && (
-                          <p className="text-destructive text-sm flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {fieldErrors.titleEn}
-                          </p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="descriptionEn">{t.labels.descriptionEn}</Label>
-                        <Suspense fallback={<div className="h-32 rounded-lg border bg-muted/50 animate-pulse" />}>
-                          <RichTextEditor
-                            value={formData.descriptionEn || ''}
-                            onChange={(value) => updateFormData('descriptionEn', value)}
-                            placeholder={t.placeholders.descriptionEn}
-                            className="min-h-[200px]"
-                            isRTL={false}
-                          />
-                        </Suspense>
-                      </div>
-                    </TabsContent>
-                    <TabsContent value="arabic" className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="titleAr">{t.labels.titleAr} <RequiredIndicator /></Label>
-                        <Input
-                          id="titleAr"
-                          value={formData.titleAr}
-                          onChange={(e) => updateFormData('titleAr', e.target.value)}
-                          placeholder={t.placeholders.titleAr}
-                          className={`text-right ${fieldErrors.titleAr ? 'border-destructive' : ''}`}
-                          required
-                          dir="rtl"
-                        />
-                        {fieldErrors.titleAr && (
-                          <p className="text-destructive text-sm flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {fieldErrors.titleAr}
-                          </p>
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="descriptionAr">{t.labels.descriptionAr}</Label>
-                        <Suspense fallback={<div className="h-32 rounded-lg border bg-muted/50 animate-pulse" />}>
-                          <RichTextEditor
-                            value={formData.descriptionAr || ''}
-                            onChange={(value) => updateFormData('descriptionAr', value)}
-                            placeholder={t.placeholders.descriptionAr}
-                            className="min-h-[200px]"
-                            isRTL={true}
-                          />
-                        </Suspense>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Preview Card */}
-            <div className="space-y-6">
-              <Card className="sticky top-6">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2">
-                    <Eye className="h-5 w-5" />
-                    {currentLang === 'en' ? 'Quick Preview' : 'معاينة سريعة'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Location' : 'الموقع'}</span>
-                      <span className="font-medium text-right text-sm">
-                        {formData.city}{formData.district ? `, ${formData.district}` : ''}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">{currentLang === 'en' ? 'Images' : 'الصور'}</span>
-                      <span className="font-semibold">{formData.images.length}</span>
-                    </div>
-                  </div>
-                  <Separator />
-                  <div className="text-xs text-muted-foreground">
-                    {currentLang === 'en' 
-                      ? 'Complete all steps to update your property listing'
-                      : 'أكمل جميع الخطوات لتحديث قائمة عقارك'
-                    }
-                  </div>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => {
-                      const validation = validateForm();
-                      toast.info(currentLang === 'en' ? "Form validation" : "التحقق من النموذج", {
-                        description: validation.isValid 
-                          ? (currentLang === 'en' ? 'All required fields are filled' : 'جميع الحقول المطلوبة مملوءة')
-                          : (currentLang === 'en' ? `Found ${Object.keys(validation.errors).length} error(s)` : `تم العثور على ${Object.keys(validation.errors).length} خطأ(أخطاء)`)
-                      });
-                    }}
-                  >
-                    {currentLang === 'en' ? 'Validate Form' : 'التحقق من النموذج'}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Required Fields Info */}
-              <Card className="bg-muted/50">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    {currentLang === 'en' ? 'Required Fields' : 'الحقول المطلوبة'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>{currentLang === 'en' ? 'Fields marked with' : 'الحقول الموسومة بـ'} <span className="text-destructive">*</span> {currentLang === 'en' ? 'are required' : 'مطلوبة'}</p>
-                    <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li>{t.labels.city}</li>
-                      <li>{t.labels.titleEn}</li>
-                      <li>{t.labels.titleAr}</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <Card className="border-l-4 border-l-primary">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <ImageIcon className="h-5 w-5 text-primary" />
-                {t.steps.media}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Upload Area */}
-              <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center bg-muted/20 hover:bg-muted/40 transition-colors">
-                <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{t.actions.uploadImages}</h3>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                  {currentLang === 'en' 
-                    ? 'Drag and drop your images here, or click to browse. Supported formats: JPG, PNG, WEBP (Max 12 images)'
-                    : 'اسحب وأفلت صورك هنا، أو انقر للتصفح. التنسيقات المدعومة: JPG, PNG, WEBP (الحد الأقصى 12 صورة)'
-                  }
-                </p>
-                <Suspense fallback={<div className="h-10 w-40 bg-muted rounded-lg animate-pulse mx-auto" />}>
-                  <CustomUploader
-                    bucket="IMAGES"
-                    onMultipleUploadComplete={handleImageUpload}
-                    buttonText={currentLang === 'en' ? "Select Images" : "اختر الصور"}
-                    multiple={true}
-                    maxFiles={12}
-                    acceptedFileTypes="image"
-                  />
-                </Suspense>
-              </div>
-
-              {/* Image Gallery */}
-              {formData.images.length > 0 && (
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <Label className="text-sm font-semibold text-lg">
-                        {t.labels.uploadedImages(formData.images.length)}
-                      </Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {currentLang === 'en' 
-                          ? 'Click on the X to remove unwanted images'
-                          : 'انقر على X لإزالة الصور غير المرغوب فيها'
-                        }
-                      </p>
-                    </div>
-                    <Badge variant="secondary" className="text-sm">
-                      {formData.images.length} / 12 {t.labels.images}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {formData.images.map((url, idx) => (
-                      <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
-                        <img 
-                          src={url} 
-                          alt={t.alt.propertyImage(idx + 1)}
-                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300" 
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(idx)}
-                          className="absolute top-3 right-3 bg-destructive text-destructive-foreground rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:scale-110"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                        <div className="absolute bottom-3 left-3 bg-background/90 text-foreground text-sm px-3 py-1.5 rounded-full font-medium">
-                          {currentLang === 'en' ? 'Image' : 'صورة'} {idx + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background to-muted/20 ${currentLang === 'ar' ? 'font-arabic' : ''}`}>
-      <div className="max-w-7xl mx-auto p-4 lg:p-6">
-        {/* Modern Header */}
+    <div className="min-h-screen bg-background px-4 py-8 text-foreground" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="mx-auto max-w-6xl">
+        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 asChild 
-                className="h-10 w-10 rounded-full"
+                className="size-10 rounded-full"
               >
                 <Link href={`/${locale}/dashboard/p`}>
-                  <ArrowLeft className={`h-5 w-5 ${currentLang === 'ar' ? 'rotate-180' : ''}`} />
+                  <ArrowLeft className={`size-5 ${isRTL ? 'rotate-180' : ''}`} />
                 </Link>
               </Button>
-              <div className={currentLang === 'ar' ? 'text-right' : 'text-left'}>
-                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                  {t.editTitle}
+              <div className={isRTL ? 'text-right' : 'text-left'}>
+                <h1 className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-3xl font-bold text-transparent">
+                  {isRTL ? 'تعديل العقار' : 'Edit Property'}
                 </h1>
-                <p className="text-muted-foreground mt-2 text-sm lg:text-base">
-                  {t.steps.current(currentStep, steps.length)} • {steps[currentStep - 1].title}
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {steps[currentStep - 1].title}
                 </p>
               </div>
             </div>
             
-            {/* Language Toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleLanguage}
-              className="gap-2 h-9"
-            >
-              <Languages className="h-4 w-4" />
-              {t.labels.language}
-              <Badge variant="secondary" className="ml-1">
-                {currentLang.toUpperCase()}
-              </Badge>
-            </Button>
+            <div className="text-right">
+              <div className="text-lg font-bold text-primary">
+                {isRTL ? `الخطوة ${currentStep} من ${steps.length}` : `Step ${currentStep} of ${steps.length}`}
+              </div>
+            </div>
           </div>
 
-          {/* Changes Indicator */}
-          {hasChanges && (
-            <Card className="mb-6 border-orange-200 bg-orange-50">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-orange-600" />
-                    <span className="font-medium text-orange-800">
-                      {t.status.unsavedChanges}
-                    </span>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={resetToOriginal} className="gap-2">
-                    <RotateCcw className="h-4 w-4" />
-                    {t.actions.resetChanges}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Modern Progress Bar */}
-          <div className="space-y-4 mb-8">
+          {/* Progress Bar */}
+          <div className="mb-8 space-y-4">
             <Progress value={progress} className="h-2" />
-            <div className={`flex ${currentLang === 'ar' ? 'flex-row-reverse' : ''} justify-between items-center`}>
+            <div className={`flex ${isRTL ? 'flex-row-reverse' : ''} items-center justify-between`}>
               {steps.map((step, index) => {
                 const isCompleted = currentStep > step.number;
                 const isCurrent = currentStep === step.number;
@@ -829,11 +326,11 @@ function EditPropertyForm({ locale }: { locale: string }) {
                 return (
                   <div key={step.number} className="flex items-center gap-3">
                     <div 
-                      className={`flex items-center justify-center h-8 w-8 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                      className={`flex size-8 cursor-pointer items-center justify-center rounded-full text-sm font-medium transition-all ${
                         isCompleted 
                           ? 'bg-primary text-primary-foreground shadow-sm' 
                           : isCurrent
-                          ? 'bg-primary text-primary-foreground shadow-lg scale-110'
+                          ? 'scale-110 bg-primary text-primary-foreground shadow-lg'
                           : 'bg-muted text-muted-foreground'
                       }`}
                       onClick={() => {
@@ -843,7 +340,7 @@ function EditPropertyForm({ locale }: { locale: string }) {
                       }}
                     >
                       {isCompleted ? (
-                        <CheckCircle className="h-4 w-4" />
+                        <CheckCircle2 className="size-4" />
                       ) : (
                         step.number
                       )}
@@ -856,7 +353,7 @@ function EditPropertyForm({ locale }: { locale: string }) {
                       </div>
                     </div>
                     {index < steps.length - 1 && (
-                      <div className={`w-8 h-0.5 mx-2 ${
+                      <div className={`mx-2 h-0.5 w-8 ${
                         isCompleted ? 'bg-primary' : 'bg-muted'
                       }`} />
                     )}
@@ -867,20 +364,323 @@ function EditPropertyForm({ locale }: { locale: string }) {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          {renderStepContent()}
+        {/* Changes Indicator */}
+        {hasChanges && (
+          <Card className="mb-6 border-orange-200 bg-orange-50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="size-5 text-orange-600" />
+                  <span className="font-medium text-orange-800">
+                    {isRTL ? 'لديك تغييرات غير محفوظة' : 'You have unsaved changes'}
+                  </span>
+                </div>
+                <Button variant="outline" size="sm" onClick={resetToOriginal}>
+                  <RotateCcw className="mr-2 size-4" />
+                  {isRTL ? 'إعادة التعيين' : 'Reset Changes'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Step 1: Basic Information */}
+          {currentStep === 1 && (
+            <div className="grid gap-6 lg:grid-cols-3">
+              <div className="space-y-6 lg:col-span-2">
+                <Card className="border-l-4 border-l-primary">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Building2 className="size-5 text-primary" />
+                      {isRTL ? 'المعلومات الأساسية' : 'Basic Information'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Location */}
+                    <div className="space-y-4">
+                      <Label className="flex items-center gap-2 text-sm font-semibold">
+                        <MapPin className="size-5 text-red-500" />
+                        {isRTL ? 'تفاصيل الموقع' : 'Location Details'}
+                      </Label>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="city">
+                            {isRTL ? 'المدينة' : 'City'} <RequiredIndicator />
+                          </Label>
+                          <Input
+                            id="city"
+                            value={formData.city}
+                            onChange={(e) => updateFormData('city', e.target.value)}
+                            placeholder={isRTL ? 'أدخل اسم المدينة' : 'Enter city name'}
+                            className={`h-11 ${fieldErrors.city ? 'border-destructive' : ''}`}
+                            required
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                          />
+                          {fieldErrors.city && (
+                            <p className="flex items-center gap-1 text-sm text-destructive">
+                              <AlertCircle className="size-3" />
+                              {fieldErrors.city}
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="district">{isRTL ? 'المنطقة/الحي' : 'District/Area'}</Label>
+                          <Input
+                            id="district"
+                            value={formData.district}
+                            onChange={(e) => updateFormData('district', e.target.value)}
+                            placeholder={isRTL ? 'أدخل المنطقة أو الحي' : 'Enter district or area'}
+                            className="h-11"
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Titles and Descriptions */}
+                    <div className="space-y-6">
+                      {/* English Content */}
+                      <div className="space-y-4">
+                        <h3 className="border-b pb-2 text-lg font-semibold">
+                          {isRTL ? 'المحتوى الإنجليزي' : 'English Content'}
+                        </h3>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="titleEn">
+                              {isRTL ? 'عنوان العقار (الإنجليزية)' : 'Property Title (English)'} <RequiredIndicator />
+                            </Label>
+                            <Input
+                              id="titleEn"
+                              value={formData.titleEn}
+                              onChange={(e) => updateFormData('titleEn', e.target.value)}
+                              placeholder={isRTL ? 'شقة رائعة في وسط المدينة' : 'Beautiful apartment in city center'}
+                              className={fieldErrors.titleEn ? 'border-destructive' : ''}
+                              required
+                              dir="ltr"
+                            />
+                            {fieldErrors.titleEn && (
+                              <p className="flex items-center gap-1 text-sm text-destructive">
+                                <AlertCircle className="size-3" />
+                                {fieldErrors.titleEn}
+                              </p>
+                            )}
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="descriptionEn">{isRTL ? 'الوصف (الإنجليزية)' : 'Description (English)'}</Label>
+                            <RichTextEditor
+                              value={formData.descriptionEn}
+                              onChange={(value) => updateFormData('descriptionEn', value)}
+                              placeholder={isRTL ? 'صف عقارك باللغة العربية...' : 'Describe your property in English...'}
+                              className="min-h-[200px]"
+                              isRTL={false}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Arabic Content */}
+                      <div className="space-y-4" dir="rtl">
+                        <h3 className="border-b pb-2 text-lg font-semibold">المحتوى العربي</h3>
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="titleAr">
+                              عنوان العقار (العربية) <RequiredIndicator />
+                            </Label>
+                            <Input
+                              id="titleAr"
+                              value={formData.titleAr}
+                              onChange={(e) => updateFormData('titleAr', e.target.value)}
+                              placeholder="شقة رائعة في وسط المدينة"
+                              className={`text-right ${fieldErrors.titleAr ? 'border-destructive' : ''}`}
+                              required
+                              dir="rtl"
+                            />
+                            {fieldErrors.titleAr && (
+                              <p className="flex items-center gap-1 text-sm text-destructive">
+                                <AlertCircle className="size-3" />
+                                {fieldErrors.titleAr}
+                              </p>
+                            )}
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="descriptionAr">الوصف (العربية)</Label>
+                            <RichTextEditor
+                              value={formData.descriptionAr}
+                              onChange={(value) => updateFormData('descriptionAr', value)}
+                              placeholder="صف عقارك باللغة العربية..."
+                              className="min-h-[200px]"
+                              isRTL={true}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Preview Card */}
+              <div className="space-y-6">
+                <Card className="sticky top-6">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2">
+                      <Eye className="size-5" />
+                      {isRTL ? 'معاينة سريعة' : 'Quick Preview'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{isRTL ? 'الموقع' : 'Location'}</span>
+                        <span className="text-right text-sm font-medium">
+                          {formData.city}{formData.district ? `, ${formData.district}` : ''}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{isRTL ? 'العنوان بالإنجليزية' : 'English Title'}</span>
+                        <span className="max-w-[120px] truncate text-right text-sm font-semibold">
+                          {formData.titleEn || '-'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{isRTL ? 'العنوان بالعربية' : 'Arabic Title'}</span>
+                        <span className="max-w-[120px] truncate text-right text-sm font-semibold">
+                          {formData.titleAr || '-'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{isRTL ? 'الصور' : 'Images'}</span>
+                        <Badge variant="secondary">
+                          {formData.images.length} {isRTL ? 'صورة' : 'images'}
+                        </Badge>
+                      </div>
+                    </div>
+                    <Separator />
+                    <div className="text-xs text-muted-foreground">
+                      {isRTL 
+                        ? 'أكمل جميع الخطوات لحفظ التغييرات'
+                        : 'Complete all steps to save your changes'
+                      }
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Required Fields Info */}
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <AlertCircle className="size-4" />
+                      {isRTL ? 'الحقول المطلوبة' : 'Required Fields'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <p>{isRTL ? 'الحقول الموسومة بـ' : 'Fields marked with'} <span className="text-destructive">*</span> {isRTL ? 'مطلوبة' : 'are required'}</p>
+                      <ul className="mt-2 list-inside list-disc space-y-1">
+                        <li>{isRTL ? 'المدينة' : 'City'}</li>
+                        <li>{isRTL ? 'العنوان بالإنجليزية' : 'English Title'}</li>
+                        <li>{isRTL ? 'العنوان بالعربية' : 'Arabic Title'}</li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Media */}
+          {currentStep === 2 && (
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <ImageIcon className="size-5 text-primary" />
+                  {isRTL ? 'الصور والوسائط' : 'Images & Media'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                {/* Upload Area */}
+                <div className="rounded-2xl border-2 border-dashed border-border bg-muted/20 p-8 text-center transition-colors hover:bg-muted/40">
+                  <ImageIcon className="mx-auto mb-4 size-12 text-muted-foreground" />
+                  <h3 className="mb-2 text-lg font-semibold">
+                    {isRTL ? 'رفع صور العقار' : 'Upload Property Images'}
+                  </h3>
+                  <p className="mx-auto mb-6 max-w-md text-muted-foreground">
+                    {isRTL 
+                      ? 'اسحب وأفلت صورك هنا، أو انقر للتصفح. التنسيقات المدعومة: JPG, PNG, WEBP'
+                      : 'Drag and drop your images here, or click to browse. Supported formats: JPG, PNG, WEBP'
+                    }
+                  </p>
+                  <CustomUploader
+                    bucket="IMAGES"
+                    onMultipleUploadComplete={handleImageUpload}
+                    buttonText={isRTL ? "اختر الصور" : "Select Images"}
+                    multiple={true}
+                    maxFiles={12}
+                    acceptedFileTypes="image"
+                  />
+                </div>
+
+                {/* Image Gallery */}
+                {formData.images.length > 0 && (
+                  <div>
+                    <div className="mb-6 flex items-center justify-between">
+                      <div>
+                        <Label className="text-lg font-semibold">
+                          {isRTL ? `الصور المرفوعة (${formData.images.length})` : `Uploaded Images (${formData.images.length})`}
+                        </Label>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {isRTL 
+                            ? 'انقر على X لإزالة الصور غير المرغوب فيها'
+                            : 'Click on the X to remove unwanted images'
+                          }
+                        </p>
+                      </div>
+                      <Badge variant="secondary" className="text-sm">
+                        {formData.images.length} / 12 {isRTL ? 'صورة' : 'images'}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {formData.images.map((url, idx) => (
+                        <div key={idx} className="group relative aspect-video overflow-hidden rounded-xl shadow-lg transition-all hover:shadow-xl">
+                          <img 
+                            src={url} 
+                            alt={isRTL ? `صورة العقار ${idx + 1}` : `Property image ${idx + 1}`}
+                            className="size-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                          />
+                          <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(idx)}
+                            className="absolute right-3 top-3 rounded-full bg-destructive p-2 text-destructive-foreground opacity-0 shadow-lg transition-all duration-200 hover:scale-110 group-hover:opacity-100"
+                          >
+                            <X className="size-4" />
+                          </button>
+                          <div className="absolute bottom-3 left-3 rounded-full bg-background/90 px-3 py-1.5 text-sm font-medium text-foreground">
+                            {isRTL ? 'صورة' : 'Image'} {idx + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Navigation Buttons */}
-          <div className={`mt-8 flex items-center justify-between pt-8 border-t ${currentLang === 'ar' ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center justify-between border-t pt-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <Button 
               type="button" 
               variant="outline" 
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="gap-2 h-11 px-6 rounded-xl"
+              className="h-11 gap-2 rounded-xl px-6"
             >
-              <ArrowLeft className={`h-4 w-4 ${currentLang === 'ar' ? 'rotate-180' : ''}`} />
-              {t.actions.previous}
+              <ArrowLeft className={`size-4 ${isRTL ? 'rotate-180' : ''}`} />
+              {isRTL ? 'الخطوة السابقة' : 'Previous Step'}
             </Button>
             
             <div className="flex gap-3">
@@ -888,10 +688,10 @@ function EditPropertyForm({ locale }: { locale: string }) {
                 type="button" 
                 variant="outline" 
                 asChild 
-                className="h-11 px-6 rounded-xl"
+                className="h-11 rounded-xl px-6"
               >
                 <Link href={`/${locale}/dashboard/p`}>
-                  {t.actions.cancel}
+                  {isRTL ? 'إلغاء' : 'Cancel'}
                 </Link>
               </Button>
               
@@ -899,26 +699,26 @@ function EditPropertyForm({ locale }: { locale: string }) {
                 <Button 
                   type="button" 
                   onClick={nextStep} 
-                  className="gap-2 h-11 px-8 rounded-xl"
+                  className="h-11 gap-2 rounded-xl px-8"
                 >
-                  {t.actions.next}
-                  <ArrowLeft className={`h-4 w-4 ${currentLang === 'ar' ? 'rotate-180' : 'rotate-0'}`} />
+                  {isRTL ? 'التالي' : 'Next Step'}
+                  <ArrowLeft className={`size-4 ${isRTL ? 'rotate-180' : 'rotate-0'}`} />
                 </Button>
               ) : (
                 <Button 
                   type="submit" 
                   disabled={loading} 
-                  className="gap-2 h-11 px-8 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                  className="h-11 gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 px-8 hover:from-primary/90 hover:to-primary/70"
                 >
                   {loading ? (
                     <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                      {t.actions.updating}
+                      <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      {isRTL ? 'جاري تحديث العقار...' : 'Updating Property...'}
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="h-4 w-4" />
-                      {t.actions.update}
+                      <Save className="size-4" />
+                      {isRTL ? 'تحديث العقار' : 'Update Property'}
                     </>
                   )}
                 </Button>
@@ -928,14 +728,5 @@ function EditPropertyForm({ locale }: { locale: string }) {
         </form>
       </div>
     </div>
-  );
-}
-
-// Main page component
-export default function EditPropertyPage({ params }: { params: { locale: string } }) {
-  return (
-    <Suspense fallback={<EditPropertySkeleton />}>
-      <EditPropertyForm locale={params.locale} />
-    </Suspense>
   );
 }

@@ -1,26 +1,46 @@
-import Google from "next-auth/providers/google";
-import Email from "next-auth/providers/email";
-import { Resend } from "resend";
+import type { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { LoginSchema } from "@/schemas";
+import { prisma } from "@/lib/db"; // Make sure this import is correct
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
-
-const authConfig = {
+export default {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    Email({
-      async sendVerificationRequest({ identifier, url }) {
-        await resend.emails.send({
-          from: "Next App <onboarding@resend.dev>",
-          to: identifier,
-          subject: "Sign in to Next App",
-          html: `<p>Click <a href="${url}">here</a> to sign in.</p>`,
-        });
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
-    }),
-  ],
-};
+      async authorize(credentials) {
+        const validatedFields = LoginSchema.safeParse(credentials);
 
-export default authConfig;
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
+
+          // Find user by email
+          const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() }
+          });
+
+          if (!user || !user.password) return null;
+
+          // Verify password
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+
+          if (passwordsMatch) {
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              role: user.role,
+            };
+          }
+        }
+
+        return null;
+      }
+    })
+  ],
+} satisfies NextAuthConfig;

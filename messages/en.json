@@ -33,7 +33,8 @@
     "properties": "Properties",
     "addProperty": "Add Property",
     "users": "Users",
-    "services": "Services"
+    "services": "Services",
+    "interests" : "Interests"
   },
   "SaveModal": {
     "title": {

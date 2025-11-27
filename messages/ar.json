@@ -36,7 +36,8 @@
     "about": "عننا",
     "blog": "المدونة",
     "users": "المستخدمين",
-    "services": "خدماتنا"
+    "services": "خدماتنا",
+    "interests" : "الهتمام"
    },
   "SaveModal": {
     "title": {

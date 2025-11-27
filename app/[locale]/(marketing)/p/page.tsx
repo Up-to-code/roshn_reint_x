@@ -21,8 +21,7 @@ export default async function PropertiesPage({ params, searchParams }: Propertie
   try {
     if (searchParams.search) {
       properties = await PropertiesServerService.search(searchParams.search);
-    } else if (searchParams.type) {
-      properties = await PropertiesServerService.getByType(searchParams.type as any);
+    
     } else if (searchParams.city) {
       properties = await PropertiesServerService.getByCity(searchParams.city);
     } else {
