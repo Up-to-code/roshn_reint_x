@@ -1,8 +1,0 @@
-// FILE: app/api/auth/[...nextauth]/route.ts
-
-// 👇 مهم جدًا يكون أول سطر في الملف
-export const runtime = "nodejs";
-
-import { GET, POST } from "@/auth";
-
-export { GET, POST };
