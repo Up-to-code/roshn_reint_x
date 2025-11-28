@@ -1,16 +1,12 @@
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
-
+ 
 import { sidebarLinks } from "@/config/dashboard";
 import { getCurrentUser } from "@/lib/session";
-import { SearchCommand } from "@/components/dashboard/search-command";
-import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
-import { ModeToggle } from "@/components/layout/mode-toggle";
-import { UserAccountNav } from "@/components/layout/user-account-nav";
+ import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+ import { UserAccountNav } from "@/components/layout/user-account-nav";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { MobileSheetSidebar } from "@/components/layout/MobileSheetSidebar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
+ import { Separator } from "@/components/ui/separator";
 import DashboardWrapper from "@/components/layout/DashboardWrapper";
 
 interface ProtectedLayoutProps {
@@ -51,22 +47,13 @@ export default async function DashboardLayout({ children }: ProtectedLayoutProps
                   />
                 </div>
                 
-                <div className="w-full max-w-md">
-                  <Suspense 
-                    fallback={
-                      <Skeleton className="h-9 w-full bg-muted/50 dark:bg-muted/30" />
-                    }
-                  >
-                    <SearchCommand links={filteredLinks} />
-                  </Suspense>
-                </div>
+        
               </div>
 
               {/* Right Section */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 rounded-lg bg-muted/30 p-1 dark:bg-muted/20">
-                  <ModeToggle />
-                  <Separator 
+                   <Separator 
                     orientation="vertical" 
                     className="mx-1 h-6 bg-border/40 dark:bg-border/30" 
                   />

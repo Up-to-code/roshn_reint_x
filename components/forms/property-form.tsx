@@ -1,3 +1,5 @@
+// fix: ensure that 'city' field (required in CreatePropertyData) is included in state and form
+
 "use client";
 import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
@@ -8,7 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Image as ImageIcon } from 'lucide-react';
 
 interface PropertyFormProps {
@@ -31,23 +32,15 @@ export function PropertyForm({
   const locale = useLocale();
   const isRTL = locale === 'ar';
 
-  const [formData, setFormData] = useState<CreatePropertyData>(
+  const [formData, setFormData] = useState<CreatePropertyData>(() =>
     initialData || {
       titleEn: '',
       titleAr: '',
       descriptionEn: '',
       descriptionAr: '',
-      price: 0,
-      type: 'APARTMENT',
-      status: 'AVAILABLE',
       city: '',
-      district: '',
-      bedrooms: 0,
-      bathrooms: 0,
-      area: 0,
-      parking: 0,
-      features: [],
       images: []
+      // district intentionally omitted, since it's optional
     }
   );
 
@@ -78,27 +71,11 @@ export function PropertyForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate required fields
-    if (!formData.titleEn || !formData.titleAr || !formData.price || !formData.city || 
-        !formData.bedrooms || !formData.bathrooms || !formData.area) {
-      alert('Please fill in all required fields');
-      return;
-    }
-
     await onSubmit(formData);
   };
 
-  const propertyTypes = [
-    { value: 'APARTMENT', label: t('types.apartment') },
-    { value: 'VILLA', label: t('types.villa') },
-    { value: 'OFFICE', label: t('types.office') },
-    { value: 'SHOP', label: t('types.shop') }
-  ];
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Images */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -108,7 +85,7 @@ export function PropertyForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <CustomUploader
-             onUploadComplete={handleImageUpload}
+            onUploadComplete={handleImageUpload}
             onMultipleUploadComplete={handleMultipleImageUpload}
             buttonText={t('uploadImage')}
             multiple={true}
@@ -137,113 +114,11 @@ export function PropertyForm({
           )}
         </CardContent>
       </Card>
-
-      {/* Basic Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('basicInfo')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="price">{t('labels.price')} *</Label>
-              <Input
-                id="price"
-                type="number"
-                value={formData.price || ''}
-                onChange={(e) => updateFormData('price', parseFloat(e.target.value))}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="type">{t('labels.type')} *</Label>
-              <Select value={formData.type} onValueChange={(val) => updateFormData('type', val)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {propertyTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="city">{t('labels.city')} *</Label>
-              <Input
-                id="city"
-                value={formData.city}
-                onChange={(e) => updateFormData('city', e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="district">{t('labels.district')}</Label>
-              <Input
-                id="district"
-                value={formData.district}
-                onChange={(e) => updateFormData('district', e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="bedrooms">{t('labels.bedrooms')} *</Label>
-              <Input
-                id="bedrooms"
-                type="number"
-                value={formData.bedrooms || ''}
-                onChange={(e) => updateFormData('bedrooms', parseInt(e.target.value))}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="bathrooms">{t('labels.bathrooms')} *</Label>
-              <Input
-                id="bathrooms"
-                type="number"
-                value={formData.bathrooms || ''}
-                onChange={(e) => updateFormData('bathrooms', parseInt(e.target.value))}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="area">{t('labels.area')} *</Label>
-              <Input
-                id="area"
-                type="number"
-                value={formData.area || ''}
-                onChange={(e) => updateFormData('area', parseInt(e.target.value))}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="parking">{t('labels.parking')}</Label>
-              <Input
-                id="parking"
-                type="number"
-                value={formData.parking || ''}
-                onChange={(e) => updateFormData('parking', parseInt(e.target.value))}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Content */}
       <Card>
         <CardHeader>
           <CardTitle>{t('content')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
-          {/* English */}
           <div className="space-y-4">
             <h3 className="border-b border-border pb-2 text-lg font-semibold">English</h3>
             <div className="space-y-2">
@@ -265,8 +140,6 @@ export function PropertyForm({
               />
             </div>
           </div>
-
-          {/* Arabic */}
           <div className="space-y-4" dir="rtl">
             <h3 className="border-b border-border pb-2 text-lg font-semibold">العربية</h3>
             <div className="space-y-2">
@@ -292,10 +165,31 @@ export function PropertyForm({
               />
             </div>
           </div>
+          <div className="space-y-4">
+            <h3 className="border-b border-border pb-2 text-lg font-semibold">
+              {t("labels.propertyLocation")}
+            </h3>
+            <div className="space-y-2">
+              <Label htmlFor="city">{t("labels.city")} *</Label>
+              <Input
+                id="city"
+                value={formData.city}
+                onChange={(e) => updateFormData("city", e.target.value)}
+                required
+              />
+            </div>
+            {/* Optionally include district input if desired */}
+            {/* <div className="space-y-2">
+              <Label htmlFor="district">{t("labels.district")}</Label>
+              <Input
+                id="district"
+                value={formData.district || ""}
+                onChange={(e) => updateFormData("district", e.target.value)}
+              />
+            </div> */}
+          </div>
         </CardContent>
       </Card>
-
-      {/* Actions */}
       <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : 'justify-end'}`}>
         <Button type="button" variant="outline" asChild>
           <a href={cancelHref}>

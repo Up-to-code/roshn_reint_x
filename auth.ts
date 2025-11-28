@@ -1,15 +1,21 @@
+// auth.ts - Updated version
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { UserRole } from "@prisma/client";
+import NextAuth, { type DefaultSession, type NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/db";
+import { getUserById } from "@/lib/user";
+import { LoginSchema } from "@/schemas"; // Make sure this exists
 import { getUserById, getUserByEmail } from "@/lib/user";
 import { LoginSchema } from "@/schemas";
 
-// More info: https://authjs.dev/getting-started/typescript#module-augmentation
 declare module "next-auth" {
   interface Session {
     user: {
@@ -26,6 +32,12 @@ declare module "next-auth" {
   }
 }
 
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth({
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
@@ -33,6 +45,45 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+  },
+  providers: [
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        const validatedFields = LoginSchema.safeParse(credentials);
+
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
+
+          // Find user by email
+          const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() }
+          });
+
+          if (!user || !user.password) return null;
+
+          // Verify password
+          const passwordsMatch = await bcrypt.compare(password, user.password);
+
+          if (passwordsMatch) {
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              role: user.role,
+            };
+          }
+        }
+
+        return null;
+      }
+    })
+  ],
   },
   providers: [
     GoogleProvider({
@@ -67,6 +118,15 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
+    async signIn({ user, account, credentials }) {
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+
+      // For credentials login, just check if user exists
+      const existingUser = await getUserById(user.id!);
+      return !!existingUser;
+    },
+
     async session({ token, session }) {
       if (session.user) {
         if (token.sub) {
@@ -79,6 +139,7 @@ export const authOptions: NextAuthOptions = {
 
         if (token.role) {
           session.user.role = token.role as UserRole;
+          session.user.role = token.role as UserRole;
         }
 
         session.user.name = token.name;
@@ -88,7 +149,17 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async jwt({ token }) {
+    async jwt({ token, user, trigger, session }) {
+      // Handle initial sign in
+      if (user) {
+        token.role = (user as any).role;
+      }
+
+      // Handle session update
+      if (trigger === "update" && session) {
+        token = { ...token, ...session };
+      }
+
       if (!token.sub) return token;
 
       const dbUser = await getUserById(token.sub);
@@ -103,6 +174,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
+} satisfies NextAuthConfig);
 };
 
 export default NextAuth(authOptions);
