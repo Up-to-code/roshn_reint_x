@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/db";
 import { resend } from "@/lib/email"; // ✅ تأكد أن هذا الملف فيه المفتاح الصحيح
-
-const prisma = new PrismaClient();
 
 // 📍 GET all interests
 export async function GET() {
