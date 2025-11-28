@@ -20,9 +20,7 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
-  baseURL: process.env.NEX
-
-T_PUBLIC_APP_URL!,
+  baseURL: process.env.NEXT_PUBLIC_APP_URL!,
   secret: process.env.AUTH_SECRET!,
 });
 
