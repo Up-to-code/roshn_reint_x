@@ -1,5 +1,7 @@
 import * as z from "zod"
 
-export const userAuthSchema = z.object({
-  email: z.string().email(),
-})
+// Export schemas from centralized location
+export { LoginSchema, RegisterSchema } from "@/schemas"
+
+// For backward compatibility, keep userAuthSchema as LoginSchema
+export { LoginSchema as userAuthSchema } from "@/schemas"

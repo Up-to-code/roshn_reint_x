@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -58,6 +58,7 @@ model User {
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
   role          UserRole  @default(USER)
+  password      String?
 
   accounts Account[]
   sessions Session[]
@@ -85,23 +86,23 @@ model Property {
   city          String
   district      String?
   images        String[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("properties")
 }
 
 model Post {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   content     String
   excerpt     String?
   headerImage String?
   thumbnail   String?
   status      PostStatus @default(DRAFT)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   @@map("posts")
 }
@@ -111,7 +112,6 @@ enum PostStatus {
   PUBLISHED
   ARCHIVED
 }
-
 
 model Contact {
   id          String   @id @default(cuid())
@@ -181,11 +181,11 @@ model AboutSettings {
 }
 
 model Interest {
-  id          String   @id @default(cuid())
-  name        String
-  email       String?
-  phone       String
-  message     String?
+  id            String   @id @default(cuid())
+  name          String
+  email         String?
+  phone         String
+  message       String?
   propertyTitle String
-  createdAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
 }

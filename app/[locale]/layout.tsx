@@ -7,7 +7,7 @@ import { Cairo } from "next/font/google";
 import "@uploadthing/react/styles.css";
 
 import "@/styles/globals.css";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "@/components/providers/session-provider";
 import { ThemeProvider } from "next-themes";
 import ModalProvider from "@/components/modals/providers";
 import { Analytics } from "@/components/analytics";

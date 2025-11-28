@@ -3,9 +3,6 @@
 // 👇 مهم جدًا يكون أول سطر في الملف
 export const runtime = "nodejs";
 
-import NextAuth from "next-auth";
-import authConfig from "@/auth.config";
+import NextAuth from "@/auth";
 
-const handler = NextAuth(authConfig);
-
-export { handler as GET, handler as POST };
+export { NextAuth as GET, NextAuth as POST };
