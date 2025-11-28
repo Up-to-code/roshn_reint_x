@@ -1,7 +1,7 @@
 "use server";
 
-import { auth } from "@/auth";
-import { prisma } from "@/lib/db";
+import { getCurrentUser } from "@/lib/session";
+import { db } from "@/lib/db";
 import { userNameSchema } from "@/lib/validations/user";
 import { revalidatePath } from "next/cache";
 
@@ -11,16 +11,16 @@ export type FormData = {
 
 export async function updateUserName(userId: string, data: FormData) {
   try {
-    const session = await auth()
+    const user = await getCurrentUser();
 
-    if (!session?.user || session?.user.id !== userId) {
+    if (!user || user.id !== userId) {
       throw new Error("Unauthorized");
     }
 
     const { name } = userNameSchema.parse(data);
 
     // Update the user name.
-    await prisma.user.update({
+    await db.user.update({
       where: {
         id: userId,
       },
