@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -132,3 +132,4 @@ export function useDeleteAccountModal() {
     [setShowDeleteAccountModal, DeleteAccountModalCallback],
   );
 }
+

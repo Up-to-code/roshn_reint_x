@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { signIn, signUp } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -14,8 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Icons } from "@/components/shared/icons";
-import { login } from "@/actions/login";
-import { register as registerAction } from "@/actions/register";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "login" | "register";
@@ -46,28 +44,17 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
 
     try {
       if (isRegister) {
-        // Registration flow
-        const result = await registerAction(data as RegisterFormData);
-        
-        if (result.error) {
-          setIsLoading(false);
-          return toast.error("Registration failed", {
-            description: result.error,
-          });
-        }
-
-        // After successful registration, sign in the user
-        const signInResult = await signIn("credentials", {
+        const { data: registerData, error } = await signUp.email({
           email: (data as RegisterFormData).email,
           password: (data as RegisterFormData).password,
-          redirect: false,
+          name: (data as RegisterFormData).name,
         });
 
         setIsLoading(false);
 
-        if (!signInResult?.ok) {
-          return toast.error("Sign in failed", {
-            description: "Please try logging in manually.",
+        if (error) {
+          return toast.error("Registration failed", {
+            description: error.message || "Please try again.",
           });
         }
 
@@ -77,28 +64,16 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
 
         router.push(searchParams?.get("from") || "/dashboard");
       } else {
-        // Login flow
-        const result = await login(data as LoginFormData);
-        
-        if (result.error) {
-          setIsLoading(false);
-          return toast.error("Login failed", {
-            description: result.error,
-          });
-        }
-
-        // Sign in with NextAuth after credentials are verified
-        const signInResult = await signIn("credentials", {
+        const { error } = await signIn.email({
           email: (data as LoginFormData).email,
           password: (data as LoginFormData).password,
-          redirect: false,
         });
 
         setIsLoading(false);
 
-        if (!signInResult?.ok) {
-          return toast.error("Something went wrong", {
-            description: "Please try again.",
+        if (error) {
+          return toast.error("Login failed", {
+            description: error.message || "Please try again.",
           });
         }
 
@@ -202,7 +177,7 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
         className={cn(buttonVariants({ variant: "outline" }))}
         onClick={() => {
           setIsGoogleLoading(true);
-          signIn("google");
+          signIn.social({ provider: "google" });
         }}
         disabled={isLoading || isGoogleLoading}
       >
@@ -216,6 +191,3 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
     </div>
   );
 }
-
-
-

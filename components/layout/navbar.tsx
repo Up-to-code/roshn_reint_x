@@ -7,7 +7,7 @@ import { Link } from "@/i18n/routing";
 import { Menu, X, Sparkles, MessageCircle, Instagram, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 
 const LocaleSwitcher = dynamic(() => import("../LocaleSwitcher"), {
   ssr: false,

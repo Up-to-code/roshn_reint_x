@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/auth-client";
 
 import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
@@ -83,3 +83,4 @@ export function useSignInModal() {
     [setShowSignInModal, SignInModalCallback],
   );
 }
+
