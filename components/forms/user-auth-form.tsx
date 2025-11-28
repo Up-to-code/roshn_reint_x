@@ -134,9 +134,9 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
                 disabled={isLoading || isGoogleLoading}
                 {...register("name")}
               />
-              {errors?.name && "name" in errors && (
+              {isRegister && (errors as any).name && (
                 <p className="px-1 text-xs text-red-600">
-                  {errors.name.message}
+                  {(errors as any).name.message}
                 </p>
               )}
             </div>
@@ -216,3 +216,6 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
     </div>
   );
 }
+
+
+
