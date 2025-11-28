@@ -1,18 +1,10 @@
-// auth.ts - Updated version
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import type { NextAuthOptions } from "next-auth";
-import NextAuth from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { UserRole } from "@prisma/client";
-import NextAuth, { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/db";
-import { getUserById } from "@/lib/user";
-import { LoginSchema } from "@/schemas"; // Make sure this exists
 import { getUserById, getUserByEmail } from "@/lib/user";
 import { LoginSchema } from "@/schemas";
 
@@ -23,13 +15,6 @@ declare module "next-auth" {
       role: UserRole;
     } & DefaultSession["user"];
   }
-  interface DefaultSession {
-    user?: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    };
-  }
 }
 
 export const {
@@ -38,7 +23,6 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
@@ -47,50 +31,11 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        const validatedFields = LoginSchema.safeParse(credentials);
-
-        if (validatedFields.success) {
-          const { email, password } = validatedFields.data;
-
-          // Find user by email
-          const user = await prisma.user.findUnique({
-            where: { email: email.toLowerCase() }
-          });
-
-          if (!user || !user.password) return null;
-
-          // Verify password
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordsMatch) {
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              image: user.image,
-              role: user.role,
-            };
-          }
-        }
-
-        return null;
-      }
-    })
-  ],
-  },
-  providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -118,7 +63,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async signIn({ user, account, credentials }) {
+    async signIn({ user, account }) {
       // Allow OAuth without email verification
       if (account?.provider !== "credentials") return true;
 
@@ -138,7 +83,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (token.role) {
-          session.user.role = token.role as UserRole;
           session.user.role = token.role as UserRole;
         }
 
@@ -174,7 +118,4 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
-} satisfies NextAuthConfig);
-};
-
-export default NextAuth(authOptions);
+});
