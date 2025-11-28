@@ -3,10 +3,10 @@ import bcrypt from "bcryptjs";
 import NextAuth, { type DefaultSession } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/db";
 import { getUserById, getUserByEmail } from "@/lib/user";
 import { LoginSchema } from "@/schemas";
+import { authConfig } from "@/auth.config";
 
 declare module "next-auth" {
   interface Session {
@@ -23,18 +23,13 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
-  pages: {
-    signIn: "/login",
-  },
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    ...authConfig.providers,
     Credentials({
       name: "credentials",
       credentials: {
