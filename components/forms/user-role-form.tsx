@@ -40,7 +40,9 @@ export function UserRoleForm({ user }: UserNameFormProps) {
   const updateUserRoleWithId = updateUserRole.bind(null, user.id);
 
   const roles = Object.values(UserRole);
-  const [role, setRole] = useState(user.role);
+  const [role, setRole] = useState<UserRole>(
+    (user.role as UserRole) || UserRole.USER
+  );
 
   const form = useForm<FormData>({
     resolver: zodResolver(userRoleSchema),
@@ -82,12 +84,12 @@ export function UserRoleForm({ user }: UserNameFormProps) {
                   <Select
                     // TODO:(FIX) Option value not update. Use useState for the moment
                     onValueChange={(value: UserRole) => {
-                      setUpdated(user.role !== value);
+                      setUpdated((user.role as UserRole) !== value);
                       setRole(value);
                       // field.onChange;
                     }}
                     name={field.name}
-                    defaultValue={user.role}
+                    defaultValue={(user.role as UserRole) || UserRole.USER}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
