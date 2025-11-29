@@ -43,7 +43,10 @@ function SignInModal({
             disabled={signInClicked}
             onClick={() => {
               setSignInClicked(true);
-              signIn("google", { redirect: false }).then(() =>
+              signIn.social({
+                provider: "google",
+                callbackURL: "/dashboard",
+              }).then(() =>
                 setTimeout(() => {
                   setShowSignInModal(false);
                 }, 400),

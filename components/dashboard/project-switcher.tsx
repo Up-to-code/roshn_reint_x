@@ -38,10 +38,10 @@ export default function ProjectSwitcher({
 }: {
   large?: boolean;
 }) {
-  const { data: session, status } = useSession();
+  const { data: session, isPending } = useSession();
   const [openPopover, setOpenPopover] = useState(false);
 
-  if (!projects || status === "loading") {
+  if (!projects || isPending) {
     return <ProjectSwitcherPlaceholder />;
   }
 

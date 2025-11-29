@@ -63,7 +63,7 @@ export function UserAccountNav() {
             </div>
 
             <ul role="list" className="mb-14 mt-1 w-full text-muted-foreground">
-              {user.role === "ADMIN" ? (
+              {(user as any).role === "ADMIN" ? (
                 <li className="rounded-lg text-foreground hover:bg-muted">
                   <Link
                     href="/admin"
@@ -141,7 +141,7 @@ export function UserAccountNav() {
         </div>
         <DropdownMenuSeparator />
 
-        {user.role === "ADMIN" ? (
+        {(user as any).role === "ADMIN" ? (
           <DropdownMenuItem asChild>
             <Link href="/admin" className="flex items-center space-x-2.5">
               <Lock className="size-4" />

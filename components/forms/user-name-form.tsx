@@ -20,7 +20,7 @@ interface UserNameFormProps {
 }
 
 export function UserNameForm({ user }: UserNameFormProps) {
-  const { update } = useSession();
+  const { refetch } = useSession();
   const [updated, setUpdated] = useState(false);
   const [isPending, startTransition] = useTransition();
   const updateUserNameWithId = updateUserName.bind(null, user.id);
@@ -49,7 +49,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
           description: "Your name was not updated. Please try again.",
         });
       } else {
-        await update();
+        await refetch();
         setUpdated(false);
         toast.success("Your name has been updated.");
       }
