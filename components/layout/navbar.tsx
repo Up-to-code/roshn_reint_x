@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/auth-client";
 
-const LocaleSwitcher = dynamic(() => import("../LocaleSwitcher"), {
+const LocaleSwitcher = dynamic(() => import("@/components/LocaleSwitcher"), {
   ssr: false,
   loading: () => <div className="size-8 animate-pulse rounded-md bg-gray-600" />,
 });
