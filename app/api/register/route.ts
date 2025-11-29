@@ -29,12 +29,25 @@ export async function POST(request: NextRequest) {
     // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 12);
     
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        name: name || email.split('@')[0],
-      },
+    // Create user and account in a transaction
+    await prisma.$transaction(async (tx) => {
+      // Create the user first
+      const user = await tx.user.create({
+        data: {
+          email: email.toLowerCase(),
+          name: name || email.split('@')[0],
+        },
+      });
+
+      // Create the account with the password
+      await tx.account.create({
+        data: {
+          accountId: user.id,
+          providerId: "credential",
+          userId: user.id,
+          password: hashedPassword,
+        },
+      });
     });
 
     return NextResponse.json(
