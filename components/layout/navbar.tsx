@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
-import { Menu, X, Sparkles, MessageCircle, Instagram, Camera, Home, Building2, Briefcase, Info, Mail } from "lucide-react";
+import { Menu, X, Sparkles, Phone, Home, Building2, Briefcase, Info, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/auth-client";
@@ -14,13 +15,11 @@ const LocaleSwitcher = dynamic(() => import("@/components/LocaleSwitcher"), {
   loading: () => <div className="size-8 animate-pulse rounded-md bg-gray-600" />,
 });
 
-const LOGO_URL = "https://fhupmhxzhukzzqunrtur.supabase.co/storage/v1/object/public/images/New%20Project%201.png";
+const LOGO_URL = "/logo.png";
 const WHATSAPP_NUMBER = "1234567890"; // Replace with actual number
 
 const SOCIAL_LINKS = [
-  { icon: MessageCircle, href: "https://tiktok.com/@yourusername", label: "TikTok" },
-  { icon: Instagram, href: "https://instagram.com/yourusername", label: "Instagram" },
-  { icon: Camera, href: "https://snapchat.com/add/yourusername", label: "Snapchat" },
+  { icon: Phone, href: `https://wa.me/${WHATSAPP_NUMBER}`, label: "WhatsApp" },
 ];
 
 // Dashboard Banner
@@ -45,8 +44,8 @@ function DashboardBanner({ session, t, isRTL }: { session: any; t: any; isRTL: b
 function Logo({ onClick }: { onClick: () => void }) {
   return (
     <Link href="/" onClick={onClick} className="flex items-center">
-      <div className="flex h-[100px] w-[160px] items-center justify-center">
-        <img src={LOGO_URL} alt="Logo" className="size-full object-contain" />
+      <div className="relative flex h-[100px] w-[160px] items-center justify-center">
+        <Image src={LOGO_URL} alt="Logo" width={160} height={100} className="object-contain" />
       </div>
     </Link>
   );

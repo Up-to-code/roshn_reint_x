@@ -3,7 +3,6 @@
 import { useLocale } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "@/components/layout/mode-toggle";
 import { Link } from "@/i18n/routing";
 import { useEffect, useState } from "react";
 
@@ -96,7 +95,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
 
   if (loading) {
     return (
-      <footer className={cn("rounded-t-3xl bg-gray-50 py-8", className)}>
+      <footer className={cn("rounded-t-3xl bg-white py-8", className)}>
         <div className="container mx-auto px-4 text-center">
           <div className="text-gray-500">Loading...</div>
         </div>
@@ -105,7 +104,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   }
 
   // Use footer data colors or default to light theme
-  const bgColor = footerData?.backgroundColor || "#f8fafc";
+  const bgColor = footerData?.backgroundColor || "#FFFFFF";
   const textColor = footerData?.textColor || "#1e293b";
   const isLightTheme = bgColor && (bgColor.startsWith("#f") || bgColor.startsWith("#fff") || bgColor.includes("white") || bgColor.includes("light"));
 
@@ -123,18 +122,13 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
           {/* Brand Section */}
           <div className={cn("space-y-6", isRTL ? "text-right" : "")}>
             <div className={cn("flex items-center gap-4", isRTL ? "flex-row-" : "")}>
-              <div className={cn(
-                "relative size-12 overflow-hidden rounded-2xl border",
-                isLightTheme 
-                  ? "border-gray-200 bg-white shadow-sm" 
-                  : "border-gray-600 bg-gray-800"
-              )}>
+              <div className="relative h-[200px] w-[200px] overflow-hidden">
                 <Image
-                  src="https://17mm2glo1t.ufs.sh/f/rQix7xjgXapPnMkzCZsvM65OTuZmLfX0irPqwtUyhICdlcAW"
+                  src="/logo.png"
                   alt="Logo"
-                  width={48}
-                  height={48}
-                  className="object-cover"
+                  width={200}
+                  height={200}
+                  className="object-contain"
                 />
               </div>
         
@@ -236,9 +230,6 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
           )}>
             {footerData?.copyrightText || `© ${new Date().getFullYear()} ${isRTL ? "العقارية" : "RealEstate"}. ${isRTL ? "جميع الحقوق محفوظة" : "All rights reserved"}`}
           </p>
-          <div className="flex items-center gap-4">
-            <ModeToggle />
-          </div>
         </div>
       </div>
     </footer>

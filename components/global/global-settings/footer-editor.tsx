@@ -163,14 +163,14 @@ export function FooterEditor() {
             <div className="flex gap-2">
               <Input
                 type="color"
-                value={footer.backgroundColor || "#f8fafc"}
+                value={footer.backgroundColor || "#FFFFFF"}
                 onChange={(e) => updateFooter({ backgroundColor: e.target.value })}
                 className="h-10 w-20 cursor-pointer"
               />
               <Input
-                value={footer.backgroundColor || "#f8fafc"}
+                value={footer.backgroundColor || "#FFFFFF"}
                 onChange={(e) => updateFooter({ backgroundColor: e.target.value })}
-                placeholder="#f8fafc"
+                placeholder="#FFFFFF"
                 className="flex-1"
               />
             </div>

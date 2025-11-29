@@ -46,7 +46,7 @@ const defaultSettings = {
       { platform: 'twitter', url: 'https://twitter.com', icon: 'twitter' },
       { platform: 'instagram', url: 'https://instagram.com', icon: 'instagram' },
     ],
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#FFFFFF',
     textColor: '#1e293b',
     showSocialLinks: true,
   },
