@@ -3,7 +3,7 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { LoginSchema } from "@/schemas";
-import { getUserByEmail } from "@/lib/user";
+import { getUserByEmailWithPassword } from "@/lib/user";
 import { DEFAULT_LOGIN_REDIRECT } from "../routes";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
@@ -17,11 +17,12 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   try {
     // Verify credentials
-    const user = await getUserByEmail(email);
+    const user = await getUserByEmailWithPassword(email);
     if (!user || !user.password) {
       return { error: "Invalid credentials!" };
     }
 
+    // At this point, TypeScript knows user.password is not null
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordsMatch) {
