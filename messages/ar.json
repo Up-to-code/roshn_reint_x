@@ -428,5 +428,47 @@
       "properties": "المتاحة",
       "posts": "المدونات",
       "contacts": "الاتصالات"
+    },
+    "uploader": {
+    "dragAndDrop": "اسحب وأفلت {type} هنا",
+    "orClickToBrowse": "أو انقر للتصفح",
+    "upToFiles": "حتى {maxFiles} ملف، {maxSize} ميجابايت لكل ملف",
+    "uploading": "جاري الرفع...",
+    "uploadFiles": "رفع الملفات",
+    "files": "الملفات",
+    "clearAll": "مسح الكل",
+    "retry": "إعادة المحاولة",
+    "view": "عرض",
+    "previews": "المعاينات",
+    "status": {
+      "uploading": "جاري الرفع",
+      "success": "نجح",
+      "error": "خطأ"
+    },
+    "errors": {
+      "tooManyFiles": "ملفات كثيرة جداً",
+      "invalidFileType": "نوع ملف غير صالح",
+      "fileTooLarge": "الملف كبير جداً",
+      "uploadFailed": "فشل الرفع",
+      "retryFailed": "فشلت إعادة المحاولة"
+    },
+    "success": {
+      "uploaded": "تم رفع {count} ملف بنجاح",
+      "uploaded_plural": "تم رفع {count} ملفات بنجاح"
+    },
+    "messages": {
+      "maxFilesAllowed": "الحد الأقصى {maxFiles} ملف. لديك {current} ملف",
+      "maxFilesAllowed_plural": "الحد الأقصى {maxFiles} ملف. لديك {current} ملفات",
+      "invalidFileType": "\"{fileName}\" ليس ملف {type} صالح. يرجى اختيار ملفات {type} فقط.",
+      "fileTooLarge": "\"{fileName}\" ({size} ميجابايت) يتجاوز الحد الأقصى {maxSize} ميجابايت.",
+      "bucketNotConfigured": "دلو التخزين غير مُكوّن. يرجى الاتصال بالمسؤول.",
+      "permissionDenied": "تم رفض إذن الرفع. يرجى التحقق من إعدادات التخزين.",
+      "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك والمحاولة مرة أخرى."
+    },
+    "types": {
+      "files": "ملفات",
+      "images": "صور",
+      "videos": "فيديوهات"
     }
+  }
 }

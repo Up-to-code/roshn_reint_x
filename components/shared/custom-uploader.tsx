@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { uploadToSupabase, getFileType, getBucketForFileType, getBucketName, type StorageBucket } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -45,16 +46,23 @@ export function CustomUploader({
   onUploadComplete,
   onMultipleUploadComplete,
   className = "",
-  buttonText = "Upload Files",
+  buttonText,
   acceptedFileTypes = 'all',
   multiple = false,
   maxFiles = 10,
   maxSize = 10, // 10MB default
 }: CustomUploaderProps) {
+  const t = useTranslations('uploader');
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Get file type label
+  const getFileTypeLabel = () => {
+    if (acceptedFileTypes === 'all') return t('types.files');
+    return t(`types.${acceptedFileTypes}`);
+  };
 
   const handleFiles = (files: FileList) => {
     const fileArray = Array.from(files);
@@ -68,9 +76,13 @@ export function CustomUploader({
     const totalAfterAdd = multiple ? currentTotalCount + fileArray.length : fileArray.length;
     
     if (multiple && totalAfterAdd > maxFiles) {
-      const errorMsg = `Maximum ${maxFiles} files allowed. You have ${currentTotalCount} file${currentTotalCount !== 1 ? 's' : ''} (${currentUploadedCount} uploaded).`;
+      const errorMsg = t('messages.maxFilesAllowed', { 
+        maxFiles, 
+        current: currentTotalCount,
+        count: currentTotalCount 
+      });
       setError(errorMsg);
-      toast.error('Too many files', {
+      toast.error(t('errors.tooManyFiles'), {
         description: errorMsg,
       });
       return;
@@ -83,9 +95,12 @@ export function CustomUploader({
       // Validate file type
       const fileType = getFileType(file);
       if (acceptedFileTypes !== 'all' && fileType !== acceptedFileTypes) {
-        const errorMsg = `"${file.name}" is not a valid ${acceptedFileTypes} file. Please select only ${acceptedFileTypes} files.`;
+        const errorMsg = t('messages.invalidFileType', { 
+          fileName: file.name, 
+          type: acceptedFileTypes 
+        });
         setError(errorMsg);
-        toast.error('Invalid file type', {
+        toast.error(t('errors.invalidFileType'), {
           description: errorMsg,
         });
         continue;
@@ -94,9 +109,13 @@ export function CustomUploader({
       // Validate file size
       const fileSizeMB = file.size / (1024 * 1024);
       if (file.size > maxSize * 1024 * 1024) {
-        const errorMsg = `"${file.name}" (${fileSizeMB.toFixed(2)}MB) exceeds the ${maxSize}MB limit.`;
+        const errorMsg = t('messages.fileTooLarge', { 
+          fileName: file.name, 
+          size: fileSizeMB.toFixed(2), 
+          maxSize 
+        });
         setError(errorMsg);
-        toast.error('File too large', {
+        toast.error(t('errors.fileTooLarge'), {
           description: errorMsg,
         });
         continue;
@@ -152,13 +171,13 @@ export function CustomUploader({
           onUploadComplete(result.url);
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Upload failed';
+        const errorMessage = err instanceof Error ? err.message : t('errors.uploadFailed');
         const userFriendlyError = errorMessage.includes('Bucket not found')
-          ? 'Storage bucket not configured. Please contact administrator.'
+          ? t('messages.bucketNotConfigured')
           : errorMessage.includes('RLS') || errorMessage.includes('row-level security')
-          ? 'Upload permission denied. Please check storage settings.'
+          ? t('messages.permissionDenied')
           : errorMessage.includes('Network error') || errorMessage.includes('Failed to fetch')
-          ? 'Network error. Please check your connection and try again.'
+          ? t('messages.networkError')
           : errorMessage;
 
         setUploadFiles(prev => prev.map(uf => 
@@ -170,7 +189,7 @@ export function CustomUploader({
         errorCount++;
         
         // Show toast for errors
-        toast.error(`Upload failed: ${uploadFile.file.name}`, {
+        toast.error(`${t('errors.uploadFailed')}: ${uploadFile.file.name}`, {
           description: userFriendlyError,
           duration: 5000,
         });
@@ -179,7 +198,7 @@ export function CustomUploader({
 
     // Show summary toast
     if (successCount > 0) {
-      toast.success(`Successfully uploaded ${successCount} file${successCount > 1 ? 's' : ''}`, {
+      toast.success(t('success.uploaded', { count: successCount }), {
         duration: 3000,
       });
     }
@@ -223,7 +242,7 @@ export function CustomUploader({
           : uf
       ));
 
-      toast.success(`Successfully uploaded ${fileToRetry.name}`, {
+      toast.success(t('success.uploaded', { count: 1 }), {
         duration: 3000,
       });
 
@@ -239,7 +258,7 @@ export function CustomUploader({
           : uf
       ));
 
-      toast.error(`Retry failed: ${fileToRetry.name}`, {
+      toast.error(`${t('errors.retryFailed')}: ${fileToRetry.name}`, {
         description: errorMessage,
         duration: 5000,
       });
@@ -339,14 +358,14 @@ export function CustomUploader({
             
             <div className="space-y-2">
               <p className="font-medium">
-                Drag and drop your {acceptedFileTypes === 'all' ? 'files' : `${acceptedFileTypes}s`} here
+                {t('dragAndDrop', { type: getFileTypeLabel() })}
               </p>
               <p className="text-sm text-muted-foreground">
-                or click to browse files
+                {t('orClickToBrowse')}
               </p>
               {multiple && (
                 <p className="text-xs text-muted-foreground">
-                  Up to {maxFiles} files, {maxSize}MB each
+                  {t('upToFiles', { maxFiles, maxSize })}
                 </p>
               )}
             </div>
@@ -359,7 +378,7 @@ export function CustomUploader({
               onClick={() => fileInputRef.current?.click()}
             >
               {getIcon()}
-              {isUploading ? "Uploading..." : buttonText}
+              {isUploading ? t('uploading') : (buttonText || t('uploadFiles'))}
             </Button>
 
             <input
@@ -389,7 +408,7 @@ export function CustomUploader({
           <CardContent className="p-4">
             <div className="mb-3 flex items-center justify-between">
               <h4 className="font-medium">
-                Files ({uploadFiles.filter(f => f.status === 'success').length}/{uploadFiles.length})
+                {t('files')} ({uploadFiles.filter(f => f.status === 'success').length}/{uploadFiles.length})
               </h4>
               {hasFiles && (
                 <Button
@@ -399,7 +418,7 @@ export function CustomUploader({
                   onClick={clearAll}
                   disabled={isUploading}
                 >
-                  Clear All
+                  {t('clearAll')}
                 </Button>
               )}
             </div>
@@ -435,7 +454,7 @@ export function CustomUploader({
                           }
                           className="text-xs"
                         >
-                          {uploadFile.status}
+                          {t(`status.${uploadFile.status}`)}
                         </Badge>
                         {getStatusIcon(uploadFile.status)}
                       </div>
@@ -460,7 +479,7 @@ export function CustomUploader({
                             className="h-6 text-xs"
                           >
                             <RefreshCw className="mr-1 size-3" />
-                            Retry
+                            {t('retry')}
                           </Button>
                         )}
                       </div>
@@ -476,7 +495,7 @@ export function CustomUploader({
                         size="sm"
                         onClick={() => retryUpload(uploadFile.file)}
                         className="text-blue-600 hover:text-blue-700"
-                        title="Retry upload"
+                        title={t('retry')}
                       >
                         <RefreshCw className="size-4" />
                       </Button>
@@ -488,7 +507,7 @@ export function CustomUploader({
                       onClick={() => removeFile(uploadFile.file)}
                       disabled={uploadFile.status === 'uploading'}
                       className="text-muted-foreground hover:text-foreground"
-                      title="Remove file"
+                      title={t('clearAll')}
                     >
                       <X className="size-4" />
                     </Button>
@@ -504,7 +523,7 @@ export function CustomUploader({
       {uploadFiles.some(uf => uf.status === 'success' && uf.file.type.startsWith('image/')) && (
         <Card>
           <CardContent className="p-4">
-            <h4 className="mb-3 font-medium">Previews</h4>
+            <h4 className="mb-3 font-medium">{t('previews')}</h4>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
               {uploadFiles
                 .filter(uf => uf.status === 'success' && uf.url && uf.file.type.startsWith('image/'))
@@ -524,7 +543,7 @@ export function CustomUploader({
                         size="sm"
                         onClick={() => window.open(uploadFile.url, '_blank')}
                       >
-                        View
+                        {t('view')}
                       </Button>
                     </div>
                   </div>

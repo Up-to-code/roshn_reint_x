@@ -419,5 +419,47 @@
     "properties": "Properties",
     "posts": "Posts",
     "contacts": "Contacts"
+  },
+  "uploader": {
+    "dragAndDrop": "Drag and drop your {type} here",
+    "orClickToBrowse": "or click to browse files",
+    "upToFiles": "Up to {maxFiles} files, {maxSize}MB each",
+    "uploading": "Uploading...",
+    "uploadFiles": "Upload Files",
+    "files": "Files",
+    "clearAll": "Clear All",
+    "retry": "Retry",
+    "view": "View",
+    "previews": "Previews",
+    "status": {
+      "uploading": "uploading",
+      "success": "success",
+      "error": "error"
+    },
+    "errors": {
+      "tooManyFiles": "Too many files",
+      "invalidFileType": "Invalid file type",
+      "fileTooLarge": "File too large",
+      "uploadFailed": "Upload failed",
+      "retryFailed": "Retry failed"
+    },
+    "success": {
+      "uploaded": "Successfully uploaded {count} file",
+      "uploaded_plural": "Successfully uploaded {count} files"
+    },
+    "messages": {
+      "maxFilesAllowed": "Maximum {maxFiles} files allowed. You have {current} file",
+      "maxFilesAllowed_plural": "Maximum {maxFiles} files allowed. You have {current} files",
+      "invalidFileType": "\"{fileName}\" is not a valid {type} file. Please select only {type} files.",
+      "fileTooLarge": "\"{fileName}\" ({size}MB) exceeds the {maxSize}MB limit.",
+      "bucketNotConfigured": "Storage bucket not configured. Please contact administrator.",
+      "permissionDenied": "Upload permission denied. Please check storage settings.",
+      "networkError": "Network error. Please check your connection and try again."
+    },
+    "types": {
+      "files": "files",
+      "images": "images",
+      "videos": "videos"
+    }
   }
 }

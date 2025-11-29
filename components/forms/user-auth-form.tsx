@@ -35,7 +35,6 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
   });
   
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -106,7 +105,7 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
                 type="text"
                 autoCapitalize="words"
                 autoComplete="name"
-                disabled={isLoading || isGoogleLoading}
+                disabled={isLoading}
                 {...register("name")}
               />
               {isRegister && (errors as any).name && (
@@ -162,32 +161,6 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           </button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <button
-        type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
-        onClick={() => {
-          setIsGoogleLoading(true);
-          signIn.social({ provider: "google" });
-        }}
-        disabled={isLoading || isGoogleLoading}
-      >
-        {isGoogleLoading ? (
-          <Icons.spinner className="mr-2 size-4 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 size-4" />
-        )}{" "}
-        Google
-      </button>
     </div>
   );
 }

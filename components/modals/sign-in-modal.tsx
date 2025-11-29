@@ -38,28 +38,9 @@ function SignInModal({
         </div>
 
         <div className="flex flex-col space-y-4 bg-secondary/50 px-4 py-8 md:px-16">
-          <Button
-            variant="default"
-            disabled={signInClicked}
-            onClick={() => {
-              setSignInClicked(true);
-              signIn.social({
-                provider: "google",
-                callbackURL: "/dashboard",
-              }).then(() =>
-                setTimeout(() => {
-                  setShowSignInModal(false);
-                }, 400),
-              );
-            }}
-          >
-            {signInClicked ? (
-              <Icons.spinner className="mr-2 size-4 animate-spin" />
-            ) : (
-              <Icons.google className="mr-2 size-4" />
-            )}{" "}
-            Sign In with Google
-          </Button>
+          <p className="text-sm text-muted-foreground text-center">
+            Please use email and password to sign in.
+          </p>
         </div>
       </div>
     </Modal>
