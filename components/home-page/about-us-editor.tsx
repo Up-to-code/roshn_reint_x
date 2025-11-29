@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,7 @@ import { CustomUploader } from "@/components/shared/custom-uploader";
 import { Plus, Trash2 } from "lucide-react";
 
 export function AboutUsEditor() {
+  const t = useTranslations('homePageEditor.aboutUs');
   const { data, currentLang, updateAboutUs, addStat, updateStat, removeStat } = useHomePageStore();
   const aboutUs = data[currentLang].aboutUs;
   const [newStat, setNewStat] = useState({ value: '', label: '' });
@@ -24,53 +26,56 @@ export function AboutUsEditor() {
     <div className="space-y-6">
       <div className="grid gap-4">
         <div>
-          <label className="text-sm font-medium">Section Title</label>
+          <label className="text-sm font-medium">{t('sectionTitle')}</label>
           <Input
             value={aboutUs.title}
             onChange={(e) => updateAboutUs({ title: e.target.value })}
-            placeholder="About Our Company"
+            placeholder={t('placeholders.aboutOurCompany')}
+            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
           />
         </div>
 
         <div>
-          <label className="text-sm font-medium">Content</label>
+          <label className="text-sm font-medium">{t('content')}</label>
           <Textarea
             value={aboutUs.content}
             onChange={(e) => updateAboutUs({ content: e.target.value })}
-            placeholder="Company description"
+            placeholder={t('placeholders.companyDescription')}
             rows={4}
+            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
           />
         </div>
 
         <div>
-          <label className="text-sm font-medium">Image</label>
+          <label className="text-sm font-medium">{t('image')}</label>
           <Input
             value={aboutUs.image}
             onChange={(e) => updateAboutUs({ image: e.target.value })}
-            placeholder="/images/about-us.jpg"
+            placeholder={t('placeholders.imagePath')}
             className="mb-2"
           />
           <CustomUploader
              onUploadComplete={(url) => updateAboutUs({ image: url })}
-            buttonText="Upload About Image"
+            acceptedFileTypes="image"
           />
         </div>
       </div>
 
       <div className="space-y-4">
-        <h3 className="font-medium">Statistics</h3>
+        <h3 className="font-medium">{t('statistics')}</h3>
         <div className="space-y-3">
           {aboutUs.stats.map((stat) => (
             <div key={stat.id} className="flex items-center gap-2 rounded-lg border p-3">
               <Input
                 value={stat.value}
                 onChange={(e) => updateStat(stat.id, { value: e.target.value })}
-                placeholder="1000+"
+                placeholder={t('placeholders.valueExample')}
               />
               <Input
                 value={stat.label}
                 onChange={(e) => updateStat(stat.id, { label: e.target.value })}
-                placeholder="Happy Clients"
+                placeholder={t('placeholders.labelExample')}
+                dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
               />
               <Button variant="outline" size="sm" onClick={() => removeStat(stat.id)}>
                 <Trash2 className="h-4 w-4" />
@@ -84,17 +89,18 @@ export function AboutUsEditor() {
             <Input
               value={newStat.value}
               onChange={(e) => setNewStat({ ...newStat, value: e.target.value })}
-              placeholder="Value"
+              placeholder={t('value')}
             />
             <Input
               value={newStat.label}
               onChange={(e) => setNewStat({ ...newStat, label: e.target.value })}
-              placeholder="Label"
+              placeholder={t('label')}
+              dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
             />
           </div>
           <Button onClick={handleAddStat} size="sm" className="mt-2">
             <Plus className="mr-2 h-4 w-4" />
-            Add Statistic
+            {t('addStatistic')}
           </Button>
         </div>
       </div>

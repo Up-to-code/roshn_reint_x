@@ -429,6 +429,167 @@
       "posts": "المدونات",
       "contacts": "الاتصالات"
     },
+    "homePageEditor": {
+      "title": "محرر الصفحة الرئيسية",
+      "subtitle": "إدارة المحتوى بلغات متعددة",
+      "currentLanguage": "اللغة الحالية",
+      "loading": "جاري تحميل المحرر...",
+      "saving": "جاري الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "import": "استيراد",
+      "export": "تصدير",
+      "english": "الإنجليزية",
+      "arabic": "العربية",
+      "sections": {
+        "hero": "البطل",
+        "banners": "اللافتات",
+        "about": "من نحن",
+        "testimonials": "الشهادات",
+        "whyus": "لماذا نختارنا",
+        "contact": "اتصل بنا",
+        "partners": "الشركاء"
+      },
+      "hero": {
+        "title": "قسم البطل",
+        "heroTitle": "عنوان البطل",
+        "heroSubtitle": "العنوان الفرعي للبطل",
+        "backgroundVideo": "فيديو الخلفية",
+        "overlayColor": "لون التغطية",
+        "primaryButton": "زر أساسي",
+        "secondaryButton": "زر ثانوي",
+        "buttonText": "نص الزر",
+        "buttonLink": "رابط الزر",
+        "buttonVariant": "نوع الزر",
+        "uploadVideo": "رفع فيديو",
+        "placeholders": {
+          "mainHeroTitle": "عنوان البطل الرئيسي",
+          "heroSubtitleDescription": "وصف العنوان الفرعي للبطل",
+          "videoPath": "/videos/hero-bg.mp4",
+          "overlayColorExample": "rgba(0,0,0,0.4)",
+          "buttonText": "نص الزر",
+          "buttonLink": "رابط الزر"
+        },
+        "variants": {
+          "primary": "أساسي",
+          "secondary": "ثانوي",
+          "outline": "إطار"
+        }
+      },
+      "banners": {
+        "title": "قسم اللافتات",
+        "currentBanners": "اللافتات الحالية",
+        "addNewBanner": "إضافة لافتة جديدة",
+        "bannerTitle": "عنوان اللافتة",
+        "bannerDescription": "وصف اللافتة",
+        "imageUrl": "رابط الصورة",
+        "linkUrl": "رابط الرابط",
+        "position": "الموضع",
+        "uploadBannerImage": "رفع صورة اللافتة",
+        "remove": "إزالة",
+        "addBanner": "إضافة لافتة",
+        "positions": {
+          "top": "أعلى",
+          "middle": "وسط",
+          "bottom": "أسفل"
+        }
+      },
+      "aboutUs": {
+        "title": "قسم من نحن",
+        "sectionTitle": "عنوان القسم",
+        "content": "المحتوى",
+        "image": "الصورة",
+        "statistics": "الإحصائيات",
+        "addNewStatistic": "إضافة إحصائية جديدة",
+        "addStatistic": "إضافة إحصائية",
+        "value": "القيمة",
+        "label": "التسمية",
+        "uploadAboutImage": "رفع صورة من نحن",
+        "placeholders": {
+          "aboutOurCompany": "عن شركتنا",
+          "companyDescription": "وصف الشركة",
+          "imagePath": "/images/about-us.jpg",
+          "valueExample": "1000+",
+          "labelExample": "عملاء سعداء"
+        }
+      },
+      "testimonials": {
+        "title": "قسم الشهادات",
+        "sectionTitle": "عنوان القسم",
+        "sectionSubtitle": "العنوان الفرعي للقسم",
+        "testimonials": "الشهادات",
+        "addNewTestimonial": "إضافة شهادة جديدة",
+        "addTestimonial": "إضافة شهادة",
+        "clientName": "اسم العميل",
+        "position": "المنصب",
+        "company": "الشركة",
+        "testimonialContent": "محتوى الشهادة",
+        "avatarUrl": "رابط الصورة الشخصية",
+        "uploadAvatar": "رفع صورة شخصية",
+        "rating": "التقييم",
+        "remove": "إزالة"
+      },
+      "whyUs": {
+        "title": "قسم لماذا نختارنا",
+        "sectionTitle": "عنوان القسم",
+        "sectionSubtitle": "العنوان الفرعي للقسم",
+        "features": "الميزات",
+        "addNewFeature": "إضافة ميزة جديدة",
+        "addFeature": "إضافة ميزة",
+        "iconUrlOrEmoji": "رابط الأيقونة أو الرمز التعبيري",
+        "uploadIcon": "رفع أيقونة",
+        "featureTitle": "عنوان الميزة",
+        "featureDescription": "وصف الميزة",
+        "remove": "إزالة"
+      },
+      "contactUs": {
+        "title": "قسم اتصل بنا",
+        "contactSettings": "إعدادات الاتصال",
+        "contactInfo": "معلومات الاتصال",
+        "formFields": "حقول النموذج",
+        "mapSettings": "إعدادات الخريطة",
+        "titleLabel": "العنوان",
+        "subtitleLabel": "العنوان الفرعي",
+        "description": "الوصف",
+        "address": "عنوان الشركة",
+        "phone": "رقم الهاتف",
+        "email": "عنوان البريد الإلكتروني",
+        "workingHours": "ساعات العمل",
+        "fieldName": "اسم_الحقل",
+        "displayLabel": "تسمية العرض",
+        "addField": "إضافة حقل",
+        "placeholders": {
+          "contactUs": "اتصل بنا",
+          "wereHereToHelp": "نحن هنا للمساعدة",
+          "getInTouch": "ابق على تواصل معنا...",
+          "mapEmbed": "<iframe src=\"https://maps.google.com/...\" />"
+        },
+        "fieldTypes": {
+          "text": "نص",
+          "email": "بريد إلكتروني",
+          "tel": "هاتف",
+          "textarea": "منطقة نص"
+        }
+      },
+      "partners": {
+        "title": "قسم الشركاء",
+        "currentPartners": "الشركاء الحاليون",
+        "addNewPartner": "إضافة شريك جديد",
+        "logoImageUrl": "رابط صورة الشعار",
+        "uploadPartnerLogo": "رفع شعار الشريك",
+        "altText": "نص بديل",
+        "remove": "إزالة",
+        "addPartner": "إضافة شريك"
+      },
+      "messages": {
+        "dataExported": "تم تصدير البيانات بنجاح!",
+        "dataImported": "تم استيراد البيانات بنجاح! لا تنس الحفظ.",
+        "invalidDataStructure": "بنية بيانات غير صالحة. المتوقع { en: ..., ar: ... }",
+        "errorParsingJson": "خطأ في تحليل ملف JSON",
+        "changesSaved": "تم حفظ التغييرات بنجاح!",
+        "errorSaving": "خطأ في حفظ التغييرات",
+        "errorExporting": "خطأ في تصدير البيانات"
+      }
+    },
     "uploader": {
     "dragAndDrop": "اسحب وأفلت {type} هنا",
     "orClickToBrowse": "أو انقر للتصفح",

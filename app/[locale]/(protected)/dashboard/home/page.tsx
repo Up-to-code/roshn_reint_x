@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,11 +17,12 @@ import { AboutUsEditor } from "@/components/home-page/about-us-editor";
 import { TestimonialsEditor } from "@/components/home-page/testimonials-editor";
 import { WhyUsEditor } from "@/components/home-page/why-us-editor";
 import { ContactUsEditor } from "@/components/home-page/contact-us-editor";
-import { PartnersEditor } from "@/components/home-page/partners-editor"; // ✨ جديد
+import { PartnersEditor } from "@/components/home-page/partners-editor";
 import { Download, Upload, Languages, Save } from "lucide-react";
 import { toast } from "sonner";
 
 export default function HomePageEditor() {
+  const t = useTranslations('homePageEditor');
   const {
     data,
     currentLang,
@@ -49,9 +51,9 @@ export default function HomePageEditor() {
       }.json`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 100);
-      toast.success("Data exported successfully!");
+      toast.success(t('messages.dataExported'));
     } catch (error) {
-      toast.error("Error exporting data");
+      toast.error(t('messages.errorExporting'));
     }
   };
 
@@ -66,12 +68,12 @@ export default function HomePageEditor() {
 
         if (content.en && content.ar) {
           setData(content);
-          toast.success("Data imported successfully! Don't forget to save.");
+          toast.success(t('messages.dataImported'));
         } else {
-          toast.error("Invalid data structure. Expected { en: ..., ar: ... }");
+          toast.error(t('messages.invalidDataStructure'));
         }
       } catch (error) {
-        toast.error("Error parsing JSON file");
+        toast.error(t('messages.errorParsingJson'));
       }
     };
     reader.readAsText(file);
@@ -82,12 +84,12 @@ export default function HomePageEditor() {
     try {
       const success = await saveData();
       if (success) {
-        toast.success("Changes saved successfully!");
+        toast.success(t('messages.changesSaved'));
       } else {
-        toast.error("Error saving changes");
+        toast.error(t('messages.errorSaving'));
       }
     } catch (error) {
-      toast.error("Error saving changes");
+      toast.error(t('messages.errorSaving'));
     }
   };
 
@@ -96,20 +98,20 @@ export default function HomePageEditor() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading editor...</p>
+          <p className="mt-4 text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );
   }
 
   const tabs = [
-    { value: "hero", label: "Hero", component: <HeroEditor /> },
-    { value: "banners", label: "Banners", component: <BannersEditor /> },
-    { value: "about", label: "About Us", component: <AboutUsEditor /> },
-    { value: "testimonials", label: "Testimonials", component: <TestimonialsEditor /> },
-    { value: "whyus", label: "Why Choose Us", component: <WhyUsEditor /> },
-    { value: "contact", label: "Contact Us", component: <ContactUsEditor /> },
-    { value: "partners", label: "Partners", component: <PartnersEditor /> }, // ✨ جديد
+    { value: "hero", label: t('sections.hero'), component: <HeroEditor /> },
+    { value: "banners", label: t('sections.banners'), component: <BannersEditor /> },
+    { value: "about", label: t('sections.about'), component: <AboutUsEditor /> },
+    { value: "testimonials", label: t('sections.testimonials'), component: <TestimonialsEditor /> },
+    { value: "whyus", label: t('sections.whyus'), component: <WhyUsEditor /> },
+    { value: "contact", label: t('sections.contact'), component: <ContactUsEditor /> },
+    { value: "partners", label: t('sections.partners'), component: <PartnersEditor /> },
   ];
 
   return (
@@ -120,10 +122,10 @@ export default function HomePageEditor() {
           <div className="flex flex-col gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
-                Home Page Editor
+                {t('title')}
               </h1>
               <p className="text-muted-foreground">
-                Manage content in multiple languages
+                {t('subtitle')}
               </p>
             </div>
 
@@ -138,8 +140,8 @@ export default function HomePageEditor() {
                   }
                   className="rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
-                  <option value="en">English</option>
-                  <option value="ar">Arabic</option>
+                  <option value="en">{t('english')}</option>
+                  <option value="ar">{t('arabic')}</option>
                 </select>
               </div>
 
@@ -159,15 +161,15 @@ export default function HomePageEditor() {
                   }
                 >
                   <Upload className="mr-2 h-4 w-4" />
-                  Import
+                  {t('import')}
                 </Button>
                 <Button variant="outline" size="sm" onClick={exportData}>
                   <Download className="mr-2 h-4 w-4" />
-                  Export
+                  {t('export')}
                 </Button>
                 <Button size="sm" onClick={handleSave} disabled={isSaving}>
                   <Save className="mr-2 h-4 w-4" />
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving ? t('saving') : t('saveChanges')}
                 </Button>
               </div>
             </div>
@@ -204,9 +206,9 @@ export default function HomePageEditor() {
             <TabsContent key={tab.value} value={tab.value} className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>{tab.label} Section</CardTitle>
+                  <CardTitle>{tab.label}</CardTitle>
                   <CardDescription>
-                    Current language: {currentLang.toUpperCase()}
+                    {t('currentLanguage')}: {currentLang.toUpperCase()}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">{tab.component}</CardContent>

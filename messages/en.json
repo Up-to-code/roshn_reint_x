@@ -420,6 +420,167 @@
     "posts": "Posts",
     "contacts": "Contacts"
   },
+  "homePageEditor": {
+    "title": "Home Page Editor",
+    "subtitle": "Manage content in multiple languages",
+    "currentLanguage": "Current language",
+    "loading": "Loading editor...",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "import": "Import",
+    "export": "Export",
+    "english": "English",
+    "arabic": "Arabic",
+    "sections": {
+      "hero": "Hero",
+      "banners": "Banners",
+      "about": "About Us",
+      "testimonials": "Testimonials",
+      "whyus": "Why Choose Us",
+      "contact": "Contact Us",
+      "partners": "Partners"
+    },
+    "hero": {
+      "title": "Hero Section",
+      "heroTitle": "Hero Title",
+      "heroSubtitle": "Hero Subtitle",
+      "backgroundVideo": "Background Video",
+      "overlayColor": "Overlay Color",
+      "primaryButton": "Primary Button",
+      "secondaryButton": "Secondary Button",
+      "buttonText": "Button Text",
+      "buttonLink": "Button Link",
+      "buttonVariant": "Button Variant",
+      "uploadVideo": "Upload Video",
+      "placeholders": {
+        "mainHeroTitle": "Main hero title",
+        "heroSubtitleDescription": "Hero subtitle description",
+        "videoPath": "/videos/hero-bg.mp4",
+        "overlayColorExample": "rgba(0,0,0,0.4)",
+        "buttonText": "Button text",
+        "buttonLink": "Button link"
+      },
+      "variants": {
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "outline": "Outline"
+      }
+    },
+    "banners": {
+      "title": "Banners Section",
+      "currentBanners": "Current Banners",
+      "addNewBanner": "Add New Banner",
+      "bannerTitle": "Banner Title",
+      "bannerDescription": "Banner Description",
+      "imageUrl": "Image URL",
+      "linkUrl": "Link URL",
+      "position": "Position",
+      "uploadBannerImage": "Upload Banner Image",
+      "remove": "Remove",
+      "addBanner": "Add Banner",
+      "positions": {
+        "top": "Top",
+        "middle": "Middle",
+        "bottom": "Bottom"
+      }
+    },
+    "aboutUs": {
+      "title": "About Us Section",
+      "sectionTitle": "Section Title",
+      "content": "Content",
+      "image": "Image",
+      "statistics": "Statistics",
+      "addNewStatistic": "Add New Statistic",
+      "addStatistic": "Add Statistic",
+      "value": "Value",
+      "label": "Label",
+      "uploadAboutImage": "Upload About Image",
+      "placeholders": {
+        "aboutOurCompany": "About Our Company",
+        "companyDescription": "Company description",
+        "imagePath": "/images/about-us.jpg",
+        "valueExample": "1000+",
+        "labelExample": "Happy Clients"
+      }
+    },
+    "testimonials": {
+      "title": "Testimonials Section",
+      "sectionTitle": "Section Title",
+      "sectionSubtitle": "Section Subtitle",
+      "testimonials": "Testimonials",
+      "addNewTestimonial": "Add New Testimonial",
+      "addTestimonial": "Add Testimonial",
+      "clientName": "Client name",
+      "position": "Position",
+      "company": "Company",
+      "testimonialContent": "Testimonial content",
+      "avatarUrl": "Avatar URL",
+      "uploadAvatar": "Upload Avatar",
+      "rating": "Rating",
+      "remove": "Remove"
+    },
+    "whyUs": {
+      "title": "Why Choose Us Section",
+      "sectionTitle": "Section Title",
+      "sectionSubtitle": "Section Subtitle",
+      "features": "Features",
+      "addNewFeature": "Add New Feature",
+      "addFeature": "Add Feature",
+      "iconUrlOrEmoji": "Icon URL or emoji",
+      "uploadIcon": "Upload Icon",
+      "featureTitle": "Feature title",
+      "featureDescription": "Feature description",
+      "remove": "Remove"
+    },
+    "contactUs": {
+      "title": "Contact Us Section",
+      "contactSettings": "Contact Settings",
+      "contactInfo": "Contact Info",
+      "formFields": "Form Fields",
+      "mapSettings": "Map Settings",
+      "titleLabel": "Title",
+      "subtitleLabel": "Subtitle",
+      "description": "Description",
+      "address": "Company address",
+      "phone": "Phone number",
+      "email": "Email address",
+      "workingHours": "Working hours",
+      "fieldName": "field_name",
+      "displayLabel": "Display label",
+      "addField": "Add Field",
+      "placeholders": {
+        "contactUs": "Contact Us",
+        "wereHereToHelp": "We're here to help",
+        "getInTouch": "Get in touch with us...",
+        "mapEmbed": "<iframe src=\"https://maps.google.com/...\" />"
+      },
+      "fieldTypes": {
+        "text": "Text",
+        "email": "Email",
+        "tel": "Phone",
+        "textarea": "Text Area"
+      }
+    },
+    "partners": {
+      "title": "Partners Section",
+      "currentPartners": "Current Partners",
+      "addNewPartner": "Add New Partner",
+      "logoImageUrl": "Logo image URL",
+      "uploadPartnerLogo": "Upload Partner Logo",
+      "altText": "Alt text",
+      "remove": "Remove",
+      "addPartner": "Add Partner"
+    },
+    "messages": {
+      "dataExported": "Data exported successfully!",
+      "dataImported": "Data imported successfully! Don't forget to save.",
+      "invalidDataStructure": "Invalid data structure. Expected { en: ..., ar: ... }",
+      "errorParsingJson": "Error parsing JSON file",
+      "changesSaved": "Changes saved successfully!",
+      "errorSaving": "Error saving changes",
+      "errorExporting": "Error exporting data"
+    }
+  },
   "uploader": {
     "dragAndDrop": "Drag and drop your {type} here",
     "orClickToBrowse": "or click to browse files",

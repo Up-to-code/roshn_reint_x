@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,7 @@ import { CustomUploader } from "@/components/shared/custom-uploader";
 import { Plus, Trash2, Star } from "lucide-react";
 
 export function TestimonialsEditor() {
+  const t = useTranslations('homePageEditor.testimonials');
   const { data, currentLang, updateTestimonials, addTestimonial, updateTestimonial, removeTestimonial } = useHomePageStore();
   const testimonials = data[currentLang].testimonials;
   const [newTestimonial, setNewTestimonial] = useState({
@@ -28,17 +30,19 @@ export function TestimonialsEditor() {
         <Input
           value={testimonials.title}
           onChange={(e) => updateTestimonials({ title: e.target.value })}
-          placeholder="Section Title"
+          placeholder={t('sectionTitle')}
+          dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
         />
         <Input
           value={testimonials.subtitle}
           onChange={(e) => updateTestimonials({ subtitle: e.target.value })}
-          placeholder="Section Subtitle"
+          placeholder={t('sectionSubtitle')}
+          dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
         />
       </div>
 
       <div className="space-y-4">
-        <h3 className="font-medium">Testimonials</h3>
+        <h3 className="font-medium">{t('testimonials')}</h3>
         <div className="space-y-3">
           {testimonials.testimonials.map((testimonial) => (
             <div key={testimonial.id} className="space-y-3 rounded-lg border p-4">
@@ -46,37 +50,41 @@ export function TestimonialsEditor() {
                 <Input
                   value={testimonial.name}
                   onChange={(e) => updateTestimonial(testimonial.id, { name: e.target.value })}
-                  placeholder="Client name"
+                  placeholder={t('clientName')}
+                  dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
                 />
                 <Input
                   value={testimonial.position}
                   onChange={(e) => updateTestimonial(testimonial.id, { position: e.target.value })}
-                  placeholder="Position"
+                  placeholder={t('position')}
+                  dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
                 />
               </div>
               <Input
                 value={testimonial.company}
                 onChange={(e) => updateTestimonial(testimonial.id, { company: e.target.value })}
-                placeholder="Company"
+                placeholder={t('company')}
+                dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
               />
               <Textarea
                 value={testimonial.content}
                 onChange={(e) => updateTestimonial(testimonial.id, { content: e.target.value })}
-                placeholder="Testimonial content"
+                placeholder={t('testimonialContent')}
                 rows={3}
+                dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
               />
               <Input
                 value={testimonial.avatar}
                 onChange={(e) => updateTestimonial(testimonial.id, { avatar: e.target.value })}
-                placeholder="Avatar URL"
+                placeholder={t('avatarUrl')}
                 className="mb-2"
               />
               <CustomUploader
                 onUploadComplete={(url) => updateTestimonial(testimonial.id, { avatar: url })}
-                buttonText="Upload Avatar"
+                acceptedFileTypes="image"
               />
               <div className="flex items-center gap-2">
-                <span className="text-sm">Rating:</span>
+                <span className="text-sm">{t('rating')}:</span>
                 {[1,2,3,4,5].map((star) => (
                   <button
                     key={star}
@@ -89,51 +97,55 @@ export function TestimonialsEditor() {
               </div>
               <Button variant="outline" size="sm" onClick={() => removeTestimonial(testimonial.id)}>
                 <Trash2 className="h-4 w-4" />
-                Remove
+                {t('remove')}
               </Button>
             </div>
           ))}
         </div>
 
         <div className="rounded-lg border bg-muted/50 p-4">
-          <h4 className="mb-3 font-medium">Add New Testimonial</h4>
+          <h4 className="mb-3 font-medium">{t('addNewTestimonial')}</h4>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
               <Input
                 value={newTestimonial.name}
                 onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
-                placeholder="Client name"
+                placeholder={t('clientName')}
+                dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
               />
               <Input
                 value={newTestimonial.position}
                 onChange={(e) => setNewTestimonial({ ...newTestimonial, position: e.target.value })}
-                placeholder="Position"
+                placeholder={t('position')}
+                dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
               />
             </div>
             <Input
               value={newTestimonial.company}
               onChange={(e) => setNewTestimonial({ ...newTestimonial, company: e.target.value })}
-              placeholder="Company"
+              placeholder={t('company')}
+              dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
             />
             <Textarea
               value={newTestimonial.content}
               onChange={(e) => setNewTestimonial({ ...newTestimonial, content: e.target.value })}
-              placeholder="Testimonial content"
+              placeholder={t('testimonialContent')}
               rows={3}
+              dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
             />
             <Input
               value={newTestimonial.avatar}
               onChange={(e) => setNewTestimonial({ ...newTestimonial, avatar: e.target.value })}
-              placeholder="Avatar URL"
+              placeholder={t('avatarUrl')}
               className="mb-2"
             />
             <CustomUploader
               onUploadComplete={(url) => setNewTestimonial({ ...newTestimonial, avatar: url })}
-              buttonText="Upload Avatar"
+              acceptedFileTypes="image"
             />
             <Button onClick={handleAddTestimonial} className="w-full">
               <Plus className="mr-2 h-4 w-4" />
-              Add Testimonial
+              {t('addTestimonial')}
             </Button>
           </div>
         </div>

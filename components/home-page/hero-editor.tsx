@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +18,7 @@ const defaultHero = {
 };
 
 export function HeroEditor() {
+  const t = useTranslations('homePageEditor.hero');
   const { data, currentLang, updateHero, updateHeroButton } = useHomePageStore();
   const content = data?.[currentLang];
   const hero = content?.hero || defaultHero;
@@ -36,24 +38,24 @@ export function HeroEditor() {
       <Input
         value={hero[`${type}Button`]?.text || ""}
         onChange={(e) => updateHeroButton(type, { text: e.target.value })}
-        placeholder={`${type} button text`}
+        placeholder={t('placeholders.buttonText')}
       />
       <Input
         value={hero[`${type}Button`]?.link || ""}
         onChange={(e) => updateHeroButton(type, { link: e.target.value })}
-        placeholder={`${type} button link`}
+        placeholder={t('placeholders.buttonLink')}
       />
       <Select
         value={hero[`${type}Button`]?.variant || type}
         onValueChange={(value: any) => updateHeroButton(type, { variant: value })}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Button variant" />
+          <SelectValue placeholder={t('buttonVariant')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="primary">Primary</SelectItem>
-          <SelectItem value="secondary">Secondary</SelectItem>
-          <SelectItem value="outline">Outline</SelectItem>
+          <SelectItem value="primary">{t('variants.primary')}</SelectItem>
+          <SelectItem value="secondary">{t('variants.secondary')}</SelectItem>
+          <SelectItem value="outline">{t('variants.outline')}</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -63,56 +65,58 @@ export function HeroEditor() {
     <div className="space-y-6">
       <div className="grid gap-4">
         <div>
-          <label className="text-sm font-medium">Hero Title</label>
+          <label className="text-sm font-medium">{t('heroTitle')}</label>
           <Input
             value={hero.title}
             onChange={(e) => updateHero({ title: e.target.value })}
-            placeholder="Main hero title"
+            placeholder={t('placeholders.mainHeroTitle')}
+            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
           />
         </div>
 
         <div>
-          <label className="text-sm font-medium">Hero Subtitle</label>
+          <label className="text-sm font-medium">{t('heroSubtitle')}</label>
           <Textarea
             value={hero.subtitle}
             onChange={(e) => updateHero({ subtitle: e.target.value })}
-            placeholder="Hero subtitle description"
+            placeholder={t('placeholders.heroSubtitleDescription')}
             rows={3}
+            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
           />
         </div>
 
         <div>
-          <label className="text-sm font-medium">Background Video</label>
+          <label className="text-sm font-medium">{t('backgroundVideo')}</label>
           <div className="space-y-3">
             <Input
               value={hero.backgroundVideo}
               onChange={(e) => updateHero({ backgroundVideo: e.target.value })}
-              placeholder="/videos/hero-bg.mp4"
+              placeholder={t('placeholders.videoPath')}
             />
             <CustomUploader
                onUploadComplete={(url) => updateHero({ backgroundVideo: url })}
-              buttonText="Upload Video"
+              acceptedFileTypes="video"
             />
           </div>
         </div>
 
         <div>
-          <label className="text-sm font-medium">Overlay Color</label>
+          <label className="text-sm font-medium">{t('overlayColor')}</label>
           <Input
             value={hero.overlayColor}
             onChange={(e) => updateHero({ overlayColor: e.target.value })}
-            placeholder="rgba(0,0,0,0.4)"
+            placeholder={t('placeholders.overlayColorExample')}
           />
         </div>
       </div>
 
       <div className="space-y-4">
-        <h3 className="font-medium">Primary Button</h3>
+        <h3 className="font-medium">{t('primaryButton')}</h3>
         <ButtonEditor type="primary" />
       </div>
 
       <div className="space-y-4">
-        <h3 className="font-medium">Secondary Button</h3>
+        <h3 className="font-medium">{t('secondaryButton')}</h3>
         <ButtonEditor type="secondary" />
       </div>
     </div>

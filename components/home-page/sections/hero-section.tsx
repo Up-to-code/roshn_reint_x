@@ -25,7 +25,8 @@ export function HeroSection({ content }: HeroSectionProps) {
 
   const Overlay = () => (
     <div
-      className="absolute inset-0 bg-black/10"
+      className="absolute inset-0"
+      style={{ backgroundColor: content.overlayColor || 'rgba(0,0,0,0.4)' }}
       aria-hidden="true"
     />
   );
