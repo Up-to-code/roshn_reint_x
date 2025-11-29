@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signUp } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
@@ -37,6 +39,7 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const locale = useLocale();
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
     setIsLoading(true);
@@ -61,7 +64,8 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        router.push(searchParams?.get("from") || "/dashboard");
+        // Always redirect to dashboard after registration
+        window.location.href = `/${locale}/dashboard`;
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
@@ -80,7 +84,8 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Redirecting to dashboard...",
         });
 
-        router.push(searchParams?.get("from") || "/dashboard");
+        // Always redirect to dashboard after sign in
+        window.location.href = `/${locale}/dashboard`;
       }
     } catch (error) {
       setIsLoading(false);
