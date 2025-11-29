@@ -158,21 +158,39 @@ export function FooterEditor() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Background Color</label>
-            <Input
-              value={footer.backgroundColor}
-              onChange={(e) => updateFooter({ backgroundColor: e.target.value })}
-              placeholder="#f8fafc"
-            />
+            <div className="flex gap-2">
+              <Input
+                type="color"
+                value={footer.backgroundColor || "#f8fafc"}
+                onChange={(e) => updateFooter({ backgroundColor: e.target.value })}
+                className="h-10 w-20 cursor-pointer"
+              />
+              <Input
+                value={footer.backgroundColor || "#f8fafc"}
+                onChange={(e) => updateFooter({ backgroundColor: e.target.value })}
+                placeholder="#f8fafc"
+                className="flex-1"
+              />
+            </div>
           </div>
-          <div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Text Color</label>
-            <Input
-              value={footer.textColor}
-              onChange={(e) => updateFooter({ textColor: e.target.value })}
-              placeholder="#64748b"
-            />
+            <div className="flex gap-2">
+              <Input
+                type="color"
+                value={footer.textColor || "#1e293b"}
+                onChange={(e) => updateFooter({ textColor: e.target.value })}
+                className="h-10 w-20 cursor-pointer"
+              />
+              <Input
+                value={footer.textColor || "#1e293b"}
+                onChange={(e) => updateFooter({ textColor: e.target.value })}
+                placeholder="#1e293b"
+                className="flex-1"
+              />
+            </div>
           </div>
         </div>
       </div>

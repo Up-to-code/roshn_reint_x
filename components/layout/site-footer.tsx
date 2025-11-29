@@ -96,23 +96,39 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
 
   if (loading) {
     return (
-      <footer className={cn("rounded-t-3xl bg-[#333333] py-8", className)}>
+      <footer className={cn("rounded-t-3xl bg-gray-50 py-8", className)}>
         <div className="container mx-auto px-4 text-center">
-          <div className="text-gray-400">Loading...</div>
+          <div className="text-gray-500">Loading...</div>
         </div>
       </footer>
     );
   }
 
+  // Use footer data colors or default to light theme
+  const bgColor = footerData?.backgroundColor || "#f8fafc";
+  const textColor = footerData?.textColor || "#1e293b";
+  const isLightTheme = bgColor && (bgColor.startsWith("#f") || bgColor.startsWith("#fff") || bgColor.includes("white") || bgColor.includes("light"));
+
   return (
-    <footer className={cn("mt-10 rounded-t-3xl bg-[#1f1f1f] py-12", className) }>
+    <footer 
+      className={cn("mt-10 rounded-t-3xl py-12", className)} 
+      style={{ 
+        backgroundColor: bgColor,
+        color: textColor 
+      }}
+    >
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
         <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand Section */}
           <div className={cn("space-y-6", isRTL ? "text-right" : "")}>
             <div className={cn("flex items-center gap-4", isRTL ? "flex-row-" : "")}>
-              <div className="relative size-12 overflow-hidden rounded-2xl border border-[#555555] bg-[#404040]">
+              <div className={cn(
+                "relative size-12 overflow-hidden rounded-2xl border",
+                isLightTheme 
+                  ? "border-gray-200 bg-white shadow-sm" 
+                  : "border-gray-600 bg-gray-800"
+              )}>
                 <Image
                   src="https://17mm2glo1t.ufs.sh/f/rQix7xjgXapPnMkzCZsvM65OTuZmLfX0irPqwtUyhICdlcAW"
                   alt="Logo"
@@ -124,7 +140,10 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
         
             </div>
             
-            <p className="text-sm leading-relaxed text-gray-400">
+            <p className={cn(
+              "text-sm leading-relaxed",
+              isLightTheme ? "text-gray-600" : "text-gray-400"
+            )}>
               {isRTL 
                 ? "منصة عقارية رائدة تقدم أفضل الخدمات والعقارات في المملكة" 
                 : "Leading real estate platform offering the best properties and services"
@@ -144,7 +163,12 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
                       href={social.url as any}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-xl bg-[#404040]/50 p-3 text-gray-400 transition-all hover:bg-[#404040] hover:text-white"
+                      className={cn(
+                        "rounded-xl p-3 transition-all",
+                        isLightTheme
+                          ? "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+                          : "bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-white"
+                      )}
                       aria-label={social.platform}
                     >
                       {IconComponent || <span>{social.platform}</span>}
@@ -158,7 +182,10 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
           {/* Footer Sections */}
           {footerData?.sections.map((section) => (
             <div key={section.id} className={cn("space-y-4", isRTL ? "text-right" : "")}>
-              <h4 className="text-sm font-bold uppercase tracking-wide text-white">
+              <h4 className={cn(
+                "text-sm font-bold uppercase tracking-wide",
+                isLightTheme ? "text-gray-900" : "text-white"
+              )}>
                 {section.title}
               </h4>
               <ul className="space-y-3">
@@ -169,14 +196,24 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block rounded-lg px-2 py-1 text-sm text-gray-400 transition-colors hover:bg-[#404040] hover:text-white"
+                        className={cn(
+                          "block rounded-lg px-2 py-1 text-sm transition-colors",
+                          isLightTheme
+                            ? "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                            : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                        )}
                       >
                         {link.label}
                       </a>
                     ) : (
                       <Link 
                         href={link.href as any}
-                        className="block rounded-lg px-2 py-1 text-sm text-gray-400 transition-colors hover:bg-[#404040] hover:text-white"
+                        className={cn(
+                          "block rounded-lg px-2 py-1 text-sm transition-colors",
+                          isLightTheme
+                            ? "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                            : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                        )}
                       >
                         {link.label}
                       </Link>
@@ -189,8 +226,14 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-[#555555] pt-8 md:flex-row">
-          <p className="text-sm text-gray-500">
+        <div className={cn(
+          "flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row",
+          isLightTheme ? "border-gray-200" : "border-gray-700"
+        )}>
+          <p className={cn(
+            "text-sm",
+            isLightTheme ? "text-gray-500" : "text-gray-400"
+          )}>
             {footerData?.copyrightText || `© ${new Date().getFullYear()} ${isRTL ? "العقارية" : "RealEstate"}. ${isRTL ? "جميع الحقوق محفوظة" : "All rights reserved"}`}
           </p>
           <div className="flex items-center gap-4">

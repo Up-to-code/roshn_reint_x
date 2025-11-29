@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
-import { Menu, X, Sparkles, MessageCircle, Instagram, Camera } from "lucide-react";
+import { Menu, X, Sparkles, MessageCircle, Instagram, Camera, Home, Building2, Briefcase, Info, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/auth-client";
@@ -56,19 +56,23 @@ function Logo({ onClick }: { onClick: () => void }) {
 function NavLinks({ links, mobile, onClick, isRTL }: { links: any[]; mobile?: boolean; onClick?: () => void; isRTL: boolean }) {
   return (
     <>
-      {links.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={onClick}
-          className={cn(
-            "font-medium text-gray-200 transition-all hover:text-white",
-            mobile ? "block px-4 py-3 text-center hover:bg-gray-700" : "px-4 py-2 text-sm"
-          )}
-        >
-          {item.title}
-        </Link>
-      ))}
+      {links.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onClick}
+            className={cn(
+              "flex items-center gap-2 font-medium text-gray-200 transition-all hover:text-white",
+              mobile ? "block px-4 py-3 text-center hover:bg-gray-700" : "px-4 py-2 text-sm"
+            )}
+          >
+            {Icon && <Icon className="size-4" />}
+            {item.title}
+          </Link>
+        );
+      })}
     </>
   );
 }
@@ -145,11 +149,11 @@ export function NavBar() {
   const isRTL = currentLocale === "ar";
 
   const navLinks = [
-    { title: t("home"), href: "/" },
-    { title: t("projects"), href: "/p" },
-    { title: t("services"), href: "/services" },
-    { title: t("about"), href: "/about" },
-    { title: t("contact"), href: "/contact" },
+    { title: t("home"), href: "/", icon: Home },
+    { title: t("projects"), href: "/p", icon: Building2 },
+    { title: t("services"), href: "/services", icon: Briefcase },
+    { title: t("about"), href: "/about", icon: Info },
+    { title: t("contact"), href: "/contact", icon: Mail },
   ];
 
   if (!mounted) {

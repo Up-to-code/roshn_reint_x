@@ -85,7 +85,7 @@ const defaultSettings: GlobalSettings = {
       { platform: 'instagram', url: 'https://instagram.com', icon: 'instagram' },
     ],
     backgroundColor: '#f8fafc',
-    textColor: '#64748b',
+    textColor: '#1e293b',
     showSocialLinks: true,
   },
   logo: {
