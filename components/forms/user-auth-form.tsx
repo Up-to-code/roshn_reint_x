@@ -126,7 +126,7 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              disabled={isLoading || isGoogleLoading}
+              disabled={isLoading}
               {...register("email")}
             />
             {errors?.email && (
@@ -144,7 +144,7 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
               placeholder="••••••••"
               type="password"
               autoComplete={isRegister ? "new-password" : "current-password"}
-              disabled={isLoading || isGoogleLoading}
+              disabled={isLoading}
               {...register("password")}
             />
             {errors?.password && (
