@@ -28,7 +28,6 @@ async function getHomePageData(locale: string) {
     }
     
     const result = await response.json();
-    console.log(result.data.partners);
     
     if (result.success) {
       return result.data;
@@ -36,7 +35,6 @@ async function getHomePageData(locale: string) {
     
     throw new Error('Failed to load home page data');
   } catch (error) {
-    console.error('Error fetching home page data:', error);
     // Return fallback data structure WITH partners array
     return {
       hero: {
@@ -100,6 +98,9 @@ export default async function Home({ params }: { params: { locale: string } }) {
   return (
     <div className="min-h-screen bg-white">
       <HeroSection content={content.hero} />
+      
+      {/* 10px spacing before partners banner */}
+      <div className="h-[10px]" />
       
       {/* Safe rendering with fallback */}
       <PartnersBanner logos={content.partners || []} />

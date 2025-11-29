@@ -31,6 +31,8 @@ export function PartnersBanner({
 
   return (
     <section className="w-full bg-orange-500 px-4 py-8">
+      {/* 10px spacing at top */}
+      <div className="h-[10px]" />
       {/* Logos container */}
       <div className="relative overflow-hidden">
         {/* Fade edges */}

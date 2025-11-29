@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomUploader } from "@/components/shared/custom-uploader";
-import { isAvailableEndpoint } from "@/lib/uploadthing";
 
 const defaultHero = {
   title: "",
