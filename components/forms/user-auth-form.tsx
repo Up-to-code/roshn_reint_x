@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signUp } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
@@ -64,8 +64,9 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Always redirect to dashboard after registration
-        window.location.href = `/${locale}/dashboard`;
+        // Always redirect to dashboard after registration with locale
+        // Use router.push with pathname from routing config (automatically includes locale)
+        router.push("/dashboard");
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
@@ -84,8 +85,9 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Redirecting to dashboard...",
         });
 
-        // Always redirect to dashboard after sign in
-        window.location.href = `/${locale}/dashboard`;
+        // Always redirect to dashboard after sign in with locale
+        // Use router.push with pathname from routing config (automatically includes locale)
+        router.push("/dashboard");
       }
     } catch (error) {
       setIsLoading(false);

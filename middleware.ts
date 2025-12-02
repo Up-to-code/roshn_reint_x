@@ -10,6 +10,11 @@ const protectedPaths = ["/dashboard"];
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // Skip auth check for API routes and static files
+  if (pathname.startsWith("/api") || pathname.startsWith("/_next") || pathname.startsWith("/favicon.ico")) {
+    return i18n(request);
+  }
+  
   // Check if the path is protected
   const isProtectedPath = protectedPaths.some(path => 
     pathname.includes(path)
@@ -20,8 +25,10 @@ export default async function middleware(request: NextRequest) {
     const sessionToken = request.cookies.get("better-auth.session_token");
     
     if (!sessionToken) {
+      // Extract locale from pathname
+      const locale = pathname.split("/")[1] || "en";
       // Redirect to login if not authenticated
-      const loginUrl = new URL("/login", request.url);
+      const loginUrl = new URL(`/${locale}/login`, request.url);
       loginUrl.searchParams.set("from", pathname);
       return NextResponse.redirect(loginUrl);
     }

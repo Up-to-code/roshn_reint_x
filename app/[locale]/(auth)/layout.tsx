@@ -4,14 +4,18 @@ import { getCurrentUser } from "@/lib/session";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
+  params: { locale: string };
 }
 
-export default async function AuthLayout({ children }: AuthLayoutProps) {
+export default async function AuthLayout({ children, params }: AuthLayoutProps) {
   const user = await getCurrentUser();
+  const locale = params.locale || "en";
 
   if (user) {
-    if (user.role === "ADMIN") redirect("/admin");
-    redirect("/dashboard");
+    if (user.role === "ADMIN") {
+      redirect(`/${locale}/admin`);
+    }
+    redirect(`/${locale}/dashboard`);
   }
 
   return <div className="min-h-screen">{children}</div>;
