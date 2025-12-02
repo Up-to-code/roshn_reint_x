@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link, useRouter, type Pathnames } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signUp } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
@@ -23,6 +23,50 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 type RegisterFormData = z.infer<typeof RegisterSchema>;
+
+// Helper function to safely convert a path to Pathnames
+function getValidPathname(path: string): Pathnames {
+  // Default to dashboard if path is empty or invalid
+  if (!path || path === "/") {
+    return "/dashboard";
+  }
+  
+  // Try to cast to Pathnames - TypeScript will validate at compile time
+  // If the path doesn't exist in routing config, default to dashboard
+  const validPaths = [
+    "/",
+    "/admin",
+    "/dashboard",
+    "/dashboard/global",
+    "/dashboard/settings",
+    "/login",
+    "/register",
+    "/projects",
+    "/about",
+    "/contact",
+    "/p",
+    "/services",
+    "/blog",
+    "/docs",
+    "/admin/projects",
+    "/admin/forms",
+    "/admin/blogs",
+    "/admin/media",
+  ] as const;
+  
+  // Check if path is in valid paths, otherwise default to dashboard
+  if (validPaths.includes(path as any)) {
+    return path as Pathnames;
+  }
+  
+  // For nested dashboard paths, try to match the base
+  if (path.startsWith("/dashboard/")) {
+    return "/dashboard";
+  }
+  
+  // Default fallback
+  return "/dashboard";
+}
 
 export function UserAuthForm({ className, type = "login", ...props }: UserAuthFormProps) {
   const isRegister = type === "register";
@@ -66,19 +110,22 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
 
         // Get the 'from' parameter or default to dashboard
         const from = searchParams.get("from");
-        let redirectPath = "/dashboard";
+        let redirectPath: Pathnames = "/dashboard";
         
         if (from) {
+          let extractedPath = "/dashboard";
           // If 'from' includes locale (e.g., /ar/dashboard), extract just the path
           if (from.startsWith(`/${locale}/`)) {
-            redirectPath = from.replace(`/${locale}`, "");
+            extractedPath = from.replace(`/${locale}`, "");
           } else if (from.startsWith("/ar/") || from.startsWith("/en/")) {
             // If 'from' has a different locale, extract the path part
-            redirectPath = "/" + from.split("/").slice(2).join("/");
+            extractedPath = "/" + from.split("/").slice(2).join("/");
           } else if (from.startsWith("/")) {
             // If 'from' is just a path without locale, use it as is
-            redirectPath = from;
+            extractedPath = from;
           }
+          // Validate and convert to Pathnames
+          redirectPath = getValidPathname(extractedPath);
         }
         
         // Use router.push with pathname from routing config (automatically includes locale)
@@ -103,19 +150,22 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
 
         // Get the 'from' parameter or default to dashboard
         const from = searchParams.get("from");
-        let redirectPath = "/dashboard";
+        let redirectPath: Pathnames = "/dashboard";
         
         if (from) {
+          let extractedPath = "/dashboard";
           // If 'from' includes locale (e.g., /ar/dashboard), extract just the path
           if (from.startsWith(`/${locale}/`)) {
-            redirectPath = from.replace(`/${locale}`, "");
+            extractedPath = from.replace(`/${locale}`, "");
           } else if (from.startsWith("/ar/") || from.startsWith("/en/")) {
             // If 'from' has a different locale, extract the path part
-            redirectPath = "/" + from.split("/").slice(2).join("/");
+            extractedPath = "/" + from.split("/").slice(2).join("/");
           } else if (from.startsWith("/")) {
             // If 'from' is just a path without locale, use it as is
-            redirectPath = from;
+            extractedPath = from;
           }
+          // Validate and convert to Pathnames
+          redirectPath = getValidPathname(extractedPath);
         }
         
         // Use router.push with pathname from routing config (automatically includes locale)
