@@ -41,10 +41,9 @@ export default async function middleware(request: NextRequest) {
       const sessionToken = request.cookies.get("better-auth.session_token");
       
       if (!sessionToken) {
-        // Redirect to login with locale and preserve the full pathname with locale
+        // Redirect to login with locale - no query parameters needed
+        // After login, user will be redirected to dashboard by default
         const loginUrl = new URL(`/${locale}/login`, request.url);
-        // Store the full pathname with locale as the 'from' parameter
-        loginUrl.searchParams.set("from", pathname);
         return NextResponse.redirect(loginUrl);
       }
     }
