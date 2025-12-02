@@ -15,40 +15,42 @@ export default async function middleware(request: NextRequest) {
     return i18n(request);
   }
 
-  // Extract locale from the current pathname
+  // Extract locale from the pathname
   const pathSegments = pathname.split("/").filter(Boolean);
   const firstSegment = pathSegments[0];
   const isLocale = routing.locales.includes(firstSegment as any);
-  const locale = isLocale ? firstSegment : routing.defaultLocale;
-  const pathWithoutLocale = isLocale ? "/" + pathSegments.slice(1).join("/") : pathname;
   
-  // Check if the path (without locale) is protected
-  const isProtectedPath = protectedPaths.some(path => 
-    pathWithoutLocale === path || pathWithoutLocale.startsWith(path + "/")
-  );
-
-  // If path doesn't have locale and is protected, let i18n middleware add locale first
-  // Then we'll check auth on the next request
-  if (!isLocale && isProtectedPath) {
-    // Let i18n middleware redirect to /{locale}/dashboard first
+  // If path doesn't have locale, let i18n middleware handle it first
+  // It will redirect /dashboard to /ar/dashboard (default locale)
+  if (!isLocale && pathname !== "/") {
     return i18n(request);
   }
 
-  // If path has locale and is protected, check authentication
-  if (isLocale && isProtectedPath) {
-    // Get session from Better Auth cookies
-    const sessionToken = request.cookies.get("better-auth.session_token");
+  // If path has locale, check if it's protected
+  if (isLocale) {
+    const locale = firstSegment;
+    const pathWithoutLocale = "/" + pathSegments.slice(1).join("/");
     
-    if (!sessionToken) {
-      // Redirect to login with locale and preserve the original path
-      const loginUrl = new URL(`/${locale}/login`, request.url);
-      // Store the full pathname with locale as the 'from' parameter
-      loginUrl.searchParams.set("from", pathname);
-      return NextResponse.redirect(loginUrl);
+    // Check if the path (without locale) is protected
+    const isProtectedPath = protectedPaths.some(path => 
+      pathWithoutLocale === path || pathWithoutLocale.startsWith(path + "/")
+    );
+
+    if (isProtectedPath) {
+      // Get session from Better Auth cookies
+      const sessionToken = request.cookies.get("better-auth.session_token");
+      
+      if (!sessionToken) {
+        // Redirect to login with locale and preserve the full pathname with locale
+        const loginUrl = new URL(`/${locale}/login`, request.url);
+        // Store the full pathname with locale as the 'from' parameter
+        loginUrl.searchParams.set("from", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
     }
   }
 
-  // Continue with i18n middleware for non-protected paths or authenticated users
+  // Continue with i18n middleware for all other cases
   return i18n(request);
 }
 
