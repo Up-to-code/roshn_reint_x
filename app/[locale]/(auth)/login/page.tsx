@@ -50,7 +50,7 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
           </p>
         </div>
         <Suspense>
-          <UserAuthForm />
+          <UserAuthForm locale={locale} />
         </Suspense>
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link

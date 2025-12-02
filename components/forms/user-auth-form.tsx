@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signUp } from "@/lib/auth-client";
@@ -18,12 +17,13 @@ import { Icons } from "@/components/shared/icons";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type?: "login" | "register";
+  locale?: string;
 }
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 type RegisterFormData = z.infer<typeof RegisterSchema>;
 
-export function UserAuthForm({ className, type = "login", ...props }: UserAuthFormProps) {
+export function UserAuthForm({ className, type = "login", locale: propLocale, ...props }: UserAuthFormProps) {
   const isRegister = type === "register";
   const schema = isRegister ? RegisterSchema : LoginSchema;
   
@@ -36,8 +36,22 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
   });
   
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState(false);
   const router = useRouter();
-  const locale = useLocale();
+  
+  // Use prop locale if provided, otherwise detect from URL on client
+  const [locale, setLocale] = React.useState(propLocale || "en");
+  
+  React.useEffect(() => {
+    setMounted(true);
+    // Only detect locale from URL if not provided as prop
+    if (!propLocale && typeof window !== "undefined") {
+      const pathLocale = window.location.pathname.split("/")[1];
+      if (pathLocale === "ar" || pathLocale === "en") {
+        setLocale(pathLocale);
+      }
+    }
+  }, [propLocale]);
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
     setIsLoading(true);

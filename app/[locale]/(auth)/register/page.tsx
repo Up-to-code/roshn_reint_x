@@ -49,7 +49,7 @@ export default function RegisterPage({ params }: { params: { locale: string } })
             </p>
           </div>
           <Suspense>
-            <UserAuthForm type="register" />
+            <UserAuthForm type="register" locale={locale} />
           </Suspense>
           <p className="px-8 text-center text-sm text-muted-foreground">
             {isRTL ? (
