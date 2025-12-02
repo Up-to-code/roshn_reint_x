@@ -4,7 +4,7 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link, type Pathnames } from "@/i18n/routing";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone } from "lucide-react";
 
 const PHONE_NUMBER = "1234567890";
 const WHATSAPP_NUMBER = "1234567890";
@@ -61,24 +61,16 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
 
           {/* Social Media Links */}
           <div className="flex items-center justify-center gap-4 border-t pt-6">
-            {/* Call */}
-            <a
-              href={`tel:${PHONE_NUMBER}`}
-              className="rounded-full bg-blue-100 p-3 text-blue-600 transition-all hover:bg-blue-200 hover:scale-110"
-              aria-label="Call"
-            >
-              <Phone className="size-5" />
-            </a>
-            
-            {/* WhatsApp */}
+            {/* Call Icon - Goes to WhatsApp */}
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-[#25D366]/10 p-3 text-[#25D366] transition-all hover:bg-[#25D366]/20 hover:scale-110"
-              aria-label="WhatsApp"
+              className="rounded-full bg-blue-100 p-3 text-blue-600 transition-all hover:bg-blue-200 hover:scale-110"
+              aria-label="Call us on WhatsApp"
+              title="Call us on WhatsApp"
             >
-              <MessageCircle className="size-5" />
+              <Phone className="size-5" />
             </a>
             
             {/* Instagram */}

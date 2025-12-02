@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
-import { Menu, X, Sparkles, Phone, MessageCircle } from "lucide-react";
+import { Menu, X, Sparkles, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/auth-client";
@@ -22,8 +22,7 @@ const INSTAGRAM_URL = "https://instagram.com";
 const TIKTOK_URL = "https://tiktok.com";
 
 const SOCIAL_LINKS = [
-  { icon: Phone, href: `tel:${PHONE_NUMBER}`, label: "Call", color: "text-blue-500 hover:text-blue-400" },
-  { icon: MessageCircle, href: `https://wa.me/${WHATSAPP_NUMBER}`, label: "WhatsApp", color: "text-[#25D366] hover:text-[#128C7E]" },
+  { icon: Phone, href: `https://wa.me/${WHATSAPP_NUMBER}`, label: "Call", color: "text-blue-500 hover:text-blue-400" },
 ];
 
 // Dashboard Banner
@@ -76,28 +75,20 @@ function NavLinks({ links, mobile, onClick, isRTL }: { links: any[]; mobile?: bo
   );
 }
 
-// Social Links with WhatsApp, Instagram, TikTok, and Call
+// Social Links with Call (WhatsApp), Instagram, TikTok
 function SocialLinks({ mobile }: { mobile?: boolean }) {
   return (
     <div className={cn("flex gap-3", mobile && "justify-center gap-4 border-t border-gray-600 pt-6")}>
-      {/* Call */}
-      <a
-        href={`tel:${PHONE_NUMBER}`}
-        className="rounded-lg p-2 text-blue-500 transition-all hover:bg-blue-500/20 hover:text-blue-400"
-        aria-label="Call"
-      >
-        <Phone className="size-5" />
-      </a>
-      
-      {/* WhatsApp */}
+      {/* Call Icon - Goes to WhatsApp */}
       <a
         href={`https://wa.me/${WHATSAPP_NUMBER}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-lg p-2 text-[#25D366] transition-all hover:bg-[#25D366]/20 hover:text-[#128C7E]"
-        aria-label="WhatsApp"
+        className="rounded-lg p-2 text-blue-500 transition-all hover:bg-blue-500/20 hover:text-blue-400"
+        aria-label="Call us on WhatsApp"
+        title="Call us on WhatsApp"
       >
-        <MessageCircle className="size-5" />
+        <Phone className="size-5" />
       </a>
       
       {/* Instagram */}

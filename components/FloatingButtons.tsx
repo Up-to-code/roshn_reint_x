@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle, Send } from "lucide-react";
+import { Phone } from "lucide-react";
 
 interface FloatingButtonsProps {
   locale: string;
@@ -14,7 +14,7 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
     ? "مرحبًا، أود الاستفسار عن خدماتكم"
     : "Hello, I would like to inquire about your services";
 
-  const handleWhatsApp = () => {
+  const handleCall = () => {
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       whatsappMessage
     )}`;
@@ -27,22 +27,14 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
         isRTL ? "right-6" : "left-6"
       }`}
     >
-      {/* WhatsApp Button */}
+      {/* Call Icon - Goes to WhatsApp */}
       <button
-        onClick={handleWhatsApp}
-        className="flex items-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-white shadow-xl transition-all duration-300 hover:scale-110 hover:bg-[#128C7E] hover:shadow-2xl"
-        aria-label={isRTL ? "راسلنا على واتساب" : "Message us on WhatsApp"}
+        onClick={handleCall}
+        className="group relative flex items-center justify-center rounded-full bg-blue-600 p-5 text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:bg-blue-700 hover:shadow-[0_20px_60px_rgba(37,99,235,0.4)]"
+        aria-label={isRTL ? "اتصل بنا على واتساب" : "Call us on WhatsApp"}
+        title={isRTL ? "اتصل بنا على واتساب" : "Call us on WhatsApp"}
       >
-        {/* WhatsApp Icon */}
-        <MessageCircle className="size-7" />
-
-        {/* Text */}
-        <span className="text-lg font-semibold">
-          {isRTL ? "واتساب" : "WhatsApp"}
-        </span>
-
-        {/* Small chat icon */}
-        <Send className="size-5 opacity-90" />
+        <Phone className="size-7" />
       </button>
     </div>
   );
