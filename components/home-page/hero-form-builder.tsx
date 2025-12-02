@@ -52,7 +52,7 @@ export function HeroFormBuilder() {
       label: field.label || '',
       type: field.type || 'text',
       required: field.required || false,
-      placeholder: field.placeholder || ''
+      placeholder: '' // ContactFormField doesn't have placeholder, use empty string
     }));
     
     updateHero({ formFields: mappedFields });
