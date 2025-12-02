@@ -115,14 +115,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare bucket options
+    // Prepare bucket options - ensure public is always a boolean
     const bucketOptions: {
-      public?: boolean;
+      public: boolean;
       fileSizeLimit?: number;
       allowedMimeTypes?: string[];
-    } = {};
+    } = {
+      public: isPublic ?? true, // Default to true if not provided
+    };
 
-    if (isPublic !== undefined) bucketOptions.public = isPublic;
     if (fileSizeLimit !== undefined) bucketOptions.fileSizeLimit = fileSizeLimit;
     if (allowedMimeTypes !== undefined) bucketOptions.allowedMimeTypes = allowedMimeTypes;
 
