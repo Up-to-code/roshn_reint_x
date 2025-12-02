@@ -31,6 +31,11 @@ export default async function middleware(request: NextRequest) {
     const locale = firstSegment;
     const pathWithoutLocale = "/" + pathSegments.slice(1).join("/");
     
+    // Skip auth check for login/register pages to avoid redirect loops
+    if (pathWithoutLocale === "/login" || pathWithoutLocale === "/register") {
+      return i18n(request);
+    }
+    
     // Check if the path (without locale) is protected
     const isProtectedPath = protectedPaths.some(path => 
       pathWithoutLocale === path || pathWithoutLocale.startsWith(path + "/")

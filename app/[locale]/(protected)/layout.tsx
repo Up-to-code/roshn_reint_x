@@ -11,12 +11,17 @@ import DashboardWrapper from "@/components/layout/DashboardWrapper";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
+  params: Promise<{ locale: string }> | { locale: string };
 }
 
-export default async function DashboardLayout({ children }: ProtectedLayoutProps) {
+export default async function DashboardLayout({ children, params }: ProtectedLayoutProps) {
+  // Handle both Promise and direct params (Next.js 15 compatibility)
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const locale = resolvedParams.locale || "en";
+  
   const user = await getCurrentUser();
 
-  if (!user) redirect("/login");
+  if (!user) redirect(`/${locale}/login`);
 
   const filteredLinks = sidebarLinks.map((section) => ({
     ...section,

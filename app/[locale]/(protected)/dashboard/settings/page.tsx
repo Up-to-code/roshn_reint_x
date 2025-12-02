@@ -13,10 +13,11 @@ export const metadata = constructMetadata({
   description: "Configure your account and website settings.",
 });
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ params }: { params: { locale: string } }) {
   const user = await getCurrentUser();
+  const locale = params.locale || "en";
 
-  if (!user?.id) redirect("/login");
+  if (!user?.id) redirect(`/${locale}/login`);
 
   return (
     <>
