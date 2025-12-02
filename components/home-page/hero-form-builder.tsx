@@ -7,46 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-
-interface FormField {
-  name: string;
-  label: string;
-  type: string;
-  placeholder?: string;
-  required?: boolean;
-}
-
-interface Hero {
-  formFields?: FormField[];
-  [key: string]: any;
-}
-
-interface Content {
-  hero?: Hero;
-  contactUs?: {
-    form?: {
-      fields?: FormField[];
-    };
-  };
-  [key: string]: any;
-}
+import { HeroSection, HeroFormField, HomePageContent, ContactFormField } from "@/types/home-page";
 
 export function HeroFormBuilder() {
   const t = useTranslations('homePageEditor.hero');
   const { data, currentLang, updateHero } = useHomePageStore();
-  const content = data?.[currentLang] as Content | undefined;
-  const hero = (content?.hero ?? {}) as Hero;
+  const content = data?.[currentLang] as HomePageContent | undefined;
+  const hero = (content?.hero ?? {}) as HeroSection;
   const formFields = hero.formFields ?? [];
 
   const updateFormField = (index: number, field: string, value: any) => {
-    const updatedFields = formFields.map((f: any, i: number) => 
+    const updatedFields: HeroFormField[] = formFields.map((f, i) => 
       i === index ? { ...f, [field]: value } : f
     );
     updateHero({ formFields: updatedFields });
   };
 
   const addFormField = () => {
-    const newField = { 
+    const newField: HeroFormField = { 
       name: `field-${Date.now()}`, 
       label: "New Field", 
       required: false, 
@@ -57,7 +35,7 @@ export function HeroFormBuilder() {
   };
 
   const removeFormField = (index: number) => {
-    const updatedFields = formFields.filter((_: any, i: number) => i !== index);
+    const updatedFields: HeroFormField[] = formFields.filter((_, i) => i !== index);
     updateHero({ formFields: updatedFields });
   };
 
@@ -69,7 +47,7 @@ export function HeroFormBuilder() {
     }
     
     // Map contact form fields to hero form fields format
-    const mappedFields = contactFormFields.map((field: any) => ({
+    const mappedFields: HeroFormField[] = contactFormFields.map((field: ContactFormField) => ({
       name: field.name || `field-${Date.now()}`,
       label: field.label || '',
       type: field.type || 'text',
@@ -107,7 +85,7 @@ export function HeroFormBuilder() {
       </div>
 
       <div className="space-y-3">
-        {formFields.map((field: any, index: number) => (
+        {formFields.map((field, index) => (
           <div key={index} className="rounded-lg border p-4 space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>

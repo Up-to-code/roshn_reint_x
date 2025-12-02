@@ -23,6 +23,14 @@ export interface HomePageContent {
   contactUs: ContactUsSection;
 }
 
+export interface HeroFormField {
+  name: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+  required?: boolean;
+}
+
 export interface HeroSection {
   title: string;
   subtitle: string;
@@ -40,6 +48,7 @@ export interface HeroSection {
   };
   backgroundVideo?: string;
   overlayColor?: string;
+  formFields?: HeroFormField[];
 }
 
 export interface Banner {
