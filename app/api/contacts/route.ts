@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         name,
         phoneNumber,
         message,
-        email: email || undefined,
+        ...(email ? { email } : {}),
       },
     });
 
