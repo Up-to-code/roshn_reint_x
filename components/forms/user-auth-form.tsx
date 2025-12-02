@@ -62,17 +62,19 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Always redirect to dashboard with locale (clean URL, no query parameters)
-        router.push("/dashboard");
+        // Wait a moment for session cookie to be set, then redirect
+        // Use window.location.href for hard redirect to ensure session is recognized
+        setTimeout(() => {
+          window.location.href = `/${locale}/dashboard`;
+        }, 500);
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
           password: (data as LoginFormData).password,
         });
 
-        setIsLoading(false);
-
         if (error) {
+          setIsLoading(false);
           return toast.error("Login failed", {
             description: error.message || "Please try again.",
           });
@@ -82,8 +84,11 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Redirecting to dashboard...",
         });
 
-        // Always redirect to dashboard with locale (clean URL, no query parameters)
-        router.push("/dashboard");
+        // Wait a moment for session cookie to be set, then redirect
+        // Use window.location.href for hard redirect to ensure session is recognized
+        setTimeout(() => {
+          window.location.href = `/${locale}/dashboard`;
+        }, 500);
       }
     } catch (error) {
       setIsLoading(false);
