@@ -28,7 +28,8 @@
     "fix-all": "bun run scripts/fix-everything.ts",
     "force-fix": "bun run scripts/force-fix-now.ts",
     "import-content": "node scripts/import-content.cjs",
-    "fix-logo": "node scripts/fix-logo.cjs"
+    "fix-logo": "node scripts/fix-logo.cjs",
+    "seed": "bun run scripts/seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
