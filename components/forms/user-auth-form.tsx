@@ -58,15 +58,16 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           });
         }
 
+        // Session cookie is set immediately by Better Auth
         toast.success("Account created!", {
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Wait a moment for session cookie to be set, then redirect
-        // Use window.location.href for hard redirect to ensure session is recognized
+        // Small delay to show toast, then redirect
+        // Use hard redirect to ensure full page reload and session recognition
         setTimeout(() => {
           window.location.href = `/${locale}/dashboard`;
-        }, 500);
+        }, 300);
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
@@ -80,15 +81,16 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           });
         }
 
+        // Session cookie is set immediately by Better Auth
         toast.success("Welcome back!", {
           description: "Redirecting to dashboard...",
         });
 
-        // Wait a moment for session cookie to be set, then redirect
-        // Use window.location.href for hard redirect to ensure session is recognized
+        // Small delay to show toast, then redirect
+        // Use hard redirect to ensure full page reload and session recognition
         setTimeout(() => {
           window.location.href = `/${locale}/dashboard`;
-        }, 500);
+        }, 300);
       }
     } catch (error) {
       setIsLoading(false);
