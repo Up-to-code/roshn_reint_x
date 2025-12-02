@@ -102,7 +102,12 @@ export default async function Home({ params }: { params: { locale: string } }) {
       {content.partners && content.partners.length > 0 && (
         <>
           <div className="h-[10px]" />
-          <PartnersBanner logos={content.partners} />
+          <PartnersBanner 
+            logos={content.partners.map((partner: any) => ({
+              src: partner.logo || partner.src,
+              alt: partner.alt || partner.name || 'Partner'
+            }))} 
+          />
         </>
       )}
       

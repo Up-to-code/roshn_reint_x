@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle, Send, Phone } from "lucide-react";
+import { MessageCircle, Send } from "lucide-react";
 
 interface FloatingButtonsProps {
   locale: string;
@@ -10,7 +10,6 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
   const isRTL = locale === "ar";
 
   const whatsappNumber = "966501234567";
-  const phoneNumber = "966501234567";
   const whatsappMessage = isRTL
     ? "مرحبًا، أود الاستفسار عن خدماتكم"
     : "Hello, I would like to inquire about your services";
@@ -20,10 +19,6 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
       whatsappMessage
     )}`;
     window.open(url, "_blank");
-  };
-
-  const handleCall = () => {
-    window.open(`tel:${phoneNumber}`, "_self");
   };
 
   return (
@@ -48,17 +43,6 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
 
         {/* Small chat icon */}
         <Send className="size-5 opacity-90" />
-      </button>
-
-      {/* Call Icon */}
-      <button
-        onClick={handleCall}
-        className="flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm p-4 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-white/20"
-        aria-label={isRTL ? "اتصل بنا" : "Call us"}
-        title={isRTL ? "اتصل بنا" : "Call us"}
-      >
-        {/* Phone Icon - Clean */}
-        <Phone className="size-6" />
       </button>
     </div>
   );

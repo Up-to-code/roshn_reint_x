@@ -4,6 +4,48 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 const defaultHomePageData = {
   en: {
+    partners: [
+      {
+        id: '1',
+        src: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200',
+        alt: 'Partner 1',
+        name: 'Real Estate Partner 1',
+        logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200',
+        link: 'https://example.com/partner1'
+      },
+      {
+        id: '2',
+        src: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200',
+        alt: 'Partner 2',
+        name: 'Real Estate Partner 2',
+        logo: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200',
+        link: 'https://example.com/partner2'
+      },
+      {
+        id: '3',
+        src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200',
+        alt: 'Partner 3',
+        name: 'Real Estate Partner 3',
+        logo: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200',
+        link: 'https://example.com/partner3'
+      },
+      {
+        id: '4',
+        src: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=200',
+        alt: 'Partner 4',
+        name: 'Real Estate Partner 4',
+        logo: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=200',
+        link: 'https://example.com/partner4'
+      },
+      {
+        id: '5',
+        src: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=200',
+        alt: 'Partner 5',
+        name: 'Real Estate Partner 5',
+        logo: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=200',
+        link: 'https://example.com/partner5'
+      }
+    ],
     hero: {
       title: "Welcome to Our Platform",
       subtitle: "Innovative solutions for your business growth",
@@ -179,6 +221,48 @@ const defaultHomePageData = {
     }
   },
   ar: {
+    partners: [
+      {
+        id: '1',
+        src: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200',
+        alt: 'شريك 1',
+        name: 'شريك عقاري 1',
+        logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200',
+        link: 'https://example.com/partner1'
+      },
+      {
+        id: '2',
+        src: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200',
+        alt: 'شريك 2',
+        name: 'شريك عقاري 2',
+        logo: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=200',
+        link: 'https://example.com/partner2'
+      },
+      {
+        id: '3',
+        src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200',
+        alt: 'شريك 3',
+        name: 'شريك عقاري 3',
+        logo: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=200',
+        link: 'https://example.com/partner3'
+      },
+      {
+        id: '4',
+        src: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=200',
+        alt: 'شريك 4',
+        name: 'شريك عقاري 4',
+        logo: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=200',
+        link: 'https://example.com/partner4'
+      },
+      {
+        id: '5',
+        src: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=200',
+        alt: 'شريك 5',
+        name: 'شريك عقاري 5',
+        logo: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=200',
+        link: 'https://example.com/partner5'
+      }
+    ],
     hero: {
       title: "مرحباً بكم في منصتنا",
       subtitle: "حلول مبتكرة لنمو عملك",
