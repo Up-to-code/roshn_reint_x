@@ -83,6 +83,14 @@ export const routing = defineRouting({
       en: "/404",
       ar: "/404",
     },
+    "/terms": {
+      en: "/terms",
+      ar: "/terms",
+    },
+    "/privacy": {
+      en: "/privacy",
+      ar: "/privacy",
+    },
   },
 });
 
