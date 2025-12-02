@@ -4,14 +4,16 @@ import { createClient } from '@supabase/supabase-js';
 export async function POST(request: NextRequest) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    // Try service role key first (for admin operations), fall back to anon key
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = supabaseServiceKey || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Missing Supabase environment variables',
-          message: 'Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY to your .env.local file.'
+          message: 'Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY (or SUPABASE_SERVICE_ROLE_KEY) to your .env.local file.'
         },
         { status: 400 }
       );
@@ -19,13 +21,25 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Try to create the images bucket
+    // Create all required buckets: images, videos, and files
     const bucketsToCreate = [
       {
         name: 'images',
         public: true,
-        fileSizeLimit: 10485760, // 10MB
+        fileSizeLimit: 5242880, // 5MB
         allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+      },
+      {
+        name: 'videos',
+        public: true,
+        fileSizeLimit: 52428800, // 50MB
+        allowedMimeTypes: ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov']
+      },
+      {
+        name: 'files',
+        public: true,
+        fileSizeLimit: 10485760, // 10MB
+        allowedMimeTypes: ['*/*'] // Allow all file types
       }
     ];
 
@@ -101,8 +115,8 @@ export async function POST(request: NextRequest) {
       success: !hasErrors,
       results,
       message: needsManual 
-        ? 'Bucket creation requires manual setup. Please follow the instructions below.'
-        : 'Bucket setup completed successfully.'
+        ? 'Bucket creation requires manual setup. Please follow the instructions below. If you have SUPABASE_SERVICE_ROLE_KEY in your .env.local, the buckets can be created automatically.'
+        : 'Bucket setup completed successfully. All required buckets (images, videos, files) are ready.'
     });
   } catch (error) {
     return NextResponse.json(

@@ -4,22 +4,20 @@ import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomUploader } from "@/components/shared/custom-uploader";
+import { HeroFormBuilder } from "./hero-form-builder";
 
 const defaultHero = {
   title: "",
   subtitle: "",
-  primaryButton: { text: "", link: "", variant: "primary" as const },
-  secondaryButton: { text: "", link: "", variant: "secondary" as const },
   backgroundVideo: "",
-  overlayColor: "rgba(0,0,0,0.4)"
+  overlayColor: "rgba(0,0,0,0.4)",
+  formFields: []
 };
 
 export function HeroEditor() {
   const t = useTranslations('homePageEditor.hero');
-  const { data, currentLang, updateHero, updateHeroButton } = useHomePageStore();
+  const { data, currentLang, updateHero } = useHomePageStore();
   const content = data?.[currentLang];
   const hero = content?.hero || defaultHero;
 
@@ -32,34 +30,6 @@ export function HeroEditor() {
       </div>
     );
   }
-
-  const ButtonEditor = ({ type }: { type: 'primary' | 'secondary' }) => (
-    <div className="space-y-3 rounded-lg border p-4">
-      <Input
-        value={hero[`${type}Button`]?.text || ""}
-        onChange={(e) => updateHeroButton(type, { text: e.target.value })}
-        placeholder={t('placeholders.buttonText')}
-      />
-      <Input
-        value={hero[`${type}Button`]?.link || ""}
-        onChange={(e) => updateHeroButton(type, { link: e.target.value })}
-        placeholder={t('placeholders.buttonLink')}
-      />
-      <Select
-        value={hero[`${type}Button`]?.variant || type}
-        onValueChange={(value: any) => updateHeroButton(type, { variant: value })}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder={t('buttonVariant')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="primary">{t('variants.primary')}</SelectItem>
-          <SelectItem value="secondary">{t('variants.secondary')}</SelectItem>
-          <SelectItem value="outline">{t('variants.outline')}</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -110,14 +80,8 @@ export function HeroEditor() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <h3 className="font-medium">{t('primaryButton')}</h3>
-        <ButtonEditor type="primary" />
-      </div>
-
-      <div className="space-y-4">
-        <h3 className="font-medium">{t('secondaryButton')}</h3>
-        <ButtonEditor type="secondary" />
+      <div className="border-t pt-6">
+        <HeroFormBuilder />
       </div>
     </div>
   );

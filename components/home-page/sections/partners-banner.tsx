@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 
 interface PartnersBannerProps {
   logos?: { src: string; alt: string }[];
@@ -12,6 +13,8 @@ export function PartnersBanner({
   speed = 30
 }: PartnersBannerProps) {
   const [mounted, setMounted] = useState(false);
+  const locale = useLocale();
+  const isRTL = locale === "ar";
 
   useEffect(() => {
     setMounted(true);
@@ -31,8 +34,13 @@ export function PartnersBanner({
 
   return (
     <section className="w-full bg-orange-500 px-4 py-8">
-      {/* 10px spacing at top */}
-      <div className="h-[10px]" />
+      {/* Title */}
+      <div className="mb-6 text-center">
+        <h2 className="text-3xl font-bold text-white">
+          {isRTL ? "شركاؤنا" : "Our Partners"}
+        </h2>
+      </div>
+      
       {/* Logos container */}
       <div className="relative overflow-hidden">
         {/* Fade edges */}

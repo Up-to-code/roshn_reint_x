@@ -91,7 +91,6 @@ async function getHomePageData(locale: string) {
 }
 
 export default async function Home({ params }: { params: { locale: string } }) {
-  // Get the locale from params, default to 'en' if not provided
   const locale = params.locale || 'en';
   const content = await getHomePageData(locale);
 
@@ -99,17 +98,17 @@ export default async function Home({ params }: { params: { locale: string } }) {
     <div className="min-h-screen bg-white">
       <HeroSection content={content.hero} />
       
-      {/* 10px spacing before partners banner */}
-      <div className="h-[10px]" />
+      {/* Our Partners Section */}
+      {content.partners && content.partners.length > 0 && (
+        <>
+          <div className="h-[10px]" />
+          <PartnersBanner logos={content.partners} />
+        </>
+      )}
       
-      {/* Safe rendering with fallback */}
-      <PartnersBanner logos={content.partners || []} />
-      
-      <ApartmentsPage  locale={locale} />
-      {/* <BannersSection banners={content.banners} /> */}
+      <ApartmentsPage locale={locale} />
       <WhyUsSection content={content.whyUs} />
       <AboutUsSection content={content.aboutUs} />
-      {/* <TestimonialsSection content={content.testimonials} /> */}
       <ContactUsSection content={content.contactUs} locale={locale} />
     </div>
   );

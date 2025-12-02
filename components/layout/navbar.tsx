@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
-import { Menu, X, Sparkles, Phone, Home, Building2, Briefcase, Info, Mail } from "lucide-react";
+import { Menu, X, Sparkles, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { useSession } from "@/lib/auth-client";
@@ -15,11 +15,15 @@ const LocaleSwitcher = dynamic(() => import("@/components/LocaleSwitcher"), {
   loading: () => <div className="size-8 animate-pulse rounded-md bg-gray-600" />,
 });
 
-const LOGO_URL = "/logo.png";
-const WHATSAPP_NUMBER = "1234567890"; // Replace with actual number
+const LOGO_URL = "https://qtthbbfudgvtstwevhbf.supabase.co/storage/v1/object/public/images/logo.png";
+const WHATSAPP_NUMBER = "1234567890";
+const PHONE_NUMBER = "1234567890";
+const INSTAGRAM_URL = "https://instagram.com";
+const TIKTOK_URL = "https://tiktok.com";
 
 const SOCIAL_LINKS = [
-  { icon: Phone, href: `https://wa.me/${WHATSAPP_NUMBER}`, label: "WhatsApp" },
+  { icon: Phone, href: `tel:${PHONE_NUMBER}`, label: "Call", color: "text-blue-500 hover:text-blue-400" },
+  { icon: MessageCircle, href: `https://wa.me/${WHATSAPP_NUMBER}`, label: "WhatsApp", color: "text-[#25D366] hover:text-[#128C7E]" },
 ];
 
 // Dashboard Banner
@@ -51,47 +55,76 @@ function Logo({ onClick }: { onClick: () => void }) {
   );
 }
 
-// Navigation Links
+// Navigation Links (without icons)
 function NavLinks({ links, mobile, onClick, isRTL }: { links: any[]; mobile?: boolean; onClick?: () => void; isRTL: boolean }) {
   return (
     <>
-      {links.map((item) => {
-        const Icon = item.icon;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onClick}
-            className={cn(
-              "flex items-center gap-2 font-medium text-gray-200 transition-all hover:text-white",
-              mobile ? "block px-4 py-3 text-center hover:bg-gray-700" : "px-4 py-2 text-sm"
-            )}
-          >
-            {Icon && <Icon className="size-4" />}
-            {item.title}
-          </Link>
-        );
-      })}
+      {links.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onClick}
+          className={cn(
+            "font-medium text-gray-200 transition-all hover:text-white",
+            mobile ? "block px-4 py-3 text-center hover:bg-gray-700" : "px-4 py-2 text-sm"
+          )}
+        >
+          {item.title}
+        </Link>
+      ))}
     </>
   );
 }
 
-// Social Links
+// Social Links with WhatsApp, Instagram, TikTok, and Call
 function SocialLinks({ mobile }: { mobile?: boolean }) {
   return (
     <div className={cn("flex gap-3", mobile && "justify-center gap-4 border-t border-gray-600 pt-6")}>
-      {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
-        <a
-          key={label}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-lg p-2 text-gray-400 transition-all hover:bg-gray-700 hover:text-white"
-          aria-label={label}
-        >
-          <Icon className="size-5" />
-        </a>
-      ))}
+      {/* Call */}
+      <a
+        href={`tel:${PHONE_NUMBER}`}
+        className="rounded-lg p-2 text-blue-500 transition-all hover:bg-blue-500/20 hover:text-blue-400"
+        aria-label="Call"
+      >
+        <Phone className="size-5" />
+      </a>
+      
+      {/* WhatsApp */}
+      <a
+        href={`https://wa.me/${WHATSAPP_NUMBER}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-lg p-2 text-[#25D366] transition-all hover:bg-[#25D366]/20 hover:text-[#128C7E]"
+        aria-label="WhatsApp"
+      >
+        <MessageCircle className="size-5" />
+      </a>
+      
+      {/* Instagram */}
+      <a
+        href={INSTAGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-lg p-2 text-pink-500 transition-all hover:bg-pink-500/20 hover:text-pink-400"
+        aria-label="Instagram"
+      >
+        <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      </a>
+      
+      {/* TikTok */}
+      <a
+        href={TIKTOK_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-lg p-2 text-black transition-all hover:bg-gray-700 hover:text-white dark:text-white"
+        aria-label="TikTok"
+      >
+        <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+        </svg>
+      </a>
     </div>
   );
 }
@@ -148,11 +181,11 @@ export function NavBar() {
   const isRTL = currentLocale === "ar";
 
   const navLinks = [
-    { title: t("home"), href: "/", icon: Home },
-    { title: t("projects"), href: "/p", icon: Building2 },
-    { title: t("services"), href: "/services", icon: Briefcase },
-    { title: t("about"), href: "/about", icon: Info },
-    { title: t("contact"), href: "/contact", icon: Mail },
+    { title: t("home"), href: "/" },
+    { title: t("projects"), href: "/p" },
+    { title: t("services"), href: "/services" },
+    { title: t("about"), href: "/about" },
+    { title: t("contact"), href: "/contact" },
   ];
 
   if (!mounted) {
