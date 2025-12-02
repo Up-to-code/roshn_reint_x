@@ -12,24 +12,25 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
   const resolvedParams = params instanceof Promise ? await params : params;
   const locale = resolvedParams.locale || "en";
 
-  // Only check user authentication - if user exists, redirect them away from login
-  // This is safe because if they're logged in, they shouldn't see login page
+  // Check if user is authenticated - if yes, redirect to dashboard
+  // This prevents authenticated users from accessing login/register pages
   try {
     const user = await getCurrentUser();
     
-    // Only redirect if we have a valid authenticated user with all required fields
-    // This prevents redirect loops by ensuring we have a real authenticated user
+    // If user is authenticated (has id and email), redirect them to dashboard
     if (user?.id && user?.email) {
+      // Redirect based on user role
       if (user.role === "ADMIN") {
         redirect(`/${locale}/admin`);
       }
+      // Regular users go to dashboard
       redirect(`/${locale}/dashboard`);
     }
   } catch (error) {
-    // If there's an error getting user, don't redirect - let them access login
+    // If there's an error getting user, allow access to login page
     // This prevents redirect loops when session check fails
-    // In production, silently fail to avoid console noise
   }
 
+  // User is not authenticated, show login/register page
   return <div className="min-h-screen">{children}</div>;
 }
