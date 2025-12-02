@@ -3,7 +3,7 @@
 import { useLocale } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Link } from "@/i18n/routing";
+import { Link, type Pathnames } from "@/i18n/routing";
 import { Phone, MessageCircle } from "lucide-react";
 
 const PHONE_NUMBER = "1234567890";
@@ -15,7 +15,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   const locale = useLocale();
   const isRTL = locale === "ar";
 
-  const footerLinks = [
+  const footerLinks: Array<{ label: string; href: Pathnames }> = [
     { label: isRTL ? "الرئيسية" : "Home", href: "/" },
     { label: isRTL ? "المشاريع" : "Projects", href: "/p" },
     { label: isRTL ? "خدماتنا" : "Services", href: "/services" },
