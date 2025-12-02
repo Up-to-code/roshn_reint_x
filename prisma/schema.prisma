@@ -185,6 +185,18 @@ model MapLocation {
   @@map("map_locations")
 }
 
+model Event {
+  id          String   @id @default(cuid())
+  type        String   // contact, property_interest, property_created, property_updated, user_registered, other
+  title       String
+  description String?
+  metadata    Json?   // Store additional data like propertyId, contactId, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("events")
+}
+
 enum UserRole {
   ADMIN
   USER

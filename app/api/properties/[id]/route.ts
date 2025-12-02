@@ -40,6 +40,26 @@ export async function PUT(
       data
     })
     
+    // Create event for property update
+    try {
+      await prisma.event.create({
+        data: {
+          type: 'property_updated',
+          title: `Property Updated: ${property.titleEn}`,
+          description: `Property "${property.titleEn}" was updated`,
+          metadata: {
+            propertyId: property.id,
+            titleEn: property.titleEn,
+            titleAr: property.titleAr,
+            city: property.city,
+          },
+        },
+      });
+      console.log("✅ Event created for property update");
+    } catch (eventError) {
+      console.error("⚠️ Failed to create event:", eventError);
+    }
+    
     return NextResponse.json(property)
   } catch (error) {
     console.error('Failed to update property:', error)
