@@ -8,12 +8,35 @@ import { Plus, Trash2, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
+interface FormField {
+  name: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+  required?: boolean;
+}
+
+interface Hero {
+  formFields?: FormField[];
+  [key: string]: any;
+}
+
+interface Content {
+  hero?: Hero;
+  contactUs?: {
+    form?: {
+      fields?: FormField[];
+    };
+  };
+  [key: string]: any;
+}
+
 export function HeroFormBuilder() {
   const t = useTranslations('homePageEditor.hero');
   const { data, currentLang, updateHero } = useHomePageStore();
-  const content = data?.[currentLang];
-  const hero = content?.hero || {};
-  const formFields = hero.formFields || [];
+  const content = data?.[currentLang] as Content | undefined;
+  const hero = (content?.hero ?? {}) as Hero;
+  const formFields = hero.formFields ?? [];
 
   const updateFormField = (index: number, field: string, value: any) => {
     const updatedFields = formFields.map((f: any, i: number) => 
