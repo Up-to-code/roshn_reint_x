@@ -14,7 +14,7 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
     ? "مرحبًا، أود الاستفسار عن خدماتكم"
     : "Hello, I would like to inquire about your services";
 
-  const handleCall = () => {
+  const handleWhatsApp = () => {
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       whatsappMessage
     )}`;
@@ -27,14 +27,27 @@ export function FloatingButtons({ locale }: FloatingButtonsProps) {
         isRTL ? "right-6" : "left-6"
       }`}
     >
-      {/* Call Icon - Goes to WhatsApp */}
+      {/* WhatsApp Button */}
       <button
-        onClick={handleCall}
-        className="group relative flex items-center justify-center rounded-full bg-blue-600 p-5 text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:bg-blue-700 hover:shadow-[0_20px_60px_rgba(37,99,235,0.4)]"
-        aria-label={isRTL ? "اتصل بنا على واتساب" : "Call us on WhatsApp"}
-        title={isRTL ? "اتصل بنا على واتساب" : "Call us on WhatsApp"}
+        onClick={handleWhatsApp}
+        className="group relative flex items-center gap-4 overflow-hidden rounded-2xl bg-[#006D5B] px-8 py-5 text-white shadow-2xl transition-all duration-500 hover:scale-110 hover:shadow-[0_20px_60px_rgba(0,109,91,0.4)]"
+        aria-label={isRTL ? "راسلنا على واتساب" : "Call us on WhatsApp"}
       >
-        <Phone className="size-7" />
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#006D5B] via-[#008C73] to-[#006D5B] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+        
+        {/* Content */}
+        <div className="relative flex items-center gap-4">
+          <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm transition-transform duration-500 group-hover:rotate-12">
+            <Phone className="size-7" />
+          </div>
+          <span className="text-xl font-bold tracking-wide">
+            {isRTL ? "اتصل بنا" : "Call Now"}
+          </span>
+        </div>
+        
+        {/* Pulse effect */}
+        <div className="absolute inset-0 rounded-2xl bg-white opacity-0 transition-opacity duration-300 group-hover:opacity-10"></div>
       </button>
     </div>
   );
