@@ -19,9 +19,21 @@ export default async function DashboardLayout({ children, params }: ProtectedLay
   const resolvedParams = params instanceof Promise ? await params : params;
   const locale = resolvedParams.locale || "en";
   
-  const user = await getCurrentUser();
-
-  if (!user) redirect(`/${locale}/login`);
+  // Check if user is authenticated
+  let user;
+  try {
+    user = await getCurrentUser();
+    
+    // Only redirect if user is definitely not authenticated
+    // Check for both id and email to ensure it's a valid user object
+    if (!user || !user.id || !user.email) {
+      redirect(`/${locale}/login`);
+    }
+  } catch (error) {
+    // If there's an error checking session, redirect to login
+    // This prevents crashes but ensures security
+    redirect(`/${locale}/login`);
+  }
 
   const filteredLinks = sidebarLinks.map((section) => ({
     ...section,

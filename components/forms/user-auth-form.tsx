@@ -63,11 +63,12 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Small delay to show toast, then redirect
-        // Use hard redirect to ensure full page reload and session recognition
+        // Refresh router to ensure session is recognized, then redirect
+        router.refresh();
+        // Use hard redirect after a brief delay to ensure cookie is set
         setTimeout(() => {
           window.location.href = `/${locale}/dashboard`;
-        }, 300);
+        }, 500);
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
@@ -86,11 +87,12 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Redirecting to dashboard...",
         });
 
-        // Small delay to show toast, then redirect
-        // Use hard redirect to ensure full page reload and session recognition
+        // Refresh router to ensure session is recognized, then redirect
+        router.refresh();
+        // Use hard redirect after a brief delay to ensure cookie is set
         setTimeout(() => {
           window.location.href = `/${locale}/dashboard`;
-        }, 300);
+        }, 500);
       }
     } catch (error) {
       setIsLoading(false);

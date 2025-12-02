@@ -42,10 +42,16 @@ export default async function middleware(request: NextRequest) {
     );
 
     if (isProtectedPath) {
-      // Get session from Better Auth cookies
+      // Check for Better Auth session cookie
+      // Better Auth uses "better-auth.session_token" as the cookie name
       const sessionToken = request.cookies.get("better-auth.session_token");
       
-      if (!sessionToken) {
+      // Also check for alternative cookie names that Better Auth might use
+      const hasSession = sessionToken || 
+                        request.cookies.get("better-auth.session") ||
+                        request.cookies.get("better-auth_session_token");
+      
+      if (!hasSession) {
         // Redirect to login with locale - no query parameters needed
         // After login, user will be redirected to dashboard by default
         const loginUrl = new URL(`/${locale}/login`, request.url);
