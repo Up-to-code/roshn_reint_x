@@ -64,9 +64,25 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Always redirect to dashboard after registration with locale
+        // Get the 'from' parameter or default to dashboard
+        const from = searchParams.get("from");
+        let redirectPath = "/dashboard";
+        
+        if (from) {
+          // If 'from' includes locale (e.g., /ar/dashboard), extract just the path
+          if (from.startsWith(`/${locale}/`)) {
+            redirectPath = from.replace(`/${locale}`, "");
+          } else if (from.startsWith("/ar/") || from.startsWith("/en/")) {
+            // If 'from' has a different locale, extract the path part
+            redirectPath = "/" + from.split("/").slice(2).join("/");
+          } else if (from.startsWith("/")) {
+            // If 'from' is just a path without locale, use it as is
+            redirectPath = from;
+          }
+        }
+        
         // Use router.push with pathname from routing config (automatically includes locale)
-        router.push("/dashboard");
+        router.push(redirectPath);
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
@@ -85,9 +101,25 @@ export function UserAuthForm({ className, type = "login", ...props }: UserAuthFo
           description: "Redirecting to dashboard...",
         });
 
-        // Always redirect to dashboard after sign in with locale
+        // Get the 'from' parameter or default to dashboard
+        const from = searchParams.get("from");
+        let redirectPath = "/dashboard";
+        
+        if (from) {
+          // If 'from' includes locale (e.g., /ar/dashboard), extract just the path
+          if (from.startsWith(`/${locale}/`)) {
+            redirectPath = from.replace(`/${locale}`, "");
+          } else if (from.startsWith("/ar/") || from.startsWith("/en/")) {
+            // If 'from' has a different locale, extract the path part
+            redirectPath = "/" + from.split("/").slice(2).join("/");
+          } else if (from.startsWith("/")) {
+            // If 'from' is just a path without locale, use it as is
+            redirectPath = from;
+          }
+        }
+        
         // Use router.push with pathname from routing config (automatically includes locale)
-        router.push("/dashboard");
+        router.push(redirectPath);
       }
     } catch (error) {
       setIsLoading(false);
