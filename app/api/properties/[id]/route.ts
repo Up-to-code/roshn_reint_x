@@ -88,7 +88,7 @@ export async function PUT(
           },
         },
       });
-      console.log("✅ Event created for property update");
+      // Event created for property update
     } catch (eventError) {
       console.error("⚠️ Failed to create event:", eventError);
     }

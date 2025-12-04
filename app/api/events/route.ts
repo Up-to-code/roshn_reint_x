@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('✅ Event created:', event);
+    // Event created successfully
 
     return NextResponse.json({ success: true, event }, { status: 201 });
   } catch (error) {

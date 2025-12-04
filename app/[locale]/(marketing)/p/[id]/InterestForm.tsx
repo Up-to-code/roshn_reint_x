@@ -58,11 +58,13 @@ export default function InterestForm({ propertyTitle, propertyId }: InterestForm
         // Reset success message after 5 seconds
         setTimeout(() => setSuccess(false), 5000);
       } else {
-        const error = await res.json();
+        const errorData = await res.json();
+        const errorMessage = errorData.details || errorData.error || (isRTL ? "يرجى المحاولة مرة أخرى" : "Please try again");
+        console.error("Interest creation failed:", errorData);
         toast.error(
           isRTL ? "فشل الإرسال" : "Failed to send",
           {
-            description: error.error || (isRTL ? "يرجى المحاولة مرة أخرى" : "Please try again")
+            description: errorMessage
           }
         );
       }

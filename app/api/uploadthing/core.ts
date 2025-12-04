@@ -22,8 +22,7 @@ export const ourFileRouter = {
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
-      console.log("file url", file.url); // ✅ استخدم file.url
+      // Upload complete
       return { uploadedBy: metadata.userId, fileUrl: file.url };
     }),
 
@@ -40,8 +39,7 @@ export const ourFileRouter = {
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Video upload complete for userId:", metadata.userId);
-      console.log("video file url", file.url); // ✅ استخدم file.url
+      // Video upload complete
       return { uploadedBy: metadata.userId, fileUrl: file.url };
     }),
 } satisfies FileRouter;

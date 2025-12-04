@@ -165,10 +165,19 @@ export default async function PropertyDetailPage({
   const { id, locale } = params;
   const isRTL = locale === "ar";
 
-  let property: Property;
+  let property: Property | null;
   try {
     property = await PropertiesServerService.getById(id);
-  } catch {
+    if (!property) {
+      notFound();
+    }
+  } catch (error) {
+    console.error('Error fetching property:', error);
+    notFound();
+  }
+
+  // Type guard - property is guaranteed to be non-null here
+  if (!property) {
     notFound();
   }
 

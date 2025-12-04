@@ -35,13 +35,6 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     
-    console.log('Received map location data:', {
-      name: data.name,
-      latitude: data.latitude,
-      longitude: data.longitude,
-      city: data.city,
-    });
-    
     // Validate required fields
     if (!data.name || data.latitude === undefined || data.longitude === undefined) {
       return NextResponse.json(
@@ -86,16 +79,9 @@ export async function POST(request: NextRequest) {
       enabled: data.enabled !== undefined ? data.enabled : true,
     };
     
-    console.log('Creating map location with data:', locationData);
-    
     const location = await prisma.mapLocation.create({
       data: locationData
     });
-    
-    console.log('Map location created successfully:', {
-      id: location.id,
-      name: location.name,
-      latitude: location.latitude,
       longitude: location.longitude,
     });
     

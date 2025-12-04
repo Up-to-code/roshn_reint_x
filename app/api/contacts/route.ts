@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("✅ Contact saved to DB:", contact);
+    // Contact saved to database
 
     // Create event for new contact
     try {
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
           },
         },
       });
-      console.log("✅ Event created for contact");
+      // Event created for contact
     } catch (eventError) {
       console.error("⚠️ Failed to create event:", eventError);
       // Don't fail the request if event creation fails
@@ -131,8 +131,7 @@ export async function POST(request: NextRequest) {
         </div>
       `;
 
-      console.log("🚀 Sending email via Resend...");
-      console.log("🔧 Using admin email:", adminEmail);
+      // Sending email via Resend
 
       const emailResult = await resend.emails.send({
         from: process.env.ADMIN_EMAIL || "noreply@roshnreit.com",
@@ -141,12 +140,12 @@ export async function POST(request: NextRequest) {
         html: emailHtml,
       });
 
-      console.log("📬 Resend response:", emailResult);
+      // Email sent via Resend
 
       if (emailResult.error) {
         console.error("❌ Resend failed:", emailResult.error);
       } else {
-        console.log("✅ Email sent successfully to:", adminEmail);
+        // Email sent successfully
       }
 
       return NextResponse.json({ 

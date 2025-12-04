@@ -53,33 +53,24 @@ export class PropertiesServerService {
 
   static async getById(id: string): Promise<Property | null> {
     try {
-      // Cache individual property for 5 minutes
-      const getCachedProperty = unstable_cache(
-        async () => {
-          return await prisma.property.findUnique({
-            where: { id },
-            select: {
-              id: true,
-              titleEn: true,
-              titleAr: true,
-              descriptionEn: true,
-              descriptionAr: true,
-              city: true,
-              district: true,
-              images: true,
-              createdAt: true,
-              updatedAt: true,
-            }
-          });
-        },
-        [`property-${id}`],
-        {
-          revalidate: 300, // 5 minutes
-          tags: ['properties', `property-${id}`]
+      // Direct query without caching to avoid issues
+      const property = await prisma.property.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          titleEn: true,
+          titleAr: true,
+          descriptionEn: true,
+          descriptionAr: true,
+          city: true,
+          district: true,
+          images: true,
+          createdAt: true,
+          updatedAt: true,
         }
-      );
+      });
       
-      return await getCachedProperty();
+      return property;
     } catch (error) {
       console.error(`Failed to fetch property ${id}:`, error);
       return null;

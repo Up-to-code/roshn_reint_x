@@ -25,3 +25,4 @@ CREATE INDEX IF NOT EXISTS "interests_read_idx" ON "interests"("read");
 CREATE INDEX IF NOT EXISTS "interests_createdAt_idx" ON "interests"("createdAt");
 
 
+

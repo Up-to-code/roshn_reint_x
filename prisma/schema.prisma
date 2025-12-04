@@ -6,6 +6,24 @@ datasource db {
   provider = "postgresql"
 }
 
+model AboutPage {
+  id        String   @id
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_page")
+}
+
+model AboutSettings {
+  id        String   @id
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("about_settings")
+}
+
 model Account {
   id           String    @id @default(cuid())
   accountId    String
@@ -23,6 +41,118 @@ model Account {
   @@map("account")
 }
 
+model Contact {
+  id          String   @id @default(cuid())
+  name        String
+  phoneNumber String
+  message     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  email       String?
+
+  @@map("contacts")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  type        String
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("events")
+}
+
+model Interest {
+  id            String    @id @default(cuid())
+  name          String
+  email         String?
+  phone         String
+  message       String?
+  propertyTitle String
+  propertyId    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  read          Boolean   @default(false)
+  property      Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@map("interests")
+}
+
+model MapLocation {
+  id          String   @id @default(cuid())
+  name        String
+  address     String?
+  latitude    Float
+  longitude   Float
+  city        String?
+  country     String?
+  description String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("map_locations")
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  title       String
+  content     String
+  excerpt     String?
+  headerImage String?
+  thumbnail   String?
+  status      PostStatus @default(DRAFT)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("posts")
+}
+
+model Property {
+  id            String     @id @default(cuid())
+  titleEn       String
+  titleAr       String
+  descriptionEn String?
+  descriptionAr String?
+  city          String
+  district      String?
+  images        String[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  interests     Interest[]
+
+  @@map("properties")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String
+  features    String[]
+  order       Int      @default(0)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
+
+model ServicesPage {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String
+  heroImage String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("services_page")
+}
+
 model Session {
   id        String   @id @default(cuid())
   expiresAt DateTime
@@ -35,6 +165,15 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("session")
+}
+
+model SiteSettings {
+  id        String   @id
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
 }
 
 model User {
@@ -66,168 +205,13 @@ model Verification {
   @@map("verification")
 }
 
-model Property {
-  id            String   @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String?
-  descriptionAr String?
-  city          String
-  district      String?
-  images        String[]
-  interests     Interest[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("properties")
-}
-
-model Post {
-  id          String     @id @default(cuid())
-  title       String
-  content     String
-  excerpt     String?
-  headerImage String?
-  thumbnail   String?
-  status      PostStatus @default(DRAFT)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  @@map("posts")
-}
-
-model Contact {
-  id          String   @id @default(cuid())
-  name        String
-  phoneNumber String
-  message     String
-  email       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("contacts")
-}
-
-model SiteSettings {
-  id        String   @id
-  data      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("site_settings")
-}
-
-model AboutPage {
-  id        String   @id
-  data      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("about_page")
-}
-
-model Service {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  image       String
-  features    String[]
-  order       Int      @default(0)
-  enabled     Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("services")
-}
-
-model ServicesPage {
-  id        String   @id @default(cuid())
-  title     String
-  subtitle  String
-  heroImage String
-  enabled   Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("services_page")
-}
-
-model AboutSettings {
-  id        String   @id
-  data      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("about_settings")
-}
-
-model Interest {
-  id            String   @id @default(cuid())
-  name          String
-  email         String?
-  phone         String
-  message       String?
-  propertyTitle String
-  propertyId    String?
-  property      Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  read          Boolean  @default(false)
-
-  @@map("interests")
-}
-
-model Property {
-  id            String   @id @default(cuid())
-  titleEn       String
-  titleAr       String
-  descriptionEn String?
-  descriptionAr String?
-  city          String
-  district      String?
-  images        String[]
-  interests     Interest[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("properties")
-}
-
-model MapLocation {
-  id          String   @id @default(cuid())
-  name        String
-  address     String?
-  latitude    Float
-  longitude   Float
-  city        String?
-  country     String?
-  description String?
-  enabled     Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("map_locations")
-}
-
-model Event {
-  id          String   @id @default(cuid())
-  type        String   // contact, property_interest, property_created, property_updated, user_registered, other
-  title       String
-  description String?
-  metadata    Json?   // Store additional data like propertyId, contactId, etc.
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("events")
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 enum UserRole {
   ADMIN
   USER
-}
-
-enum PostStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
 }

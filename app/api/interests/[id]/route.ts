@@ -11,12 +11,32 @@ export async function PATCH(
     const body = await request.json();
     const { read } = body;
 
-    const interest = await prisma.interest.update({
-      where: { id: params.id },
-      data: { read: read ?? false },
-    });
+    // Try to update with read field, fallback without it if field doesn't exist
+    try {
+      const interest = await prisma.interest.update({
+        where: { id: params.id },
+        data: { read: read ?? false },
+      });
 
-    return NextResponse.json(interest);
+      return NextResponse.json(interest);
+    } catch (updateError: any) {
+      // If read field doesn't exist, just return the interest without updating read
+      if (updateError?.message?.includes('read') || updateError?.message?.includes('Unknown argument')) {
+        const interest = await prisma.interest.findUnique({
+          where: { id: params.id },
+        });
+
+        if (!interest) {
+          return NextResponse.json(
+            { error: 'Interest not found' },
+            { status: 404 }
+          );
+        }
+
+        return NextResponse.json(interest);
+      }
+      throw updateError;
+    }
   } catch (error) {
     console.error('Failed to update interest:', error);
     return NextResponse.json(

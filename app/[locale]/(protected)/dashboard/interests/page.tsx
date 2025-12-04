@@ -243,7 +243,7 @@ export default function InterestsPage() {
                           className="flex items-center gap-2 text-primary hover:underline"
                         >
                           <Building className="size-4" />
-                          {locale === 'ar' 
+                          {locale === 'ar'
                             ? interest.property?.titleAr || interest.propertyTitle
                             : interest.property?.titleEn || interest.propertyTitle}
                         </Link>

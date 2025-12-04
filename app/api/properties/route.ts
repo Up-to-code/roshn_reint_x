@@ -56,14 +56,6 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json()
     
-    console.log('Received property data:', {
-      titleEn: data.titleEn,
-      titleAr: data.titleAr,
-      city: data.city,
-      images: data.images,
-      imageCount: data.images?.length || 0
-    })
-    
     // Validate required fields based on schema
     if (!data.titleEn || !data.titleAr || !data.city) {
       return NextResponse.json(
@@ -83,18 +75,8 @@ export async function POST(request: NextRequest) {
       images: data.images || [],
     }
     
-    console.log('Creating property with data:', propertyData)
-    
     const property = await prisma.property.create({
       data: propertyData
-    })
-    
-    console.log('Property created successfully:', {
-      id: property.id,
-      titleEn: property.titleEn,
-      titleAr: property.titleAr,
-      city: property.city,
-      imageCount: property.images.length
     })
 
     // Note: Cache will be revalidated on next request
@@ -117,7 +99,7 @@ export async function POST(request: NextRequest) {
           },
         },
       });
-      console.log("✅ Event created for property");
+      // Event created successfully
     } catch (eventError) {
       console.error("⚠️ Failed to create event:", eventError);
       // Don't fail the request if event creation fails
@@ -152,7 +134,7 @@ export async function POST(request: NextRequest) {
         </div>
       `;
 
-      console.log("🚀 Sending property creation email...");
+      // Sending property creation email
       
       const emailResult = await resend.emails.send({
         from: process.env.ADMIN_EMAIL || "noreply@roshnreit.com",
@@ -164,7 +146,7 @@ export async function POST(request: NextRequest) {
       if (emailResult.error) {
         console.error("❌ Email failed:", emailResult.error);
       } else {
-        console.log("✅ Property creation email sent to:", adminEmail);
+        // Property creation email sent successfully
       }
     } catch (emailError) {
       console.error("❌ Email sending error:", emailError);
