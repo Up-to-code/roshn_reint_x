@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Building, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -45,10 +46,13 @@ export default function PropertyImageGallery({
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative aspect-video overflow-hidden rounded-lg bg-muted">
-        <img 
+        <Image 
           src={images[currentImageIndex]} 
           alt={`${title} - Image ${currentImageIndex + 1}`}
-          className="size-full object-cover transition-transform duration-300 hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 80vw"
+          priority={currentImageIndex === 0}
         />
         
         {/* Navigation Arrows */}
@@ -94,11 +98,15 @@ export default function PropertyImageGallery({
               }`}
               onClick={() => goToImage(index)}
             >
-              <img 
-                src={image} 
-                alt={`${title} - Thumbnail ${index + 1}`}
-                className="size-20 object-cover md:size-24"
-              />
+              <div className="relative size-20 md:size-24">
+                <Image 
+                  src={image} 
+                  alt={`${title} - Thumbnail ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 80px, 96px"
+                />
+              </div>
             </button>
           ))}
         </div>

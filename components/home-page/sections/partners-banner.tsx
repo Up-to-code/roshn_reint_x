@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useLocale } from "next-intl";
 
 interface PartnersBannerProps {
@@ -47,13 +48,15 @@ export function PartnersBanner({
           {logosToShow.map((logo, index) => (
             <div
               key={`${logo.alt}-${index}`}
-              className="flex items-center justify-center"
+              className="relative flex h-12 w-auto items-center justify-center md:h-16"
             >
-              <img
+              <Image
                 src={logo.src}
                 alt={logo.alt}
-                className="h-12 w-auto object-contain opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 md:h-16"
-                loading="lazy"
+                width={120}
+                height={64}
+                className="object-contain opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+                sizes="(max-width: 768px) 48px, 64px"
               />
             </div>
           ))}

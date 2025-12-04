@@ -1,11 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { unstable_cache } from 'next/cache'
+
+// Cache posts list for 60 seconds
+const getCachedPosts = unstable_cache(
+  async () => {
+    return await prisma.post.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        excerpt: true,
+        status: true,
+        headerImage: true,
+        thumbnail: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: {
+        status: 'PUBLISHED'
+      },
+      orderBy: { updatedAt: 'desc' }
+    })
+  },
+  ['posts-list'],
+  {
+    revalidate: 60, // Revalidate every 60 seconds
+    tags: ['posts']
+  }
+)
 
 export async function GET() {
   try {
-    const posts = await prisma.post.findMany({
-      orderBy: { updatedAt: 'desc' }
-    })
+    const posts = await getCachedPosts()
     
     // Convert Date objects to strings for JSON serialization
     const serializedPosts = posts.map(post => ({
@@ -13,8 +40,16 @@ export async function GET() {
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString()
     }))
-     console.log(serializedPosts)
-    return NextResponse.json(serializedPosts)
+    
+    const response = NextResponse.json(serializedPosts)
+    
+    // Set cache headers
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    )
+    
+    return response
   } catch (error) {
     console.error('Failed to fetch posts:', error)
     return NextResponse.json(

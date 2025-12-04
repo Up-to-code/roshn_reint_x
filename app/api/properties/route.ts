@@ -2,13 +2,47 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { resend } from '@/lib/email'
+import { unstable_cache } from 'next/cache'
+
+// Cache properties list for 60 seconds, revalidate in background
+const getCachedProperties = unstable_cache(
+  async () => {
+    return await prisma.property.findMany({
+      select: {
+        id: true,
+        titleEn: true,
+        titleAr: true,
+        descriptionEn: true,
+        descriptionAr: true,
+        city: true,
+        district: true,
+        images: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+  },
+  ['properties-list'],
+  {
+    revalidate: 60, // Revalidate every 60 seconds
+    tags: ['properties']
+  }
+)
 
 export async function GET() {
   try {
-    const properties = await prisma.property.findMany({
-      orderBy: { createdAt: 'desc' }
-    })
-    return NextResponse.json(properties)
+    const properties = await getCachedProperties()
+    
+    const response = NextResponse.json(properties)
+    
+    // Set cache headers
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    )
+    
+    return response
   } catch (error) {
     console.error('Failed to fetch properties:', error)
     return NextResponse.json(
@@ -62,6 +96,9 @@ export async function POST(request: NextRequest) {
       city: property.city,
       imageCount: property.images.length
     })
+
+    // Note: Cache will be revalidated on next request
+    // For immediate revalidation, call /api/revalidate?tag=properties
 
     // Create event for new property
     try {

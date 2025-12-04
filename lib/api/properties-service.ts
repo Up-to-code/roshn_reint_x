@@ -24,7 +24,7 @@ export class PropertiesService {
   static async getAll(): Promise<Property[]> {
     try {
       const response = await fetch('/api/properties', {
-        cache: 'no-store',
+        next: { revalidate: 60 }, // Revalidate every 60 seconds
         headers: {
           'Content-Type': 'application/json',
         }
@@ -39,7 +39,7 @@ export class PropertiesService {
   static async getById(id: string): Promise<Property> {
     try {
       const response = await fetch(`/api/properties/${id}`, {
-        cache: 'no-store',
+        next: { revalidate: 300 }, // Revalidate every 5 minutes
         headers: {
           'Content-Type': 'application/json',
         }
@@ -117,7 +117,7 @@ export class PropertiesService {
   static async search(query: string): Promise<Property[]> {
     try {
       const response = await fetch(`/api/properties/search?q=${encodeURIComponent(query)}`, {
-        cache: 'no-store',
+        next: { revalidate: 30 }, // Cache search results for 30 seconds
         headers: {
           'Content-Type': 'application/json',
         }

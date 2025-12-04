@@ -22,10 +22,12 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
   const [isPending, startTransition] = useTransition();
   const isRTL = locale === "ar";
 
-  // Fetch properties
+  // Fetch properties with caching
   const fetchProperties = useCallback(async () => {
     try {
-      const res = await fetch("/api/properties", );
+      const res = await fetch("/api/properties", {
+        next: { revalidate: 60 }, // Revalidate every 60 seconds
+      });
       if (!res.ok) throw new Error("Failed to load properties");
 
       const data: Property[] = await res.json();

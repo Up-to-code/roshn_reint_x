@@ -23,11 +23,26 @@ export const PropertyUtils = {
   }
 };
 
+// Server-side properties service with caching
+import { unstable_cache } from 'next/cache';
+
 // Server-side properties service
 export class PropertiesServerService {
   static async getAll(): Promise<Property[]> {
     try {
       return await prisma.property.findMany({
+        select: {
+          id: true,
+          titleEn: true,
+          titleAr: true,
+          descriptionEn: true,
+          descriptionAr: true,
+          city: true,
+          district: true,
+          images: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         orderBy: { createdAt: "desc" }
       });
     } catch (error) {
@@ -38,9 +53,33 @@ export class PropertiesServerService {
 
   static async getById(id: string): Promise<Property | null> {
     try {
-      return await prisma.property.findUnique({
-        where: { id }
-      });
+      // Cache individual property for 5 minutes
+      const getCachedProperty = unstable_cache(
+        async () => {
+          return await prisma.property.findUnique({
+            where: { id },
+            select: {
+              id: true,
+              titleEn: true,
+              titleAr: true,
+              descriptionEn: true,
+              descriptionAr: true,
+              city: true,
+              district: true,
+              images: true,
+              createdAt: true,
+              updatedAt: true,
+            }
+          });
+        },
+        [`property-${id}`],
+        {
+          revalidate: 300, // 5 minutes
+          tags: ['properties', `property-${id}`]
+        }
+      );
+      
+      return await getCachedProperty();
     } catch (error) {
       console.error(`Failed to fetch property ${id}:`, error);
       return null;
@@ -87,6 +126,18 @@ export class PropertiesServerService {
   static async getFeatured(limit: number = 6): Promise<Property[]> {
     try {
       return await prisma.property.findMany({
+        select: {
+          id: true,
+          titleEn: true,
+          titleAr: true,
+          descriptionEn: true,
+          descriptionAr: true,
+          city: true,
+          district: true,
+          images: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         orderBy: { createdAt: "desc" },
         take: limit
       });
@@ -99,6 +150,18 @@ export class PropertiesServerService {
   static async getRecent(limit: number = 6): Promise<Property[]> {
     try {
       return await prisma.property.findMany({
+        select: {
+          id: true,
+          titleEn: true,
+          titleAr: true,
+          descriptionEn: true,
+          descriptionAr: true,
+          city: true,
+          district: true,
+          images: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         orderBy: { createdAt: "desc" },
         take: limit
       });

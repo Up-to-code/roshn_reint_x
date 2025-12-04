@@ -4,13 +4,14 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Cairo } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@uploadthing/react/styles.css";
 
 import "@/styles/globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { ThemeProvider } from "next-themes";
 import ModalProvider from "@/components/modals/providers";
-import { Analytics } from "@/components/analytics";
 import { Toaster } from "sonner";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
  
@@ -54,6 +55,7 @@ export default async function RootLayout({
             >
                <ModalProvider>{children}</ModalProvider>
                <Analytics />
+               <SpeedInsights />
               <Toaster richColors closeButton />
               <TailwindIndicator />
             </ThemeProvider>

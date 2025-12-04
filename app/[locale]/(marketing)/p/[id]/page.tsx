@@ -8,6 +8,30 @@ import { PropertiesServerService } from "@/lib/api/properties-server";
 import { PropertyUtils } from "@/lib/api/properties-service";
 import { Property } from "@prisma/client";
 import InterestForm from "./InterestForm";
+import { prisma } from "@/lib/db";
+
+// Generate static params for ISR
+export async function generateStaticParams() {
+  try {
+    const properties = await prisma.property.findMany({
+      select: { id: true },
+      take: 100, // Limit to first 100 for build time
+    });
+
+    return properties.flatMap((property) =>
+      ['en', 'ar'].map((locale) => ({
+        id: property.id,
+        locale,
+      }))
+    );
+  } catch (error) {
+    console.error('Failed to generate static params:', error);
+    return [];
+  }
+}
+
+// Revalidate every 5 minutes
+export const revalidate = 300;
 
 // ✅ Metadata
 export async function generateMetadata({
@@ -18,6 +42,13 @@ export async function generateMetadata({
   try {
     const { id, locale } = params;
     const property = await PropertiesServerService.getById(id);
+    if (!property) {
+      return {
+        title: "Property Not Found",
+        description: "The requested property could not be found.",
+      };
+    }
+    
     const title = PropertyUtils.getLocalizedTitle(property, locale);
     const description = PropertyUtils.getLocalizedDescription(property, locale);
 

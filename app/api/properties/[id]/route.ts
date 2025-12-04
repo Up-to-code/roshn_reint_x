@@ -1,15 +1,40 @@
 // app/api/properties/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { unstable_cache } from 'next/cache'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const property = await prisma.property.findUnique({
-      where: { id: params.id }
-    })
+    // Cache individual property for 5 minutes
+    const getCachedProperty = unstable_cache(
+      async () => {
+        return await prisma.property.findUnique({
+          where: { id: params.id },
+          select: {
+            id: true,
+            titleEn: true,
+            titleAr: true,
+            descriptionEn: true,
+            descriptionAr: true,
+            city: true,
+            district: true,
+            images: true,
+            createdAt: true,
+            updatedAt: true,
+          }
+        })
+      },
+      [`property-${params.id}`],
+      {
+        revalidate: 300, // 5 minutes
+        tags: ['properties', `property-${params.id}`]
+      }
+    )
+    
+    const property = await getCachedProperty()
     
     if (!property) {
       return NextResponse.json(
@@ -18,7 +43,15 @@ export async function GET(
       )
     }
     
-    return NextResponse.json(property)
+    const response = NextResponse.json(property)
+    
+    // Set cache headers
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=300, stale-while-revalidate=600'
+    )
+    
+    return response
   } catch (error) {
     console.error('Failed to fetch property:', error)
     return NextResponse.json(

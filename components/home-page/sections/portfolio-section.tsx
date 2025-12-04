@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 // Define types locally since the import is causing issues
 interface Project {
@@ -64,11 +65,13 @@ function PortfolioCard({ project, priority = false }: PortfolioCardProps) {
     <article className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
       {/* Image Container */}
       <div className="relative h-72 overflow-hidden md:h-80">
-        <img
+        <Image
           src={project.image}
           alt={project.title}
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading={priority ? "eager" : "lazy"}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={priority}
         />
         {/* Overlay Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
