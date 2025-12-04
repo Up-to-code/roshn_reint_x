@@ -622,5 +622,39 @@
       "images": "images",
       "videos": "videos"
     }
+  },
+  "interests": {
+    "title": "Property Interests",
+    "subtitle": "Manage property inquiries and messages",
+    "searchPlaceholder": "Search messages...",
+    "filters": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "table": {
+      "status": "Status",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "property": "Property",
+      "message": "Message",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "actions": {
+      "markRead": "Mark as Read",
+      "markUnread": "Mark as Unread",
+      "delete": "Delete",
+      "viewProperty": "View Property"
+    },
+    "empty": {
+      "title": "No messages found",
+      "description": "No property interests match your search criteria"
+    },
+    "badges": {
+      "read": "Read",
+      "unread": "Unread"
+    }
   }
 }

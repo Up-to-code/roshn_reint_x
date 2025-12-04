@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo, useCallback, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Building } from "lucide-react";
+import { Building, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Property {
   id: string;
@@ -20,16 +21,20 @@ interface HomePropertiesGridProps {
   locale: string;
 }
 
+const INITIAL_DISPLAY_COUNT = 6;
+const LOAD_MORE_COUNT = 6;
+
 export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isPending, startTransition] = useTransition();
+  const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
   const isRTL = locale === "ar";
 
   // Fetch properties with caching
   const fetchProperties = useCallback(async () => {
     try {
       const res = await fetch("/api/properties", {
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
+        next: { revalidate: 60 },
       });
       if (!res.ok) throw new Error("Failed to load properties");
 
@@ -60,11 +65,17 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
     });
   }, [fetchProperties]);
 
-  // Limit visible properties to 6
+  // Get visible properties based on display count
   const visibleProperties = useMemo(
-    () => properties.slice(0, 6),
-    [properties]
+    () => properties.slice(0, displayCount),
+    [properties, displayCount]
   );
+
+  const hasMore = properties.length > displayCount;
+
+  const handleShowMore = () => {
+    setDisplayCount(prev => Math.min(prev + LOAD_MORE_COUNT, properties.length));
+  };
 
   // Skeleton Card Component
   const SkeletonCard = () => (
@@ -100,7 +111,9 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
         {/* Grid */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            ? Array.from({ length: INITIAL_DISPLAY_COUNT }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))
             : visibleProperties.map((property) => (
                 <Link
                   href={`/${locale}/p/${property.id}`}
@@ -135,6 +148,40 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
                 </Link>
               ))}
         </div>
+
+        {/* Show More Button */}
+        {!isLoading && hasMore && (
+          <div className="mt-12 flex justify-center">
+            <Button
+              onClick={handleShowMore}
+              size="lg"
+              variant="outline"
+              className="group"
+            >
+              {locale === "ar" ? "عرض المزيد" : "Show More"}
+              <ChevronRight
+                className={`ml-2 size-4 transition-transform group-hover:translate-x-1 ${
+                  isRTL ? "rotate-180 mr-2 ml-0" : ""
+                }`}
+              />
+            </Button>
+          </div>
+        )}
+
+        {/* View All Link */}
+        {!isLoading && properties.length > 0 && (
+          <div className="mt-8 text-center">
+            <Link
+              href={`/${locale}/p`}
+              className="inline-flex items-center text-primary hover:underline"
+            >
+              {locale === "ar" ? "عرض جميع العقارات" : "View All Properties"}
+              <ChevronRight
+                className={`ml-1 size-4 ${isRTL ? "rotate-180 mr-1 ml-0" : ""}`}
+              />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

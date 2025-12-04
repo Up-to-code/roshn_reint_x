@@ -34,9 +34,9 @@ export const sidebarLinks: SidebarNavItem[] = [
      items: [
        { href: "/dashboard/home", icon: "home", title: "sidebar.homepage" },
        { href: "/dashboard/about", icon: "blog", title: "sidebar.about" },
-       { href: "/dashboard/forms", icon: "blog", title: "sidebar.forms" },
-       { href: "/dashboard/interests", icon: "blog", title: "sidebar.interests" },
-       { href: "/dashboard/services", icon: "blog", title: "sidebar.services" },
+       { href: "/dashboard/forms", icon: "post", title: "sidebar.forms" },
+       { href: "/dashboard/interests", icon: "messages", title: "sidebar.interests" },
+       { href: "/dashboard/services", icon: "briefcase", title: "sidebar.services" },
      ],
    },
   {

@@ -226,7 +226,7 @@ export default async function PropertyDetailPage({
 
         {/* Contact / Interest Form */}
         <div className="border-t pt-6">
-          <InterestForm propertyTitle={title} />
+          <InterestForm propertyTitle={title} propertyId={property.id} />
         </div>
       </div>
     </div>

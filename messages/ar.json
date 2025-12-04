@@ -631,5 +631,39 @@
       "images": "صور",
       "videos": "فيديوهات"
     }
+  },
+  "interests": {
+    "title": "اهتمامات العقارات",
+    "subtitle": "إدارة استفسارات ورسائل العقارات",
+    "searchPlaceholder": "بحث في الرسائل...",
+    "filters": {
+      "all": "الكل",
+      "unread": "غير مقروء",
+      "read": "مقروء"
+    },
+    "table": {
+      "status": "الحالة",
+      "name": "الاسم",
+      "email": "البريد",
+      "phone": "الهاتف",
+      "property": "العقار",
+      "message": "الرسالة",
+      "date": "التاريخ",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "markRead": "تمت القراءة",
+      "markUnread": "غير مقروء",
+      "delete": "حذف",
+      "viewProperty": "عرض العقار"
+    },
+    "empty": {
+      "title": "لم يتم العثور على رسائل",
+      "description": "لا توجد اهتمامات عقارية تطابق معايير البحث"
+    },
+    "badges": {
+      "read": "مقروء",
+      "unread": "غير مقروء"
+    }
   }
 }
