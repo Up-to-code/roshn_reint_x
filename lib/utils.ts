@@ -79,7 +79,20 @@ export function formatDate(createdAt: Date, input: string | number): string {
 }
 
 export function absoluteUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+  if (!baseUrl) {
+    return path;
+  }
+  
+  // Ensure baseUrl has protocol
+  const normalizedUrl = baseUrl.startsWith("http://") || baseUrl.startsWith("https://")
+    ? baseUrl
+    : `https://${baseUrl}`;
+  
+  // Ensure path starts with /
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  
+  return `${normalizedUrl}${normalizedPath}`;
 }
 
 // Utils from precedent.dev

@@ -1,6 +1,20 @@
 import { SidebarNavItem, SiteConfig } from "types";
- 
-const site_url = process.env.NEXT_PUBLIC_APP_URL as string;
+
+// Normalize site URL to ensure it has protocol
+function normalizeSiteURL(url: string | undefined): string {
+  if (!url) {
+    return "http://localhost:3000";
+  }
+  
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    return `https://${url}`;
+  }
+  
+  return url;
+}
+
+const site_url = normalizeSiteURL(process.env.NEXT_PUBLIC_APP_URL);
 
 export const siteConfig: SiteConfig = {
   name: "Next Starter",

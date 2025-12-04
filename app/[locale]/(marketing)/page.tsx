@@ -15,7 +15,12 @@ async function getHomePageData(locale: string) {
     const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || '';
     const proto = hdrs.get('x-forwarded-proto') || 'https';
     const envBase = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || '';
-    const baseUrl = envBase || (host ? `${proto}://${host}` : '');
+    
+    // Normalize base URL - ensure it has protocol
+    let baseUrl = envBase || (host ? `${proto}://${host}` : '');
+    if (baseUrl && !baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+      baseUrl = `${proto}://${baseUrl}`;
+    }
     const response = await fetch(`${baseUrl}/api/home-page?locale=${locale}`, {
       cache: 'no-store', // Ensure fresh data on each request
       headers: {

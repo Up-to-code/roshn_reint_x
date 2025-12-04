@@ -6,6 +6,26 @@ if (!process.env.AUTH_SECRET) {
   throw new Error("AUTH_SECRET environment variable is required");
 }
 
+// Helper function to normalize base URL
+function normalizeBaseURL(url: string | undefined): string {
+  if (!url) {
+    return "http://localhost:3000";
+  }
+  
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    // For production, default to https
+    const protocol = process.env.NODE_ENV === "production" ? "https://" : "http://";
+    return `${protocol}${url}`;
+  }
+  
+  return url;
+}
+
+const baseURL = normalizeBaseURL(
+  process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL
+);
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -28,9 +48,9 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
+  baseURL,
   secret: process.env.AUTH_SECRET,
-  trustedOrigins: process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : undefined,
+  trustedOrigins: baseURL !== "http://localhost:3000" ? [baseURL] : undefined,
 });
 
 export type Session = typeof auth.$Infer.Session.session;
