@@ -82,8 +82,6 @@ export async function POST(request: NextRequest) {
     const location = await prisma.mapLocation.create({
       data: locationData
     });
-      longitude: location.longitude,
-    });
     
     return NextResponse.json(location, { status: 201 });
   } catch (error) {
@@ -94,9 +92,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-
-
-
-
 
