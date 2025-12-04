@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signUp } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Eye, EyeOff } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { LoginSchema, RegisterSchema } from "@/schemas";
@@ -37,6 +38,7 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
   
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [mounted, setMounted] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const router = useRouter();
   
   // Use prop locale if provided, otherwise detect from URL on client
@@ -165,14 +167,36 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
             <Label htmlFor="password">
               Password
             </Label>
-            <Input
-              id="password"
-              placeholder="••••••••"
-              type="password"
-              autoComplete={isRegister ? "new-password" : "current-password"}
-              disabled={isLoading}
-              {...register("password")}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                placeholder="••••••••"
+                type={showPassword ? "text" : "password"}
+                autoComplete={isRegister ? "new-password" : "current-password"}
+                disabled={isLoading}
+                className={cn(
+                  locale === "ar" ? "pl-10" : "pr-10"
+                )}
+                {...register("password")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={cn(
+                  "absolute top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none transition-colors",
+                  locale === "ar" ? "left-3" : "right-3"
+                )}
+                tabIndex={-1}
+                disabled={isLoading}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeOff className="size-4" />
+                ) : (
+                  <Eye className="size-4" />
+                )}
+              </button>
+            </div>
             {errors?.password && (
               <p className="px-1 text-xs text-red-600">
                 {errors.password.message}
