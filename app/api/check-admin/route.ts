@@ -2,6 +2,9 @@
 import { getCurrentUser } from '@/lib/session';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Mark as dynamic since it uses headers() in getCurrentUser
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // Properly await the user

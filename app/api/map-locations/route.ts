@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
+// Mark as dynamic since it uses request.url
+export const dynamic = 'force-dynamic';
+
 // GET - Fetch all map locations
 export async function GET(request: NextRequest) {
   try {

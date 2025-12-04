@@ -2,6 +2,9 @@
 import { revalidateTag, revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Mark as dynamic since it uses request.url
+export const dynamic = 'force-dynamic';
+
 /**
  * API route to revalidate cache
  * Usage: POST /api/revalidate?tag=properties&path=/p

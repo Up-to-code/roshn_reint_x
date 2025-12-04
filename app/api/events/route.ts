@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { z } from 'zod';
 
+// Mark as dynamic since it uses request.url
+export const dynamic = 'force-dynamic';
+
 const eventSchema = z.object({
   type: z.enum(['contact', 'property_interest', 'property_created', 'property_updated', 'user_registered', 'other']),
   title: z.string(),

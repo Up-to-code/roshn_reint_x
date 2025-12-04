@@ -24,7 +24,7 @@ const nextConfig = {
     
     // Experimental features for better performance
     experimental: {
-        optimizeCss: true,
+        // optimizeCss requires critters package - removed to fix build
         optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
     },
     
