@@ -79,12 +79,14 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Refresh router to ensure session is recognized, then redirect
+        // Wait a bit longer to ensure cookie is set and propagated
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Refresh router to ensure session is recognized
         router.refresh();
-        // Use hard redirect after a brief delay to ensure cookie is set
-        setTimeout(() => {
-          window.location.href = `/${locale}/dashboard`;
-        }, 500);
+        
+        // Use hard redirect to ensure cookie is sent with request
+        window.location.href = `/${locale}/dashboard`;
       } else {
         const { error } = await signIn.email({
           email: (data as LoginFormData).email,
@@ -103,12 +105,14 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
           description: "Redirecting to dashboard...",
         });
 
-        // Refresh router to ensure session is recognized, then redirect
+        // Wait a bit longer to ensure cookie is set and propagated
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Refresh router to ensure session is recognized
         router.refresh();
-        // Use hard redirect after a brief delay to ensure cookie is set
-        setTimeout(() => {
-          window.location.href = `/${locale}/dashboard`;
-        }, 500);
+        
+        // Use hard redirect to ensure cookie is sent with request
+        window.location.href = `/${locale}/dashboard`;
       }
     } catch (error) {
       setIsLoading(false);

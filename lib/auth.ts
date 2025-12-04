@@ -51,6 +51,14 @@ export const auth = betterAuth({
   baseURL,
   secret: process.env.AUTH_SECRET,
   trustedOrigins: baseURL !== "http://localhost:3000" ? [baseURL] : undefined,
+  // Cookie configuration for production
+  advanced: {
+    cookiePrefix: "better-auth",
+    generateId: undefined,
+    crossSubDomainCookies: {
+      enabled: false,
+    },
+  },
 });
 
 export type Session = typeof auth.$Infer.Session.session;
