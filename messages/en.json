@@ -4,13 +4,15 @@
     "contact": "Contact Me"
   },
   "nav": {
+    "home": "Home",
     "projects": "Projects",
     "about": "About Us",
     "contact": "Contact Us",
     "signin": "Sign In",
     "dashboard": "Dashboard",
     "blog": "Blog",
-    "services": "Services"
+    "services": "Services",
+    "goToDashboard": "Go to Dashboard"
 
   },
   "sidebar": {
@@ -34,7 +36,8 @@
     "addProperty": "Add Property",
     "users": "Users",
     "services": "Services",
-    "interests" : "Interests"
+    "interests" : "Interests",
+    "leads": "Leads"
   },
   "SaveModal": {
     "title": {
@@ -655,6 +658,19 @@
     "badges": {
       "read": "Read",
       "unread": "Unread"
+    }
+  },
+  "landing": {
+    "formTitle": "Register Now",
+    "formSubtitle": "Successful investment with 20K cashback",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone Number",
+    "submit": "Submit",
+    "placeholders": {
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "phone": "05xxxxxxxx"
     }
   }
 }

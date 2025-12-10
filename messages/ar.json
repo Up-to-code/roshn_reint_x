@@ -37,7 +37,8 @@
     "blog": "المدونة",
     "users": "المستخدمين",
     "services": "خدماتنا",
-    "interests" : "الهتمام"
+    "interests" : "الهتمام",
+    "leads": "العملاء المحتملين"
    },
   "SaveModal": {
     "title": {
@@ -664,6 +665,19 @@
     "badges": {
       "read": "مقروء",
       "unread": "غير مقروء"
+    }
+  },
+  "landing": {
+    "formTitle": "سجل الآن",
+    "formSubtitle": "استثمار ناجح وعليها 20 الف كاش باك",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "phone": "رقم الهاتف",
+    "submit": "تقديم",
+    "placeholders": {
+      "firstName": "فضل",
+      "lastName": "الصلاحي",
+      "phone": "05xxxxxxxx"
     }
   }
 }
