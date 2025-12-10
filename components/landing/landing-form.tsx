@@ -121,7 +121,7 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
                 <FormItem className="text-right rtl:text-right space-y-1">
                   <FormLabel className="text-gray-700 font-semibold">{t("firstName")}</FormLabel>
                    <FormControl>
-                    <Input placeholder={t("placeholders.firstName")} {...field} className="text-right h-11 bg-white" />
+                    <Input placeholder="" {...field} className="text-right h-11 bg-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,7 +134,7 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
                 <FormItem className="text-right rtl:text-right space-y-1">
                   <FormLabel className="text-gray-700 font-semibold">{t("lastName")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("placeholders.lastName")} {...field} className="text-right h-11 bg-white" />
+                    <Input placeholder="" {...field} className="text-right h-11 bg-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,7 +147,7 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
                 <FormItem className="text-right rtl:text-right space-y-1">
                   <FormLabel className="text-gray-700 font-semibold">{t("phone")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("placeholders.phone")} type="tel" {...field} className="text-right h-11 bg-white" />
+                    <Input placeholder="" type="tel" {...field} className="text-right h-11 bg-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
