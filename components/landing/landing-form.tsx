@@ -74,7 +74,7 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
   if (isSuccess) {
       return (
         <Card className="w-full max-w-md border-none shadow-xl bg-white/95 backdrop-blur-sm relative pt-12 sm:pt-14 overflow-visible mx-auto">
-            <div className="absolute -top-10 sm:-top-12 left-1/2 -translate-x-1/2 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDCFDc0Hgy8bYAKU3WZvrs21Ej4GIk76MmOXao" alt="Logo" className="w-full h-full object-cover" />
              </div>
@@ -90,7 +90,7 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
 
   return (
     <Card className="w-full max-w-md border-none shadow-xl bg-white/95 backdrop-blur-sm relative pt-12 sm:pt-14 overflow-visible mx-auto">
-       <div className="absolute -top-10 sm:-top-12 left-1/2 -translate-x-1/2 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
+       <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDCFDc0Hgy8bYAKU3WZvrs21Ej4GIk76MmOXao" alt="Logo" className="w-full h-full object-cover" />
        </div>
