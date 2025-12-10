@@ -26,7 +26,7 @@ export async function submitLead(data: SubmitLeadParams) {
       },
     });
 
-    revalidatePath("/admin/leads");
+    revalidatePath("/dashboard/leads");
     return { success: true };
   } catch (error) {
     console.error("Error submitting lead:", error);
