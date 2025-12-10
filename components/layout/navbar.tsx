@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
@@ -168,7 +168,9 @@ export function NavBar() {
 
   useEffect(() => setMounted(true), []);
 
-  const currentLocale = typeof window !== "undefined" ? window.location.pathname.split("/")[1] : "en";
+
+  
+  const currentLocale = useLocale();
   const isRTL = currentLocale === "ar";
 
   const navLinks = [
