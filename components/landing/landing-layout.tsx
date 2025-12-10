@@ -28,7 +28,7 @@ export function LandingLayout({
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-4 sm:p-6 md:p-8">
         {children}
       </div>
     </div>
