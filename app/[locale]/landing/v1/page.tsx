@@ -17,7 +17,7 @@ export default function LandingPageV1() {
   return (
     <LandingLayout backgroundImage="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDizS16sDmZ5GKUeA6NpfuWJqQIcYLDSdlynM9" overlayColor="bg-transparent">
       <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
-        <LandingForm source="روشن ريزدنس" title="روشن ريت" />
+        <LandingForm source="روشن ريزدنس" title="روشن ريت" subtitle="مشروع روشن ريزدنس (اتحاد ملاك ٥ سنوات مجانا)" />
       </div>
     </LandingLayout>
   );
