@@ -678,6 +678,9 @@
       "firstName": "فضل",
       "lastName": "الصلاحي",
       "phone": "05xxxxxxxx"
-    }
+    },
+    "successMessage": "تم التسجيل بنجاح!",
+    "thankYou": "شكراً لك!",
+    "successDescription": "تم استلام بياناتك وسنتواصل معك قريباً."
   }
 }

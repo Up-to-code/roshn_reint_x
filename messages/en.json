@@ -671,6 +671,9 @@
       "firstName": "Enter first name",
       "lastName": "Enter last name",
       "phone": "05xxxxxxxx"
-    }
+    },
+    "successMessage": "Successfully registered!",
+    "thankYou": "Thank You!",
+    "successDescription": "We have received your details and will contact you shortly."
   }
 }
