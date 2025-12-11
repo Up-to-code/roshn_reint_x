@@ -660,6 +660,16 @@
       "unread": "Unread"
     }
   },
+  "footer": {
+    "home": "Home",
+    "projects": "Projects",
+    "services": "Services",
+    "blog": "Blog",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "brandName": "Dorrah Real Estate",
+    "rightsReserved": "All rights reserved"
+  },
   "landing": {
     "formTitle": "Register Now",
     "formSubtitle": "Register Your Interest",

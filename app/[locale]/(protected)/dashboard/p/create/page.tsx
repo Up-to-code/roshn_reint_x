@@ -348,6 +348,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <Button 
+                type="button"
                 variant="ghost" 
                 size="icon" 
                 asChild 
@@ -401,7 +402,8 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                           ? 'bg-primary text-primary-foreground shadow-lg scale-110'
                           : 'bg-muted text-muted-foreground'
                       }`}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         if (step.number <= currentStep) {
                           setCurrentStep(step.number);
                           toast.info(currentLang === 'en' 
@@ -602,7 +604,8 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                       type="button" 
                       variant="outline" 
                       className="w-full"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const validation = validateForm();
                         toast.info(currentLang === 'en' ? "Form validation" : "التحقق من النموذج", {
                           description: validation.isValid 
@@ -699,7 +702,10 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                           <button
                             type="button"
-                            onClick={() => removeImage(idx)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeImage(idx);
+                            }}
                             className="absolute top-3 right-3 bg-destructive text-destructive-foreground rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:scale-110"
                           >
                             <X className="h-4 w-4" />
@@ -721,7 +727,8 @@ function CreatePropertyForm({ locale }: { locale: string }) {
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 prevStep();
                 toast.info(currentLang === 'en' 
                   ? `Moved to step ${currentStep - 1}`
@@ -741,12 +748,14 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                 variant="outline" 
                 asChild 
                 className="h-11 px-6 rounded-xl"
-                onClick={() => toast.info(currentLang === 'en' 
-                  ? "Cancelling property creation" 
-                  : "جاري إلغاء إنشاء العقار"
-                )}
               >
-                <Link href={`/${locale}/dashboard/p`}>
+                <Link 
+                  href={`/${locale}/dashboard/p`}
+                  onClick={() => toast.info(currentLang === 'en' 
+                    ? "Cancelling property creation" 
+                    : "جاري إلغاء إنشاء العقار"
+                  )}
+                >
                   {t.actions.cancel}
                 </Link>
               </Button>

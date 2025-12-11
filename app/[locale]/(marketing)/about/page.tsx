@@ -1,9 +1,79 @@
-"use client";
-
-import Image from "next/image";
 import React from "react";
+import { prisma } from "@/lib/db";
 
-export default function AboutPage(): JSX.Element {
+// Force dynamic rendering so updates appear immediately
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// Default fallback data
+const defaultAboutData = {
+  hero: {
+    title: "من نحن",
+    subtitle: "درة العقارية، مطور عقاري معتمد من وزارة الإسكان، تقدم مجموعة متكاملة من الخدمات العقارية. مقرها في مدينة جدة، بدأت أولى أعمالها في عام 2017. وصلت إلى أكثر من 51 مشروعًا سكنيًا، واستطاعت من خلال أسعارها التنافسية تغطية شريحة واسعة ومكَّنت آلاف العائلات من تملك منازلهم.",
+    image: "https://dorrah.sa/wp-content/uploads/2023/12/2023-12-24-20.34.01.jpg"
+  },
+  vision: {
+    title: "الرؤية",
+    description: "تقديم خدمات عقارية متميزة ومتكاملة من خلال الابتكار والاستدامة والتميز في كل جانب."
+  },
+  mission: {
+    title: "الرسالة",
+    description: "توفير فرص استثمارية وسكنية استثنائية في قطاع العقارات وتحقيق تجربة فريدة لعملائنا."
+  },
+  goals: [
+    "توفير خدمات متكاملة تمتد من فكرة شراء العقار إلى ما بعد البيع",
+    "تسهيل عمليات البحث عن العقار واختياره وشرائه وتملكه",
+    "تنويع خيارات المساحات والديكور وكذلك المنطقة السكنية"
+  ],
+  tagline: "توفير فرص استثمارية وسكنية استثنائية في قطاع العقارات، وتحقيق تجربة متفوقة لعملائنا."
+};
+
+interface AboutData {
+  hero: {
+    title: string;
+    subtitle: string;
+    image: string;
+  };
+  vision: {
+    title: string;
+    description: string;
+  };
+  mission: {
+    title: string;
+    description: string;
+  };
+  goals: string[];
+  tagline: string;
+}
+
+// Robust data fetching
+async function getAboutData(): Promise<AboutData> {
+  try {
+    const existing = await prisma.aboutPage.findUnique({ 
+      where: { id: 'default' } 
+    });
+
+    if (existing && existing.data) {
+      const fetchedData = existing.data as unknown as AboutData;
+      return {
+        hero: { ...defaultAboutData.hero, ...fetchedData.hero },
+        vision: { ...defaultAboutData.vision, ...fetchedData.vision },
+        mission: { ...defaultAboutData.mission, ...fetchedData.mission },
+        goals: fetchedData.goals || defaultAboutData.goals,
+        tagline: fetchedData.tagline || defaultAboutData.tagline
+      };
+    }
+  } catch (error) {
+    console.error('SERVER ERROR: Failed to fetch About Page data:', error);
+    // Return default data on error to prevent page crash
+  }
+  
+  return defaultAboutData;
+}
+
+export default async function AboutPage() {
+  const aboutData = await getAboutData();
+
   return (
     <main dir="rtl" lang="ar" className="my-40 w-full bg-[#FFFFFF] text-gray-700">
       {/* Hero Section */}
@@ -11,38 +81,31 @@ export default function AboutPage(): JSX.Element {
         <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
           {/* Image */}
           <div className="overflow-hidden rounded-xl shadow-lg">
-            <Image
-              src="https://dorrah.sa/wp-content/uploads/2023/12/2023-12-24-20.34.01.jpg"
+             {/* eslint-disable-next-line @next/next/no-img-element */}
+             <img
+              src={aboutData.hero.image}
               alt="مشروع درة العقارية"
-              width={800}
-              height={520}
               className="h-auto w-full rounded-xl object-cover"
-              priority
             />
           </div>
 
           {/* Text Content */}
           <div className="text-right">
             <h1 id="hero-title" className="mb-4 text-3xl font-bold text-[#D35400] md:text-4xl">
-              من نحن
+              {aboutData.hero.title}
             </h1>
             <p className="text-lg leading-8 text-gray-600">
-              درة العقارية، مطور عقاري معتمد من وزارة الإسكان، تقدم مجموعة
-              متكاملة من الخدمات العقارية. مقرها في مدينة جدة، بدأت أولى أعمالها
-              في عام 2017. وصلت إلى أكثر من 51 مشروعًا سكنيًا، واستطاعت من خلال
-              أسعارها التنافسية تغطية شريحة واسعة ومكَّنت آلاف العائلات من تملك
-              منازلهم.
+              {aboutData.hero.subtitle}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Mission Statement */}
+      {/* Tagline */}
       <section className="w-full px-6 md:px-20" aria-label="بيان المهمة">
         <div className="mx-auto max-w-6xl text-center">
           <p className="text-lg text-gray-600 md:text-xl">
-            توفير فرص استثمارية وسكنية استثنائية في قطاع العقارات، وتحقيق تجربة
-            متفوقة لعملائنا.
+            {aboutData.tagline}
           </p>
         </div>
       </section>
@@ -73,10 +136,9 @@ export default function AboutPage(): JSX.Element {
                 </svg>
               </div>
               <div>
-                <h3 className="mb-2 text-xl font-semibold text-[#D35400]">الرؤية</h3>
+                <h3 className="mb-2 text-xl font-semibold text-[#D35400]">{aboutData.vision.title}</h3>
                 <p className="leading-7 text-gray-600">
-                  تقديم خدمات عقارية متميزة ومتكاملة من خلال الابتكار والاستدامة
-                  والتميز في كل جانب.
+                  {aboutData.vision.description}
                 </p>
               </div>
             </div>
@@ -104,10 +166,9 @@ export default function AboutPage(): JSX.Element {
                 </svg>
               </div>
               <div>
-                <h3 className="mb-2 text-xl font-semibold text-[#D35400]">الرسالة</h3>
+                <h3 className="mb-2 text-xl font-semibold text-[#D35400]">{aboutData.mission.title}</h3>
                 <p className="leading-7 text-gray-600">
-                  توفير فرص استثمارية وسكنية استثنائية في قطاع العقارات وتحقيق
-                  تجربة فريدة لعملائنا.
+                  {aboutData.mission.description}
                 </p>
               </div>
             </div>
@@ -131,7 +192,7 @@ export default function AboutPage(): JSX.Element {
                   stroke="#D35400" 
                   strokeWidth="1.4" 
                   strokeLinecap="round" 
-                  strokeLinejoin="round" 
+                  strokeLinejoin="round"
                 />
                 <circle 
                   cx="12" 
@@ -145,22 +206,9 @@ export default function AboutPage(): JSX.Element {
           </div>
 
           <div className="space-y-6">
-            {[
-              {
-                text: "توفير خدمات متكاملة تمتد من فكرة شراء العقار إلى ما بعد البيع",
-                id: 1
-              },
-              {
-                text: "تسهيل عمليات البحث عن العقار واختياره وشرائه وتملكه",
-                id: 2
-              },
-              {
-                text: "تنويع خيارات المساحات والديكور وكذلك المنطقة السكنية",
-                id: 3
-              },
-            ].map((goal) => (
+            {aboutData.goals.map((goal, index) => (
               <div 
-                key={goal.id}
+                key={index}
                 className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm transition-all hover:shadow-md"
               >
                 <div 
@@ -168,9 +216,9 @@ export default function AboutPage(): JSX.Element {
                   style={{ backgroundColor: "#D35400" }}
                   aria-hidden="true"
                 >
-                  {goal.id}
+                  {index + 1}
                 </div>
-                <p className="leading-7 text-gray-700">{goal.text}</p>
+                <p className="leading-7 text-gray-700">{goal}</p>
               </div>
             ))}
           </div>

@@ -216,7 +216,7 @@ export default function AboutPageEditor() {
         <div className=" top-0 z-50  p-4">
           <div className="container mx-auto flex justify-between">
             <h1 className="text-xl font-bold">معاينة صفحة من نحن</h1>
-            <Button onClick={() => setPreviewMode(false)} variant="outline">
+            <Button type="button" onClick={() => setPreviewMode(false)} variant="outline">
               العودة إلى المحرر
             </Button>
           </div>
@@ -322,11 +322,11 @@ export default function AboutPageEditor() {
             <p className="mt-1 text-gray-600">تعديل محتوى صفحة من نحن</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => setPreviewMode(true)} variant="outline">
+            <Button type="button" onClick={() => setPreviewMode(true)} variant="outline">
               <Eye className="ml-2 size-4" />
               معاينة
             </Button>
-            <Button onClick={saveAboutData} disabled={loading}>
+            <Button type="button" onClick={saveAboutData} disabled={loading}>
               <Save className="ml-2 size-4" />
               {loading ? "جاري الحفظ..." : "حفظ التغييرات"}
             </Button>
@@ -452,7 +452,7 @@ export default function AboutPageEditor() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>الأهداف</CardTitle>
-            <Button onClick={addGoal} size="sm">
+            <Button type="button" onClick={addGoal} size="sm">
               <Plus className="ml-2 size-4" />
               إضافة هدف
             </Button>
@@ -469,6 +469,7 @@ export default function AboutPageEditor() {
                   placeholder="أدخل الهدف"
                 />
                 <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => removeGoal(index)}

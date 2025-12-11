@@ -167,6 +167,7 @@ export function ContactUsSection({ content, locale }: ContactUsSectionProps) {
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       required
+                      minLength={3}
                       disabled={isLoading}
                       placeholder={
                         isRTL ? "أدخل رقم الجوال" : "Enter your phone number"
@@ -188,6 +189,7 @@ export function ContactUsSection({ content, locale }: ContactUsSectionProps) {
                       value={formData.message}
                       onChange={handleChange}
                       required
+                      minLength={2}
                       rows={4}
                       disabled={isLoading}
                       placeholder={

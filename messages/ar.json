@@ -667,6 +667,16 @@
       "unread": "غير مقروء"
     }
   },
+  "footer": {
+    "home": "الرئيسية",
+    "projects": "المشاريع",
+    "services": "الخدمات",
+    "blog": "المدونة",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "brandName": "درة العقارية",
+    "rightsReserved": "جميع الحقوق محفوظة"
+  },
   "landing": {
     "formTitle": "سجل الآن",
     "formSubtitle": "سجل اهتمامك",

@@ -5,8 +5,8 @@ import { z } from 'zod';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  phoneNumber: z.string().min(5, 'Phone number must be at least 5 characters'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
+  phoneNumber: z.string().min(3, 'Phone number must be at least 3 characters'),
+  message: z.string().min(2, 'Message must be at least 2 characters'),
   email: z.string().email().optional().or(z.literal('')),
   propertyId: z.string().optional(),
   propertyTitle: z.string().optional(),
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
     
     const validation = contactSchema.safeParse(body);
     if (!validation.success) {
+      console.log("❌ Contact API Validation Error:", JSON.stringify(validation.error.errors, null, 2));
       return NextResponse.json(
         {
           message: 'Invalid input',

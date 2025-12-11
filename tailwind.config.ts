@@ -140,6 +140,10 @@ const config = {
   				}
   			},
   		 
+  			'infinite-scroll': {
+				from: { transform: 'translateX(0)' },
+				to: { transform: 'translateX(-50%)' }
+			},
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -148,6 +152,7 @@ const config = {
   			'fade-down': 'fade-down 0.5s',
   			'fade-in': 'fade-in 0.4s',
   			'fade-out': 'fade-out 0.4s',
+            'infinite-scroll': 'infinite-scroll 25s linear infinite',
   		 
   		}
   	}

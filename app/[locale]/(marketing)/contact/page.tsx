@@ -274,13 +274,13 @@ export default function ContactPage({ params }: ContactPageProps) {
                         value={formData.phoneNumber}
                         onChange={handleChange}
                         required
-                        minLength={5}
+                        minLength={3}
                         placeholder={locale === "ar" ? "أدخل رقم هاتفك" : "Enter your phone number"}
                         className={isRTL ? "text-right" : ""}
                         dir={isRTL ? "rtl" : "ltr"}
                       />
                       <p className="text-xs text-muted-foreground">
-                        {locale === "ar" ? "يجب أن يكون رقم الهاتف على الأقل 5 أرقام" : "Phone number must be at least 5 characters"}
+                        {locale === "ar" ? "يجب أن يكون رقم الهاتف على الأقل 3 أرقام" : "Phone number must be at least 3 characters"}
                       </p>
                     </div>
                   </div>
@@ -295,14 +295,14 @@ export default function ContactPage({ params }: ContactPageProps) {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      minLength={10}
+                      minLength={2}
                       rows={6}
                       placeholder={locale === "ar" ? "اكتب رسالتك هنا..." : "Write your message here..."}
                       className={isRTL ? "text-right" : ""}
                       dir={isRTL ? "rtl" : "ltr"}
                     />
                     <p className="text-xs text-muted-foreground">
-                      {locale === "ar" ? "يجب أن تكون الرسالة على الأقل 10 أحرف" : "Message must be at least 10 characters"}
+                      {locale === "ar" ? "يجب أن تكون الرسالة على الأقل 2 أحرف" : "Message must be at least 2 characters"}
                     </p>
                   </div>
 

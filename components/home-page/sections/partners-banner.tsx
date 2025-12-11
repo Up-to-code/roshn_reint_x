@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useLocale } from "next-intl";
+import { cn } from "@/lib/utils";
 
 interface PartnersBannerProps {
   logos?: { src: string; alt: string }[];
@@ -43,23 +44,32 @@ export function PartnersBanner({
           </h2>
         </div>
         
-        {/* Logos container - Simple grid layout */}
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-          {logosToShow.map((logo, index) => (
-            <div
-              key={`${logo.alt}-${index}`}
-              className="relative flex h-12 w-auto items-center justify-center md:h-16"
-            >
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={120}
-                height={64}
-                className="object-contain opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-                sizes="(max-width: 768px) 48px, 64px"
-              />
-            </div>
-          ))}
+        {/* Infinite Scroll Container */}
+        <div className="relative m-auto w-full overflow-hidden">
+          <div 
+            className="flex w-max animate-infinite-scroll hover:[animation-play-state:paused]"
+            style={{ animationDuration: `${speed}s` }}
+          >
+            {/* Render 4 sets of logos to ensure seamless loop on large screens */}
+            {[...Array(4)].map((_, setIndex) => (
+              <div key={`set-${setIndex}`} className="flex">
+                {logosToShow.map((logo, index) => (
+                  <div
+                    key={`${setIndex}-${logo.alt}-${index}`}
+                    className="mx-12 flex h-24 w-40 items-center justify-center"
+                  >
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={160}
+                      height={80}
+                      className="h-auto w-full object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

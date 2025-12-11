@@ -104,7 +104,8 @@ export default async function Home({ params }: { params: { locale: string } }) {
       <HeroSection content={content.hero} />
       
       {/* Our Partners Section */}
-      {content.partners && content.partners.length > 0 && (
+
+      <ApartmentsPage locale={locale} />      {content.partners && content.partners.length > 0 && (
         <>
           <div className="h-[10px]" />
           <PartnersBanner 
@@ -116,7 +117,6 @@ export default async function Home({ params }: { params: { locale: string } }) {
         </>
       )}
       
-      <ApartmentsPage locale={locale} />
       <WhyUsSection content={content.whyUs} />
       <AboutUsSection content={content.aboutUs} />
       <ContactUsSection content={content.contactUs} locale={locale} />

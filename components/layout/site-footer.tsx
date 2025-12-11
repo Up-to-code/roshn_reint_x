@@ -1,10 +1,11 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link, type Pathnames } from "@/i18n/routing";
 import { Phone } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const PHONE_NUMBER = "1234567890";
 const WHATSAPP_NUMBER = "1234567890";
@@ -12,16 +13,21 @@ const INSTAGRAM_URL = "https://instagram.com";
 const TIKTOK_URL = "https://tiktok.com";
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
-  const locale = useLocale();
-  const isRTL = locale === "ar";
+  const t = useTranslations("footer");
+  const [year, setYear] = useState<number | null>(null);
+
+  // Only set the year on client side to avoid hydration mismatch
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const footerLinks: Array<{ label: string; href: Pathnames }> = [
-    { label: isRTL ? "الرئيسية" : "Home", href: "/" },
-    { label: isRTL ? "المشاريع" : "Projects", href: "/p" },
-    { label: isRTL ? "خدماتنا" : "Services", href: "/services" },
-    { label: isRTL ? "المدونة" : "Blog", href: "/blog" },
-    { label: isRTL ? "من نحن" : "About", href: "/about" },
-    { label: isRTL ? "اتصل بنا" : "Contact", href: "/contact" },
+    { label: t("home"), href: "/" },
+    { label: t("projects"), href: "/p" },
+    { label: t("services"), href: "/services" },
+    { label: t("blog"), href: "/blog" },
+    { label: t("about"), href: "/about" },
+    { label: t("contact"), href: "/contact" },
   ];
 
   return (
@@ -41,7 +47,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
                 />
               </div>
               <p className="text-sm text-gray-500">
-                © {new Date().getFullYear()} {isRTL ? "روشن" : "Roshn"}. {isRTL ? "جميع الحقوق محفوظة" : "All rights reserved"}.
+                © {year || "2024"} {t("brandName")}. {t("rightsReserved")}.
               </p>
             </div>
 
