@@ -670,8 +670,10 @@
     "placeholders": {
       "firstName": "Enter first name",
       "lastName": "Enter last name",
-      "phone": "05xxxxxxxx"
+      "phone": "05xxxxxxxx",
+      "email": "example@domain.com"
     },
+    "email": "Email",
     "successMessage": "Successfully registered!",
     "thankYou": "Thank You!",
     "successDescription": "We have received your details and will contact you shortly."

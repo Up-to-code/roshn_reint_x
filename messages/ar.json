@@ -677,8 +677,10 @@
     "placeholders": {
       "firstName": "فضل",
       "lastName": "الصلاحي",
-      "phone": "05xxxxxxxx"
+      "phone": "05xxxxxxxx",
+      "email": "example@domain.com"
     },
+    "email": "البريد الإلكتروني",
     "successMessage": "تم التسجيل بنجاح!",
     "thankYou": "شكراً لك!",
     "successDescription": "تم استلام بياناتك وسنتواصل معك قريباً."

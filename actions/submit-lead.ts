@@ -10,13 +10,12 @@ interface SubmitLeadParams {
   firstName: string;
   lastName: string;
   phone: string;
-  email?: string;
   source: string;
 }
 
 export async function submitLead(data: SubmitLeadParams) {
   try {
-    const { firstName, lastName, phone, email, source } = data;
+    const { firstName, lastName, phone, source } = data;
 
     // We use the 'Interest' table as planned, mapping fields appropriately.
     // 'name' combines first and last name.
@@ -25,7 +24,6 @@ export async function submitLead(data: SubmitLeadParams) {
       data: {
         name: `${firstName} ${lastName}`,
         phone: phone,
-        email: email || null,
         propertyTitle: source,
         message: "Lead from landing page",
       },
@@ -56,7 +54,6 @@ export async function submitLead(data: SubmitLeadParams) {
 
 Name: ${firstName} ${lastName}
 Phone: ${phone}
-Email: ${email || 'N/A'}
 Source: ${source}
 User OS: ${osString}
 Message: Lead from landing page
