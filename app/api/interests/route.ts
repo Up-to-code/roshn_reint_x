@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, userAgent } from 'next/server';
 import { prisma } from '@/lib/db';
+import { mailtrap } from '@/lib/email';
 
 // Public API - No authentication required
 export const dynamic = 'force-dynamic';
@@ -113,6 +114,9 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // Send notification
+      await sendInterestNotification(interest, request);
+
       return NextResponse.json(interest, { status: 201 });
     } catch (error: any) {
       // If read field doesn't exist, create without it
@@ -141,6 +145,9 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        // Send notification
+        await sendInterestNotification(interest, request);
+
         return NextResponse.json(interest, { status: 201 });
       }
       // Re-throw other errors
@@ -163,3 +170,43 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+async function sendInterestNotification(interest: any, request: NextRequest) {
+  try {
+    const { os } = userAgent(request);
+    const osString = os?.name ? `${os.name} ${os.version || ''}` : 'Unknown OS';
+    
+    // Use a default sender if not configured in env
+    const sender = {
+      email: "mailtrap@demomailtrap.com", 
+      name: "Roshn Interest Notification",
+    };
+    
+    const recipients = [
+      {
+        email: "roshnreitsaudi@gmail.com",
+      },
+    ];
+
+    await mailtrap.send({
+      from: sender,
+      to: recipients,
+      subject: `New Interest: ${interest.propertyTitle || 'General Inquiry'}`,
+      text: `New interest received!
+
+Name: ${interest.name}
+Phone: ${interest.phone}
+Email: ${interest.email || 'N/A'}
+User OS: ${osString}
+Property: ${interest.propertyTitle || 'N/A'}
+Message: ${interest.message || 'N/A'}
+`,
+      category: "New Interest",
+    });
+    console.log(`Notification sent for interest ${interest.id}`);
+  } catch (error) {
+    console.error('Failed to send email notification:', error);
+    // Continue without failing the request
+  }
+}
+
