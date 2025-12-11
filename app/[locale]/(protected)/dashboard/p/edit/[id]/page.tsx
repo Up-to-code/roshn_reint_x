@@ -74,7 +74,7 @@ export default function EditPropertyPage() {
   const loadProperty = async () => {
     try {
       setLoadingProperty(true);
-      console.log('Loading property with ID:', propertyId);
+
       const property = await PropertiesService.getById(propertyId);
       
       if (!property) {
@@ -83,7 +83,7 @@ export default function EditPropertyPage() {
         return;
       }
       
-      console.log('Property loaded:', property);
+
       
       const editData: EditPropertyFormData = {
         titleEn: property.titleEn,
