@@ -2,11 +2,11 @@ import { Property } from "@prisma/client"
 
 // lib/properties-service.ts
 export interface CreatePropertyData {
-  titleEn: string
+  titleEn?: string
   titleAr: string
   descriptionEn?: string
   descriptionAr?: string
-  city: string
+  city?: string
   district?: string
   price: number
   images: string[]

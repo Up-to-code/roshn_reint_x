@@ -69,22 +69,27 @@ export default function PropertiesClient({ initialProperties, locale }: Properti
   };
 
   const getLocalizedTitle = (property: SerializedProperty) => {
-    return locale === 'ar' ? property.titleAr : property.titleEn;
+    if (locale === 'ar') return property.titleAr;
+    return property.titleEn || property.titleAr;
   };
 
   const getDisplayLocation = (property: SerializedProperty) => {
-    if (property.district) {
-      return `${property.city}, ${property.district}`;
-    }
-    return property.city;
+    const city = property.city || '';
+    const district = property.district || '';
+    
+    if (city && district) return `${city}, ${district}`;
+    if (city) return city;
+    if (district) return district;
+    return '';
   };
 
   // Filter properties based on search
   const filteredProperties = useMemo(() => {
     return properties.filter(p => {
-      const title = (locale === 'ar' ? p.titleAr : p.titleEn).toLowerCase();
+      const title = (locale === 'ar' ? p.titleAr : (p.titleEn || p.titleAr)).toLowerCase();
       const searchTerm = search.toLowerCase();
-      return title.includes(searchTerm) || p.city.toLowerCase().includes(searchTerm);
+      const city = (p.city || '').toLowerCase();
+      return title.includes(searchTerm) || city.includes(searchTerm);
     });
   }, [properties, search, locale]);
 

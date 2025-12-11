@@ -8,11 +8,11 @@ import { resend } from '@/lib/email'
 import { redirect } from 'next/navigation'
 
 export interface CreatePropertyData {
-  titleEn: string
+  titleEn?: string
   titleAr: string
   descriptionEn?: string
   descriptionAr?: string
-  city: string
+  city?: string
   district?: string
   price: number
   images: string[]
@@ -71,17 +71,17 @@ export async function getPropertyById(id: string): Promise<ActionResponse> {
 export async function createProperty(data: CreatePropertyData): Promise<ActionResponse> {
   try {
     // Basic validation
-    if (!data.titleEn || !data.titleAr || !data.city) {
-      return { success: false, error: 'Missing required fields' }
+    if (!data.titleAr) {
+      return { success: false, error: 'Arabic title is required' }
     }
 
     const property = await prisma.property.create({
       data: {
-        titleEn: data.titleEn,
+        titleEn: data.titleEn || null,
         titleAr: data.titleAr,
         descriptionEn: data.descriptionEn || null,
         descriptionAr: data.descriptionAr || null,
-        city: data.city,
+        city: data.city || null,
         district: data.district || null,
         price: data.price || 0,
         images: data.images || [],
@@ -90,10 +90,11 @@ export async function createProperty(data: CreatePropertyData): Promise<ActionRe
 
     // Log event
     const { EventsService } = await import('@/lib/api/events-service');
+    const displayTitle = property.titleEn || property.titleAr;
     await EventsService.create({
         type: 'property_created',
-        title: `New Property Created: ${property.titleEn}`,
-        description: `Property "${property.titleEn}" was created in ${property.city}`,
+        title: `New Property Created: ${displayTitle}`,
+        description: `Property "${displayTitle}" was created in ${property.city || 'unknown city'}`,
         metadata: {
           propertyId: property.id,
           titleEn: property.titleEn,
@@ -108,12 +109,13 @@ export async function createProperty(data: CreatePropertyData): Promise<ActionRe
     // ... (Email logic kept similar to previous)
     const adminEmail = "roshnreitsaudi@gmail.com";
         try {
-          const emailSubject = `🏡 New Property Added: ${property.titleEn}`;
+          const displayTitle = property.titleEn || property.titleAr;
+          const emailSubject = `🏡 New Property Added: ${displayTitle}`;
           const emailHtml = `
             <div style="font-family: Arial, sans-serif;">
               <h2>New Property Added</h2>
-              <p>Title: ${property.titleEn}</p>
-              <p>City: ${property.city}</p>
+              <p>Title: ${displayTitle}</p>
+              <p>City: ${property.city || 'N/A'}</p>
               <p>Price: ${property.price}</p>
             </div>
           `;
@@ -145,10 +147,11 @@ export async function updateProperty(id: string, data: UpdatePropertyData): Prom
     })
 
     const { EventsService } = await import('@/lib/api/events-service');
+    const displayTitle = property.titleEn || property.titleAr;
     await EventsService.create({
       type: 'property_updated',
-      title: `Property Updated: ${property.titleEn}`,
-      description: `Property "${property.titleEn}" was updated`,
+      title: `Property Updated: ${displayTitle}`,
+      description: `Property "${displayTitle}" was updated`,
       metadata: {
         propertyId: property.id,
         titleEn: property.titleEn,
@@ -181,10 +184,11 @@ export async function deleteProperty(id: string): Promise<ActionResponse> {
     })
 
     const { EventsService } = await import('@/lib/api/events-service');
+    const displayTitle = existing.titleEn || existing.titleAr;
     await EventsService.create({
       type: 'property_deleted',
-      title: `Property Deleted: ${existing.titleEn}`,
-      description: `Property "${existing.titleEn}" was deleted`,
+      title: `Property Deleted: ${displayTitle}`,
+      description: `Property "${displayTitle}" was deleted`,
       metadata: {
         propertyId: existing.id,
         titleEn: existing.titleEn,

@@ -113,11 +113,11 @@ model Post {
 
 model Property {
   id            String     @id @default(cuid())
-  titleEn       String
+  titleEn       String?
   titleAr       String
   descriptionEn String?
   descriptionAr String?
-  city          String
+  city          String?
   district      String?
   price         Float      @default(0)
   images        String[]

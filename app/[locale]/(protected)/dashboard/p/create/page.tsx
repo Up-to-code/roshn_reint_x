@@ -166,9 +166,9 @@ const defaultFormData: CreatePropertyFormData = {
 
 // Required fields configuration based on schema
 const requiredFields = {
-  titleEn: true,
+  titleEn: false,
   titleAr: true,
-  city: true,
+  city: false,
 };
 
 // Required field indicator component
@@ -244,7 +244,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
 
   const validateCurrentStep = (): boolean => {
     const stepValidations: Record<number, (keyof CreatePropertyFormData)[]> = {
-      1: ['titleEn', 'titleAr', 'city'],
+      1: ['titleAr'],
       2: [], // Images are optional
     };
 
@@ -472,14 +472,13 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                       </Label>
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                          <Label htmlFor="city">{t.labels.city} <RequiredIndicator /></Label>
+                          <Label htmlFor="city">{t.labels.city}</Label>
                           <Input
                             id="city"
                             value={formData.city}
                             onChange={(e) => updateFormData('city', e.target.value)}
                             placeholder={t.placeholders.city}
                             className={`h-11 ${fieldErrors.city ? 'border-destructive' : ''}`}
-                            required
                             dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
                           />
                           {fieldErrors.city && (
@@ -527,14 +526,13 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                       </TabsList>
                       <TabsContent value="english" className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="titleEn">{t.labels.titleEn} <RequiredIndicator /></Label>
+                          <Label htmlFor="titleEn">{t.labels.titleEn}</Label>
                           <Input
                             id="titleEn"
                             value={formData.titleEn}
                             onChange={(e) => updateFormData('titleEn', e.target.value)}
                             placeholder={t.placeholders.titleEn}
                             className={fieldErrors.titleEn ? 'border-destructive' : ''}
-                            required
                             dir="ltr"
                           />
                           {fieldErrors.titleEn && (

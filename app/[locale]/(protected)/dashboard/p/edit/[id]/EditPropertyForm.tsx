@@ -45,11 +45,11 @@ export default function EditPropertyForm({ property, locale }: EditPropertyFormP
   const [hasChanges, setHasChanges] = useState(false);
   
   const [formData, setFormData] = useState<EditPropertyFormData>({
-    titleEn: property.titleEn,
+    titleEn: property.titleEn || '',
     titleAr: property.titleAr,
     descriptionEn: property.descriptionEn || '',
     descriptionAr: property.descriptionAr || '',
-    city: property.city,
+    city: property.city || '',
     district: property.district || '',
     price: property.price || 0,
     images: property.images || [],
@@ -59,9 +59,9 @@ export default function EditPropertyForm({ property, locale }: EditPropertyFormP
 
   // Required fields configuration
   const requiredFields = {
-    titleEn: true,
+    titleEn: false,
     titleAr: true,
-    city: true,
+    city: false,
   };
 
   // Field errors state
@@ -130,7 +130,7 @@ export default function EditPropertyForm({ property, locale }: EditPropertyFormP
 
   const validateCurrentStep = (): boolean => {
     const stepValidations: Record<number, (keyof EditPropertyFormData)[]> = {
-      1: ['titleEn', 'titleAr', 'city'],
+      1: ['titleAr'],
       2: [], // Images are optional
     };
 
@@ -359,7 +359,7 @@ export default function EditPropertyForm({ property, locale }: EditPropertyFormP
                       <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="city">
-                            {isRTL ? 'المدينة' : 'City'} <RequiredIndicator />
+                            {isRTL ? 'المدينة' : 'City'}
                           </Label>
                           <Input
                             id="city"
@@ -417,7 +417,7 @@ export default function EditPropertyForm({ property, locale }: EditPropertyFormP
                         <div className="space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="titleEn">
-                              {isRTL ? 'عنوان العقار (الإنجليزية)' : 'Property Title (English)'} <RequiredIndicator />
+                              {isRTL ? 'عنوان العقار (الإنجليزية)' : 'Property Title (English)'}
                             </Label>
                             <Input
                               id="titleEn"

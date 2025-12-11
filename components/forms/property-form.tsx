@@ -122,12 +122,11 @@ export function PropertyForm({
           <div className="space-y-4">
             <h3 className="border-b border-border pb-2 text-lg font-semibold">English</h3>
             <div className="space-y-2">
-              <Label htmlFor="titleEn">{t('labels.title')} *</Label>
+              <Label htmlFor="titleEn">{t('labels.title')}</Label>
               <Input
                 id="titleEn"
                 value={formData.titleEn}
                 onChange={(e) => updateFormData('titleEn', e.target.value)}
-                required
               />
             </div>
             <div className="space-y-2">
@@ -170,12 +169,11 @@ export function PropertyForm({
               {t("labels.propertyLocation")}
             </h3>
             <div className="space-y-2">
-              <Label htmlFor="city">{t("labels.city")} *</Label>
+              <Label htmlFor="city">{t("labels.city")}</Label>
               <Input
                 id="city"
                 value={formData.city}
                 onChange={(e) => updateFormData("city", e.target.value)}
-                required
               />
             </div>
             {/* Optionally include district input if desired */}
