@@ -106,7 +106,7 @@ export class PropertiesService {
       
       if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Delete failed' }))
-        throw new Error(error.message || 'Delete failed')
+        throw new Error(error.error || error.message || 'Delete failed')
       }
     } catch (error) {
       console.error(`Failed to delete property ${id}:`, error)

@@ -42,8 +42,15 @@ export default function PropertiesDashboard() {
     
     try {
       await PropertiesService.delete(id);
-      setProperties(properties.filter(p => p.id !== id));
-    } catch (error) {
+      setProperties(prev => prev.filter(p => p.id !== id));
+      // Optional: Show success toast instead of silent update
+    } catch (error: any) {
+      // If error is 404 or "Property not found", we should still remove it from UI
+      if (error.message?.includes('not found') || error.message?.includes('404')) {
+        setProperties(prev => prev.filter(p => p.id !== id));
+        return;
+      }
+      
       console.error('Error deleting property:', error);
       alert(commonT('error'));
     }

@@ -108,9 +108,39 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // First check if property exists
+    const existingProperty = await prisma.property.findUnique({
+      where: { id: params.id },
+      select: { id: true, titleEn: true }
+    })
+    
+    if (!existingProperty) {
+      return NextResponse.json(
+        { error: 'Property not found' }, 
+        { status: 404 }
+      )
+    }
+    
     await prisma.property.delete({
       where: { id: params.id }
     })
+    
+    // Create event for property deletion
+    try {
+      await prisma.event.create({
+        data: {
+          type: 'property_deleted',
+          title: `Property Deleted: ${existingProperty.titleEn}`,
+          description: `Property "${existingProperty.titleEn}" was deleted`,
+          metadata: {
+            propertyId: existingProperty.id,
+            titleEn: existingProperty.titleEn,
+          },
+        },
+      });
+    } catch (eventError) {
+      console.error("⚠️ Failed to create delete event:", eventError);
+    }
     
     return NextResponse.json({ message: 'Property deleted successfully' })
   } catch (error) {

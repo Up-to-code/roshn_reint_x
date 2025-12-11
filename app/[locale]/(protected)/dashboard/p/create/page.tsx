@@ -39,6 +39,7 @@ const translations = {
     steps: {
       basicInfo: "Basic Information",
       media: "Photos & Media",
+      confirm: "Confirm & Submit",
       current: (current: number, total: number) => `Step ${current} of ${total}`
     },
     actions: {
@@ -94,6 +95,7 @@ const translations = {
     steps: {
       basicInfo: "المعلومات الأساسية",
       media: "الصور والوسائط",
+      confirm: "التأكيد والإرسال",
       current: (current: number, total: number) => `الخطوة ${current} من ${total}`
     },
     actions: {
@@ -182,7 +184,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
   const t = translations[currentLang];
 
   // Progress calculation
-  const progress = (currentStep / 2) * 100;
+  const progress = (currentStep / 3) * 100;
 
   const updateFormData = (field: keyof CreatePropertyFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -306,10 +308,11 @@ function CreatePropertyForm({ locale }: { locale: string }) {
     });
   };
 
-  // Steps configuration - simplified to 2 steps
+  // Steps configuration - 3 steps with confirmation
   const steps = [
     { number: 1, title: t.steps.basicInfo, icon: Building2, description: currentLang === 'en' ? 'Basic property information' : 'المعلومات الأساسية للعقار' },
-    { number: 2, title: t.steps.media, icon: ImageIcon, description: currentLang === 'en' ? 'Photos and visual content' : 'الصور والمحتوى المرئي' }
+    { number: 2, title: t.steps.media, icon: ImageIcon, description: currentLang === 'en' ? 'Photos and visual content' : 'الصور والمحتوى المرئي' },
+    { number: 3, title: t.steps.confirm, icon: CheckCircle2, description: currentLang === 'en' ? 'Review and confirm your listing' : 'مراجعة وتأكيد قائمتك' }
   ];
 
   const nextStep = () => {
@@ -642,7 +645,114 @@ function CreatePropertyForm({ locale }: { locale: string }) {
             </div>
           )}
 
-          {/* Step 2: Media */}
+          {/* Step 3: Confirmation */}
+          {currentStep === 3 && (
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  {t.steps.confirm}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                {/* Location Summary */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2 border-b pb-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    {t.labels.location}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 bg-muted/20 p-4 rounded-xl">
+                    <div>
+                      <span className="text-sm text-muted-foreground block mb-1">{t.labels.city}</span>
+                      <span className="font-medium">{formData.city}</span>
+                    </div>
+                    <div>
+                      <span className="text-sm text-muted-foreground block mb-1">{t.labels.district}</span>
+                      <span className="font-medium">{formData.district || '-'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content Summary */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2 border-b pb-2">
+                    <Languages className="h-4 w-4 text-muted-foreground" />
+                    {currentLang === 'en' ? 'Content Details' : 'تفاصيل المحتوى'}
+                  </h3>
+                  
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* English Content */}
+                    <div className="space-y-3 p-4 border rounded-xl bg-card">
+                      <div className="font-medium text-sm text-muted-foreground mb-2 flex items-center gap-2">
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">EN</span>
+                        English
+                      </div>
+                      <div>
+                        <span className="text-sm text-muted-foreground block mb-1">{t.labels.titleEn}</span>
+                        <span className="font-medium block">{formData.titleEn}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-muted-foreground block mb-1">{t.labels.descriptionEn}</span>
+                        <div 
+                          className="text-sm prose prose-sm max-w-none dark:prose-invert"
+                          dangerouslySetInnerHTML={{ __html: formData.descriptionEn || '-' }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Arabic Content */}
+                    <div className="space-y-3 p-4 border rounded-xl bg-card text-right" dir="rtl">
+                      <div className="font-medium text-sm text-muted-foreground mb-2 flex items-center gap-2 justify-end">
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">AR</span>
+                        العربية
+                      </div>
+                      <div>
+                        <span className="text-sm text-muted-foreground block mb-1">{t.labels.titleAr}</span>
+                        <span className="font-medium block">{formData.titleAr}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-muted-foreground block mb-1">{t.labels.descriptionAr}</span>
+                        <div 
+                          className="text-sm prose prose-sm max-w-none dark:prose-invert"
+                          dangerouslySetInnerHTML={{ __html: formData.descriptionAr || '-' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Images Summary */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2 border-b pb-2">
+                    <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                    {t.labels.images} ({formData.images.length})
+                  </h3>
+                  
+                  {formData.images.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {formData.images.map((url, idx) => (
+                        <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border">
+                          <img 
+                            src={url} 
+                            alt={`Preview ${idx}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 bg-muted/20 rounded-xl border border-dashed">
+                      <ImageIcon className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">
+                        {currentLang === 'en' ? 'No images uploaded' : 'لم يتم رفع أي صور'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {currentStep === 2 && (
             <Card className="border-l-4 border-l-primary">
               <CardHeader className="pb-4">
