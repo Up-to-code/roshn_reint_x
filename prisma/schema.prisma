@@ -119,6 +119,7 @@ model Property {
   descriptionAr String?
   city          String
   district      String?
+  price         Float      @default(0)
   images        String[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

@@ -227,7 +227,11 @@
       "area": "Area (m²)",
       "parking": "Parking Spaces",
       "title": "Property Title",
+      "title": "Property Title",
       "description": "Description"
+    },
+    "placeholders": {
+      "price": "0.00"
     },
     "actions": {
       "back": "Back to Properties",

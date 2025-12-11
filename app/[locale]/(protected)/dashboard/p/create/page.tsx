@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PropertiesService, type CreatePropertyData } from '@/lib/api/properties-service';
+import { createProperty, type CreatePropertyData } from '@/app/actions/properties';
 import { CustomUploader } from '@/components/shared/custom-uploader';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -61,11 +61,13 @@ const translations = {
       uploadedImages: (count: number) => `Uploaded Images (${count})`,
       location: "Location Details",
       images: "images",
-      language: "Language"
+      language: "Language",
+      price: "Price (SAR)"
     },
     placeholders: {
       city: "Enter city name",
       district: "Enter district or area",
+      price: "0.00",
       titleEn: "Beautiful apartment in city center",
       titleAr: "شقة رائعة في وسط المدينة",
       descriptionEn: "Describe your property in English...",
@@ -117,11 +119,13 @@ const translations = {
       uploadedImages: (count: number) => `الصور المرفوعة (${count})`,
       location: "تفاصيل الموقع",
       images: "الصور",
-      language: "اللغة"
+      language: "اللغة",
+      price: "السعر (ر.س)"
     },
     placeholders: {
       city: "أدخل اسم المدينة",
       district: "أدخل المنطقة أو الحي",
+      price: "0.00",
       titleEn: "شقة جميلة في وسط المدينة",
       titleAr: "شقة رائعة في وسط المدينة",
       descriptionEn: "صف عقارك باللغة الإنجليزية...",
@@ -156,6 +160,7 @@ const defaultFormData: CreatePropertyFormData = {
   descriptionAr: '',
   city: '',
   district: '',
+  price: 0,
   images: [],
 };
 
@@ -283,8 +288,12 @@ function CreatePropertyForm({ locale }: { locale: string }) {
     
     const promise = new Promise(async (resolve, reject) => {
       try {
-        await PropertiesService.create(formData);
-        resolve(true);
+        const result = await createProperty(formData);
+        if (result.success) {
+          resolve(true);
+        } else {
+          reject(new Error(result.error || 'Failed to create property'));
+        }
       } catch (error) {
         console.error('Error creating property:', error);
         reject(error);
@@ -295,6 +304,7 @@ function CreatePropertyForm({ locale }: { locale: string }) {
       loading: currentLang === 'en' ? 'Creating your property...' : 'جاري إنشاء عقارك...',
       success: () => {
         setLoading(false);
+        router.refresh();
         setTimeout(() => {
           router.push(`/${locale}/dashboard/p`);
         }, 1000);
@@ -486,6 +496,20 @@ function CreatePropertyForm({ locale }: { locale: string }) {
                             value={formData.district}
                             onChange={(e) => updateFormData('district', e.target.value)}
                             placeholder={t.placeholders.district}
+                            className="h-11"
+                            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
+                          />
+                        </div>
+                        <div className="space-y-2 col-span-2 md:col-span-1">
+                          <Label htmlFor="price">{t.labels.price}</Label>
+                          <Input
+                            id="price"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) => updateFormData('price', parseFloat(e.target.value) || 0)}
+                            placeholder={t.placeholders.price}
                             className="h-11"
                             dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
                           />

@@ -1,7 +1,9 @@
+
 // app/api/properties/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { unstable_cache } from 'next/cache'
+import { EventsService } from '@/lib/api/events-service'
 
 export async function GET(
   request: NextRequest,
@@ -74,24 +76,17 @@ export async function PUT(
     })
     
     // Create event for property update
-    try {
-      await prisma.event.create({
-        data: {
-          type: 'property_updated',
-          title: `Property Updated: ${property.titleEn}`,
-          description: `Property "${property.titleEn}" was updated`,
-          metadata: {
-            propertyId: property.id,
-            titleEn: property.titleEn,
-            titleAr: property.titleAr,
-            city: property.city,
-          },
-        },
-      });
-      // Event created for property update
-    } catch (eventError) {
-      console.error("⚠️ Failed to create event:", eventError);
-    }
+    await EventsService.create({
+      type: 'property_updated',
+      title: `Property Updated: ${property.titleEn}`,
+      description: `Property "${property.titleEn}" was updated`,
+      metadata: {
+        propertyId: property.id,
+        titleEn: property.titleEn,
+        titleAr: property.titleAr,
+        city: property.city,
+      },
+    });
     
     return NextResponse.json(property)
   } catch (error) {
@@ -126,21 +121,15 @@ export async function DELETE(
     })
     
     // Create event for property deletion
-    try {
-      await prisma.event.create({
-        data: {
-          type: 'property_deleted',
-          title: `Property Deleted: ${existingProperty.titleEn}`,
-          description: `Property "${existingProperty.titleEn}" was deleted`,
-          metadata: {
-            propertyId: existingProperty.id,
-            titleEn: existingProperty.titleEn,
-          },
-        },
-      });
-    } catch (eventError) {
-      console.error("⚠️ Failed to create delete event:", eventError);
-    }
+    await EventsService.create({
+      type: 'property_deleted',
+      title: `Property Deleted: ${existingProperty.titleEn}`,
+      description: `Property "${existingProperty.titleEn}" was deleted`,
+      metadata: {
+        propertyId: existingProperty.id,
+        titleEn: existingProperty.titleEn,
+      },
+    });
     
     return NextResponse.json({ message: 'Property deleted successfully' })
   } catch (error) {

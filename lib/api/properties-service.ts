@@ -8,6 +8,7 @@ export interface CreatePropertyData {
   descriptionAr?: string
   city: string
   district?: string
+  price: number
   images: string[]
 }
 

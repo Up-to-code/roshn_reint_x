@@ -214,6 +214,11 @@ export default async function PropertyDetailPage({
               {property.district && `, ${property.district}`}
             </span>
           </div>
+          <div className="mt-4">
+            <span className="text-3xl font-bold text-primary">
+              {new Intl.NumberFormat(locale, { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(property.price || 0)}
+            </span>
+          </div>
         </div>
 
         {/* Property Image Gallery */}

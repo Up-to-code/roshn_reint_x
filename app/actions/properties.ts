@@ -1,0 +1,201 @@
+
+'use server'
+
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { prisma } from '@/lib/db'
+import { resend } from '@/lib/email'
+// import { EventsService } from '@/lib/api/events-service'
+import { redirect } from 'next/navigation'
+
+export interface CreatePropertyData {
+  titleEn: string
+  titleAr: string
+  descriptionEn?: string
+  descriptionAr?: string
+  city: string
+  district?: string
+  price: number
+  images: string[]
+}
+
+export interface UpdatePropertyData extends Partial<CreatePropertyData> {}
+
+type ActionResponse<T = any> = {
+  success: boolean
+  data?: T
+  error?: string
+}
+
+export async function getProperties(): Promise<ActionResponse> {
+  try {
+    const properties = await prisma.property.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: {
+          id: true,
+          titleEn: true,
+          titleAr: true,
+          descriptionEn: true,
+          descriptionAr: true,
+          city: true,
+          district: true,
+          price: true,
+          images: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+    })
+    return { success: true, data: properties }
+  } catch (error) {
+    console.error('Failed to fetch properties:', error)
+    return { success: false, error: 'Failed to fetch properties' }
+  }
+}
+
+export async function getPropertyById(id: string): Promise<ActionResponse> {
+  try {
+    const property = await prisma.property.findUnique({
+      where: { id },
+    })
+    
+    if (!property) {
+      return { success: false, error: 'Property not found' }
+    }
+    
+    return { success: true, data: property }
+  } catch (error) {
+    console.error('Failed to fetch property:', error)
+    return { success: false, error: 'Failed to fetch property' }
+  }
+}
+
+export async function createProperty(data: CreatePropertyData): Promise<ActionResponse> {
+  try {
+    // Basic validation
+    if (!data.titleEn || !data.titleAr || !data.city) {
+      return { success: false, error: 'Missing required fields' }
+    }
+
+    const property = await prisma.property.create({
+      data: {
+        titleEn: data.titleEn,
+        titleAr: data.titleAr,
+        descriptionEn: data.descriptionEn || null,
+        descriptionAr: data.descriptionAr || null,
+        city: data.city,
+        district: data.district || null,
+        price: data.price || 0,
+        images: data.images || [],
+      },
+    })
+
+    // Log event
+    const { EventsService } = await import('@/lib/api/events-service');
+    await EventsService.create({
+        type: 'property_created',
+        title: `New Property Created: ${property.titleEn}`,
+        description: `Property "${property.titleEn}" was created in ${property.city}`,
+        metadata: {
+          propertyId: property.id,
+          titleEn: property.titleEn,
+          titleAr: property.titleAr,
+          city: property.city,
+          district: property.district,
+          imageCount: property.images.length,
+        },
+      });
+
+    // Send email
+    // ... (Email logic kept similar to previous)
+    const adminEmail = "roshnreitsaudi@gmail.com";
+        try {
+          const emailSubject = `🏡 New Property Added: ${property.titleEn}`;
+          const emailHtml = `
+            <div style="font-family: Arial, sans-serif;">
+              <h2>New Property Added</h2>
+              <p>Title: ${property.titleEn}</p>
+              <p>City: ${property.city}</p>
+              <p>Price: ${property.price}</p>
+            </div>
+          `;
+          await resend.emails.send({
+            from: process.env.ADMIN_EMAIL || "noreply@roshnreit.com",
+            to: adminEmail,
+            subject: emailSubject,
+            html: emailHtml,
+          });
+        } catch (emailError) {
+          console.error("❌ Email sending error:", emailError);
+        }
+
+    revalidatePath('/dashboard/p')
+    revalidateTag('properties')
+    
+    return { success: true, data: property }
+  } catch (error) {
+    console.error('Failed to create property:', error)
+    return { success: false, error: 'Failed to create property' }
+  }
+}
+
+export async function updateProperty(id: string, data: UpdatePropertyData): Promise<ActionResponse> {
+  try {
+    const property = await prisma.property.update({
+      where: { id },
+      data,
+    })
+
+    const { EventsService } = await import('@/lib/api/events-service');
+    await EventsService.create({
+      type: 'property_updated',
+      title: `Property Updated: ${property.titleEn}`,
+      description: `Property "${property.titleEn}" was updated`,
+      metadata: {
+        propertyId: property.id,
+        titleEn: property.titleEn,
+        titleAr: property.titleAr,
+        city: property.city,
+      },
+    });
+
+    revalidatePath('/dashboard/p')
+    revalidatePath(`/dashboard/p/edit/${id}`)
+    revalidateTag('properties')
+    
+    return { success: true, data: property }
+  } catch (error) {
+    console.error('Failed to update property:', error)
+    return { success: false, error: 'Failed to update property' }
+  }
+}
+
+export async function deleteProperty(id: string): Promise<ActionResponse> {
+  try {
+    // Check existence first
+    const existing = await prisma.property.findUnique({ where: { id } })
+    if (!existing) {
+        return { success: false, error: 'Property not found' }
+    }
+
+    await prisma.property.delete({
+      where: { id },
+    })
+
+    const { EventsService } = await import('@/lib/api/events-service');
+    await EventsService.create({
+      type: 'property_deleted',
+      title: `Property Deleted: ${existing.titleEn}`,
+      description: `Property "${existing.titleEn}" was deleted`,
+      metadata: {
+        propertyId: existing.id,
+        titleEn: existing.titleEn,
+      },
+    });
+
+    revalidatePath('/dashboard/p')
+    
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to delete property:', error)
+    return { success: false, error: 'Failed to delete property' }
+  }
+}

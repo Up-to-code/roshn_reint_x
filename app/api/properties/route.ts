@@ -1,8 +1,9 @@
-// app/api/properties/route.ts
+
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { resend } from '@/lib/email'
 import { unstable_cache } from 'next/cache'
+import { EventsService } from '@/lib/api/events-service'
 
 // Cache properties list for 60 seconds, revalidate in background
 const getCachedProperties = unstable_cache(
@@ -79,31 +80,20 @@ export async function POST(request: NextRequest) {
       data: propertyData
     })
 
-    // Note: Cache will be revalidated on next request
-    // For immediate revalidation, call /api/revalidate?tag=properties
-
     // Create event for new property
-    try {
-      await prisma.event.create({
-        data: {
-          type: 'property_created',
-          title: `New Property Created: ${property.titleEn}`,
-          description: `Property "${property.titleEn}" was created in ${property.city}`,
-          metadata: {
-            propertyId: property.id,
-            titleEn: property.titleEn,
-            titleAr: property.titleAr,
-            city: property.city,
-            district: property.district,
-            imageCount: property.images.length,
-          },
-        },
-      });
-      // Event created successfully
-    } catch (eventError) {
-      console.error("⚠️ Failed to create event:", eventError);
-      // Don't fail the request if event creation fails
-    }
+    await EventsService.create({
+      type: 'property_created',
+      title: `New Property Created: ${property.titleEn}`,
+      description: `Property "${property.titleEn}" was created in ${property.city}`,
+      metadata: {
+        propertyId: property.id,
+        titleEn: property.titleEn,
+        titleAr: property.titleAr,
+        city: property.city,
+        district: property.district,
+        imageCount: property.images.length,
+      },
+    });
 
     // Send email notification when property is created
     const adminEmail = "roshnreitsaudi@gmail.com";

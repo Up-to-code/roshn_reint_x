@@ -11,6 +11,7 @@ interface Property {
   titleEn: string;
   titleAr: string;
   images: string[];
+  price?: number;
   title?: string;
   city?: string;
   district?: string;
@@ -28,7 +29,6 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
   const [currentPage, setCurrentPage] = useState(1);
   const isRTL = locale === "ar";
 
-  // Fetch properties with caching
   const fetchProperties = useCallback(async () => {
     try {
       const res = await fetch("/api/properties", {
@@ -131,6 +131,13 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
 
                     {/* Full smooth shadow overlay */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/40" />
+
+                    {/* Price Tag */}
+                    <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} z-20`}>
+                      <span className="inline-block rounded-lg bg-white/90 px-3 py-1 text-sm font-bold text-slate-900 backdrop-blur-sm">
+                        {new Intl.NumberFormat(locale, { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(property.price || 0)}
+                      </span>
+                    </div>
 
                     {/* Title */}
                     <div className="absolute bottom-5 left-5 right-5 z-20">
