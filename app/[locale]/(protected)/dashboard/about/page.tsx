@@ -231,7 +231,7 @@ export default function AboutPageEditor() {
               <div className="overflow-hidden rounded-xl shadow-lg">
                 <img
                   src={heroData.image || "https://dorrah.sa/wp-content/uploads/2023/12/2023-12-24-20.34.01.jpg"}
-                  alt="مشروع درة العقارية"
+                  alt="مشروع روشن ريت"
                   className="h-auto w-full rounded-xl object-cover"
                 />
               </div>

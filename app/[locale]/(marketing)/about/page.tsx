@@ -84,7 +84,7 @@ export default async function AboutPage() {
              {/* eslint-disable-next-line @next/next/no-img-element */}
              <img
               src={aboutData.hero.image}
-              alt="مشروع درة العقارية"
+              alt="مشروع روشن ريت"
               className="h-auto w-full rounded-xl object-cover"
             />
           </div>
