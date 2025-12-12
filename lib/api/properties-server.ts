@@ -30,7 +30,7 @@ import { unstable_cache } from 'next/cache';
 export class PropertiesServerService {
   static async getAll(): Promise<Property[]> {
     try {
-      return await prisma.property.findMany({
+      const properties = await prisma.property.findMany({
         select: {
           id: true,
           titleEn: true,
@@ -39,12 +39,14 @@ export class PropertiesServerService {
           descriptionAr: true,
           city: true,
           district: true,
+          price: true,
           images: true,
           createdAt: true,
           updatedAt: true,
         },
         orderBy: { createdAt: "desc" }
       });
+      return properties as Property[];
     } catch (error) {
       console.error("Failed to fetch properties:", error);
       throw new Error("Unable to load properties");
@@ -64,6 +66,7 @@ export class PropertiesServerService {
           descriptionAr: true,
           city: true,
           district: true,
+          price: true,
           images: true,
           createdAt: true,
           updatedAt: true,
@@ -125,6 +128,7 @@ export class PropertiesServerService {
           descriptionAr: true,
           city: true,
           district: true,
+          price: true,
           images: true,
           createdAt: true,
           updatedAt: true,
@@ -149,6 +153,7 @@ export class PropertiesServerService {
           descriptionAr: true,
           city: true,
           district: true,
+          price: true,
           images: true,
           createdAt: true,
           updatedAt: true,
