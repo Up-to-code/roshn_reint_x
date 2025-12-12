@@ -56,14 +56,14 @@ export function PartnersBanner({
                 {logosToShow.map((logo, index) => (
                   <div
                     key={`${setIndex}-${logo.alt}-${index}`}
-                    className="mx-12 flex h-24 w-40 items-center justify-center"
+                    className="mx-12 flex h-[200px] w-[150px] items-center justify-center"
                   >
                     <Image
                       src={logo.src}
                       alt={logo.alt}
-                      width={160}
-                      height={80}
-                      className="h-auto w-full object-contain"
+                      width={150}
+                      height={200}
+                      className="h-full w-full object-contain"
                     />
                   </div>
                 ))}
