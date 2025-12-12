@@ -39,6 +39,7 @@ export function PropertyForm({
       descriptionEn: '',
       descriptionAr: '',
       city: '',
+      price: 0,
       images: []
       // district intentionally omitted, since it's optional
     }
@@ -174,6 +175,17 @@ export function PropertyForm({
                 id="city"
                 value={formData.city}
                 onChange={(e) => updateFormData("city", e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">{t("labels.price")}</Label>
+              <Input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) => updateFormData("price", parseFloat(e.target.value) || 0)}
               />
             </div>
             {/* Optionally include district input if desired */}
