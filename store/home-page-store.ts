@@ -45,12 +45,10 @@ export const useHomePageStore = create<HomePageStore>((set, get) => ({
         currentLang: get().currentLang,
         enHero: data.en?.hero ? {
           title: data.en.hero.title,
-          subtitle: data.en.hero.subtitle,
           backgroundVideo: data.en.hero.backgroundVideo,
         } : null,
         arHero: data.ar?.hero ? {
           title: data.ar.hero.title,
-          subtitle: data.ar.hero.subtitle,
           backgroundVideo: data.ar.hero.backgroundVideo,
         } : null,
       });
@@ -65,7 +63,6 @@ export const useHomePageStore = create<HomePageStore>((set, get) => ({
       if (!data.en.hero) {
         data.en.hero = { 
           title: '', 
-          subtitle: '', 
           backgroundVideo: '', 
           overlayColor: 'rgba(0,0,0,0.4)', 
           formFields: [],
@@ -90,7 +87,6 @@ export const useHomePageStore = create<HomePageStore>((set, get) => ({
       if (!data.ar.hero) {
         data.ar.hero = { 
           title: '', 
-          subtitle: '', 
           backgroundVideo: '', 
           overlayColor: 'rgba(0,0,0,0.4)', 
           formFields: [],

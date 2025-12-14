@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { CustomUploader } from "@/components/shared/custom-uploader";
-import { HeroFormBuilder } from "./hero-form-builder";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Trash2, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -15,7 +14,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const defaultHero = {
   title: "",
-  subtitle: "",
   backgroundVideo: "",
   overlayColor: "rgba(0,0,0,0.4)",
   formFields: []
@@ -77,24 +75,26 @@ export function HeroEditor() {
     <div className="space-y-6">
       <div className="grid gap-4">
         <div>
-          <label className="text-sm font-medium">{t('heroTitle')}</label>
-          <Input
-            value={hero.title}
-            onChange={(e) => updateHero({ title: e.target.value })}
-            placeholder={t('placeholders.mainHeroTitle')}
-            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
+          <label className="mb-2 block text-sm font-medium">
+            {t('heroTitle')} 
+            <span className="ml-2 text-xs text-muted-foreground">
+              ({currentLang === 'ar' ? 'محرر نص منسق - يمكنك تنسيق النص وإضافة أسطر جديدة' : 'Rich text editor - Format text and add new lines'})
+            </span>
+          </label>
+          <RichTextEditor
+            value={hero.title || ''}
+            onChange={(value) => updateHero({ title: value })}
+            placeholder={currentLang === 'ar' 
+              ? 'أدخل العنوان هنا... يمكنك استخدام Enter لسطر جديد'
+              : 'Enter title here... Press Enter for a new line'}
+            isRTL={currentLang === 'ar'}
+            className="min-h-[250px]"
           />
-        </div>
-
-        <div>
-          <label className="text-sm font-medium">{t('heroSubtitle')}</label>
-          <Textarea
-            value={hero.subtitle}
-            onChange={(e) => updateHero({ subtitle: e.target.value })}
-            placeholder={t('placeholders.heroSubtitleDescription')}
-            rows={3}
-            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            {currentLang === 'ar' 
+              ? '💡 نصيحة: استخدم شريط الأدوات لتنسيق النص. اضغط Enter لإنشاء سطر جديد.'
+              : '💡 Tip: Use the toolbar to format text. Press Enter to create a new line.'}
+          </p>
         </div>
 
         <div>
@@ -222,10 +222,6 @@ export function HeroEditor() {
             placeholder={t('placeholders.overlayColorExample')}
           />
         </div>
-      </div>
-
-      <div className="border-t pt-6">
-        <HeroFormBuilder />
       </div>
     </div>
   );

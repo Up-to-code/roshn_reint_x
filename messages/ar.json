@@ -456,7 +456,6 @@
       "hero": {
         "title": "قسم البطل",
         "heroTitle": "عنوان البطل",
-        "heroSubtitle": "العنوان الفرعي للبطل",
         "backgroundVideo": "فيديو الخلفية",
         "overlayColor": "لون التغطية",
         "primaryButton": "زر أساسي",
@@ -467,7 +466,6 @@
         "uploadVideo": "رفع فيديو",
         "placeholders": {
           "mainHeroTitle": "عنوان البطل الرئيسي",
-          "heroSubtitleDescription": "وصف العنوان الفرعي للبطل",
           "videoPath": "/videos/hero-bg.mp4",
           "overlayColorExample": "rgba(0,0,0,0.4)",
           "buttonText": "نص الزر",

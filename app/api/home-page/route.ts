@@ -48,7 +48,6 @@ const defaultHomePageData = {
     ],
     hero: {
       title: "Welcome to Our Platform",
-      subtitle: "Innovative solutions for your business growth",
       primaryButton: { text: "Get Started", link: "/signup", variant: "primary" as const },
       secondaryButton: { text: "Learn More", link: "/about", variant: "secondary" as const },
       backgroundVideo: "",
@@ -265,7 +264,6 @@ const defaultHomePageData = {
     ],
     hero: {
       title: "مرحباً بكم في منصتنا",
-      subtitle: "حلول مبتكرة لنمو عملك",
       primaryButton: { text: "ابدأ الآن", link: "/signup", variant: "primary" as const },
       secondaryButton: { text: "اعرف المزيد", link: "/about", variant: "secondary" as const },
       backgroundVideo: "",
@@ -500,13 +498,11 @@ export async function POST(request: NextRequest) {
       hasAr: !!homePageData.ar,
       enHero: homePageData.en?.hero ? {
         hasTitle: !!homePageData.en.hero.title,
-        hasSubtitle: !!homePageData.en.hero.subtitle,
         hasBackgroundVideo: !!homePageData.en.hero.backgroundVideo,
         backgroundVideo: homePageData.en.hero.backgroundVideo,
       } : null,
       arHero: homePageData.ar?.hero ? {
         hasTitle: !!homePageData.ar.hero.title,
-        hasSubtitle: !!homePageData.ar.hero.subtitle,
         hasBackgroundVideo: !!homePageData.ar.hero.backgroundVideo,
         backgroundVideo: homePageData.ar.hero.backgroundVideo,
       } : null,

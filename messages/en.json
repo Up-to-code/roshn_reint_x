@@ -446,11 +446,10 @@
       "contact": "Contact Us",
       "partners": "Partners"
     },
-    "hero": {
-      "title": "Hero Section",
-      "heroTitle": "Hero Title",
-      "heroSubtitle": "Hero Subtitle",
-      "backgroundVideo": "Background Video",
+      "hero": {
+        "title": "Hero Section",
+        "heroTitle": "Hero Title",
+        "backgroundVideo": "Background Video",
       "overlayColor": "Overlay Color",
       "primaryButton": "Primary Button",
       "secondaryButton": "Secondary Button",
@@ -460,7 +459,6 @@
       "uploadVideo": "Upload Video",
       "placeholders": {
         "mainHeroTitle": "Main hero title",
-        "heroSubtitleDescription": "Hero subtitle description",
         "videoPath": "/videos/hero-bg.mp4",
         "overlayColorExample": "rgba(0,0,0,0.4)",
         "buttonText": "Button text",
