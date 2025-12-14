@@ -78,36 +78,50 @@ export function HeroSection({ content }: HeroSectionProps) {
           </div>
         )}
 
+        {/* Subtitle - appears before main title */}
+        {content.subtitle && (
+          <div 
+            className={`mb-4 text-lg sm:text-xl md:text-2xl font-medium text-gray-200/90 ${
+              /[\u0600-\u06FF]/.test(content.subtitle) ? 'text-right' : 'text-center'
+            }`}
+            dir={/[\u0600-\u06FF]/.test(content.subtitle) ? 'rtl' : 'ltr'}
+          >
+            {/<[^>]+>/.test(content.subtitle) ? (
+              <div 
+                className="[&_*]:text-inherit [&_*]:font-inherit [&_p]:mb-2 [&_p]:last:mb-0 [&_strong]:font-bold [&_em]:italic"
+                dangerouslySetInnerHTML={{ __html: content.subtitle }}
+              />
+            ) : (
+              <span>{content.subtitle}</span>
+            )}
+          </div>
+        )}
+
         {/* Main Title - Support RTL and rich text HTML with better spacing */}
-        {(() => {
-          const isRTL = content.title && /[\u0600-\u06FF]/.test(content.title);
-          const hasHTML = content.title && /<[^>]+>/.test(content.title);
-          
-          return (
-            <h1 
-              className={`mb-6 text-[48px] font-bold tracking-tight sm:text-[52px] md:text-[56px] lg:text-[60px] xl:text-[64px] ${
-                isRTL ? 'text-right' : 'text-center'
-              }`}
-              style={{ lineHeight: '1.2' }}
-              dir={isRTL ? 'rtl' : 'ltr'}
-            >
-              {hasHTML ? (
-                <div 
-                  className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl [&_*]:text-inherit [&_*]:font-inherit [&_*]:leading-[1.2] [&_p]:mb-4 [&_p]:last:mb-0 [&_strong]:font-bold [&_em]:italic [&_br]:block [&_br]:h-2"
-                  dangerouslySetInnerHTML={{ __html: content.title }}
-                />
-              ) : (
-                <span className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl">
-                  {content.title ? content.title.split('\n').map((line, index) => (
-                    <span key={index} className="block mb-2 last:mb-0" style={{ lineHeight: '1.2' }}>
-                      {line.trim() || '\u00A0'}
-                    </span>
-                  )) : '\u00A0'}
-                </span>
-              )}
-            </h1>
-          );
-        })()}
+        {content.title && (
+          <h1 
+            className={`mb-6 text-[48px] font-bold tracking-tight sm:text-[52px] md:text-[56px] lg:text-[60px] xl:text-[64px] ${
+              /[\u0600-\u06FF]/.test(content.title) ? 'text-right' : 'text-center'
+            }`}
+            style={{ lineHeight: '1.2' }}
+            dir={/[\u0600-\u06FF]/.test(content.title) ? 'rtl' : 'ltr'}
+          >
+            {/<[^>]+>/.test(content.title) ? (
+              <div 
+                className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl [&_*]:text-inherit [&_*]:font-inherit [&_*]:leading-[1.2] [&_p]:mb-4 [&_p]:last:mb-0 [&_strong]:font-bold [&_em]:italic [&_br]:block [&_br]:h-2"
+                dangerouslySetInnerHTML={{ __html: content.title }}
+              />
+            ) : (
+              <span className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl">
+                {content.title.split('\n').map((line, index) => (
+                  <span key={index} className="block mb-2 last:mb-0" style={{ lineHeight: '1.2' }}>
+                    {line.trim() || '\u00A0'}
+                  </span>
+                ))}
+              </span>
+            )}
+          </h1>
+        )}
       </div>
 
       {/* Scroll indicator */}

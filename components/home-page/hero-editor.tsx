@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const defaultHero = {
   title: "",
+  subtitle: "",
   backgroundVideo: "",
   overlayColor: "rgba(0,0,0,0.4)",
   formFields: []
@@ -94,6 +95,29 @@ export function HeroEditor() {
             {currentLang === 'ar' 
               ? '💡 نصيحة: استخدم شريط الأدوات لتنسيق النص. اضغط Enter لإنشاء سطر جديد.'
               : '💡 Tip: Use the toolbar to format text. Press Enter to create a new line.'}
+          </p>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium">
+            {t('heroSubtitle') || (currentLang === 'ar' ? 'العنوان الفرعي' : 'Subtitle')}
+            <span className="ml-2 text-xs text-muted-foreground">
+              ({currentLang === 'ar' ? 'اختياري - نص قصير يظهر تحت العنوان الرئيسي' : 'Optional - Short text displayed below the main title'})
+            </span>
+          </label>
+          <RichTextEditor
+            value={hero.subtitle || ''}
+            onChange={(value) => updateHero({ subtitle: value })}
+            placeholder={currentLang === 'ar' 
+              ? 'أدخل العنوان الفرعي هنا...'
+              : 'Enter subtitle here...'}
+            isRTL={currentLang === 'ar'}
+            className="min-h-[120px]"
+          />
+          <p className="mt-2 text-xs text-muted-foreground">
+            {currentLang === 'ar' 
+              ? '💡 نصيحة: العنوان الفرعي يظهر بحجم أصغر تحت العنوان الرئيسي مباشرة.'
+              : '💡 Tip: The subtitle appears in a smaller size directly below the main title.'}
           </p>
         </div>
 

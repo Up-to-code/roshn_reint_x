@@ -47,16 +47,26 @@ export default function ContactsPage() {
     const method = editingContact ? 'PUT' : 'POST';
 
     try {
+      setLoading(true);
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
-      await fetchContacts();
-      closeForm();
+      if (response.ok) {
+        // Refresh the contacts list
+        await fetchContacts();
+        closeForm();
+        window.alert(editingContact ? 'تم تحديث جهة الاتصال بنجاح' : 'تمت إضافة جهة الاتصال بنجاح');
+      } else {
+        window.alert('فشلت العملية');
+      }
     } catch (err) {
       console.error('Failed to save contact:', err);
+      window.alert('حدث خطأ أثناء الحفظ');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,10 +77,22 @@ export default function ContactsPage() {
     }
 
     try {
-      await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
-      await fetchContacts();
+      setLoading(true);
+      const response = await fetch(`/api/contacts/${id}`, { method: 'DELETE' });
+      
+      if (response.ok) {
+        // Immediately update the UI by removing the deleted contact
+        setContacts(prevContacts => prevContacts.filter(c => c.id !== id));
+        // Show success message
+        window.alert('تم حذف جهة الاتصال بنجاح');
+      } else {
+        window.alert('فشل في حذف جهة الاتصال');
+      }
     } catch (err) {
       console.error('Failed to delete contact:', err);
+      window.alert('حدث خطأ أثناء الحذف');
+    } finally {
+      setLoading(false);
     }
   };
 

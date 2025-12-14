@@ -69,27 +69,6 @@ export async function generateMetadata({
   }
 }
 
-// Function to clean and format HTML description
-function formatDescription(html: string, isRTL: boolean): string {
-  if (!html) return "";
-
-  // Remove inline styles and classes
-  let cleaned = html
-    .replace(/ style="[^"]*"/g, "")
-    .replace(/ class="[^"]*"/g, "")
-    .replace(/<br\s*\/?>/g, "\n")
-    .replace(/<span[^>]*>/g, "")
-    .replace(/<\/span>/g, "")
-    .replace(/<div[^>]*>/g, "")
-    .replace(/<\/div>/g, "\n")
-    .trim();
-
-  // Convert bullet points to proper list items
-  cleaned = cleaned.replace(/•\s*/g, "• ");
-
-  return cleaned;
-}
-
 // Component to render formatted description
 function DescriptionContent({
   description,
@@ -106,53 +85,14 @@ function DescriptionContent({
     );
   }
 
-  const formattedText = formatDescription(description, isRTL);
-
   return (
     <div
       className={`prose prose-sm max-w-none text-gray-700 leading-relaxed ${
-        isRTL ? "text-right" : "text-left"
+        isRTL ? "text-right prose-headings:text-right" : "text-left"
       }`}
       dir={isRTL ? "rtl" : "ltr"}
-    >
-      {/* Render with proper line breaks */}
-      {formattedText.split("\n").map((paragraph, index) => {
-        if (!paragraph.trim()) return <br key={index} />;
-
-        // Check if it's a bullet point
-        if (paragraph.trim().startsWith("•")) {
-          return (
-            <div key={index} className="flex items-start gap-2 mb-1">
-              <span className="text-gray-600 mt-1">•</span>
-              <span>{paragraph.replace("•", "").trim()}</span>
-            </div>
-          );
-        }
-
-        // Check if it's a heading (contains specific keywords)
-        const isHeading = /(موقع متميز|مميزات ومواصفات|تفاصيل الشقه|خلفية)/.test(
-          paragraph
-        );
-
-        if (isHeading) {
-          return (
-            <h3
-              key={index}
-              className="font-semibold text-gray-900 mt-4 mb-2 text-lg"
-            >
-              {paragraph}
-            </h3>
-          );
-        }
-
-        // Regular paragraph
-        return (
-          <p key={index} className="mb-3">
-            {paragraph}
-          </p>
-        );
-      })}
-    </div>
+      dangerouslySetInnerHTML={{ __html: description }}
+    />
   );
 }
 

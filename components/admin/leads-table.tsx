@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { deleteLead } from "@/actions/delete-lead";
+import { useRouter } from "next/navigation";
 
 interface Lead {
   id: string;
@@ -32,6 +33,7 @@ interface LeadsTableProps {
 
 export function LeadsTable({ leads }: LeadsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleExport = () => {
     try {
@@ -81,6 +83,8 @@ export function LeadsTable({ leads }: LeadsTableProps) {
       const result = await deleteLead(id);
       if (result.success) {
         toast.success("Lead deleted successfully");
+        // Refresh the page to show updated data
+        router.refresh();
       } else {
         toast.error("Failed to delete lead");
       }

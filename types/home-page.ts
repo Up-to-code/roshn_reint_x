@@ -33,6 +33,7 @@ export interface HeroFormField {
 
 export interface HeroSection {
   title: string;
+  subtitle?: string;
   accentText?: string;
   backgroundImage?: string;
   primaryButton?: {

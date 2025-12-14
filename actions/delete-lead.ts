@@ -13,9 +13,12 @@ export async function deleteLead(leadId: string) {
 
     // Revalidate all pages that display interests/leads
     revalidatePath("/dashboard/leads");
-    revalidatePath("/[locale]/dashboard/leads");
     revalidatePath("/dashboard/interests");
-    revalidatePath("/[locale]/dashboard/interests");
+    // Revalidate the localized protected dashboard routes
+    revalidatePath("/ar/dashboard/leads");
+    revalidatePath("/en/dashboard/leads");
+    revalidatePath("/ar/dashboard/interests");
+    revalidatePath("/en/dashboard/interests");
     
     return { success: true };
   } catch (error) {

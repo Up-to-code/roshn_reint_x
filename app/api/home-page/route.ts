@@ -48,6 +48,7 @@ const defaultHomePageData = {
     ],
     hero: {
       title: "Welcome to Our Platform",
+      subtitle: "",
       primaryButton: { text: "Get Started", link: "/signup", variant: "primary" as const },
       secondaryButton: { text: "Learn More", link: "/about", variant: "secondary" as const },
       backgroundVideo: "",
@@ -264,6 +265,7 @@ const defaultHomePageData = {
     ],
     hero: {
       title: "مرحباً بكم في منصتنا",
+      subtitle: "",
       primaryButton: { text: "ابدأ الآن", link: "/signup", variant: "primary" as const },
       secondaryButton: { text: "اعرف المزيد", link: "/about", variant: "secondary" as const },
       backgroundVideo: "",
