@@ -106,7 +106,7 @@ export default async function Home({ params }: { params: { locale: string } }) {
       {/* Featured Properties Section */}
       <ApartmentsPage locale={locale} />
       
-      {/* Our Partners Section */}
+      {/* Our Partners Section - Display ALL partners, no limit */}
       {content.partners && content.partners.length > 0 && (
         <>
           <div className="h-[10px]" />

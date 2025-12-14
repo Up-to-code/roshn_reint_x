@@ -23,6 +23,7 @@ export function PartnersBanner({
   }, []);
 
   // Use default empty array if logos is undefined
+  // Display ALL partners - no limit applied
   const logosToShow = logos || [];
 
   if (!mounted) {
