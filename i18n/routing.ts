@@ -19,10 +19,6 @@ export const routing = defineRouting({
       en: "/dashboard",
       ar: "/dashboard",
     },
-    "/dashboard/global": {
-      en: "/dashboard/global",
-      ar: "/dashboard/global",
-    },
     "/dashboard/settings": {
       en: "/dashboard/settings",
       ar: "/dashboard/settings",

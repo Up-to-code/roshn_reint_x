@@ -19,7 +19,6 @@ export const sidebarLinks: SidebarNavItem[] = [
     title: "sidebar.menu",
     items: [
       { href: "/dashboard", icon: "dashboard", title: "sidebar.dashboard" },
-      { href: "/dashboard/global", icon: "global", title: "sidebar.global" },
       { href: "/dashboard/p", icon: "building", title: "sidebar.properties" },
       { href: "/dashboard/p/create", icon: "plus", title: "sidebar.addProperty" },
       // { href: "/admin", icon: "briefcase", title: "sidebar.adminPanel", authorizeOnly: UserRole.ADMIN },

@@ -45,6 +45,7 @@ export function HeroEditor() {
           isValid: false,
           errors: ['Failed to validate bucket'],
           warnings: [],
+          canListBuckets: false,
         });
       } finally {
         setIsValidating(false);
