@@ -10,7 +10,7 @@ interface FloatingButtonsProps {
 export function FloatingButtons({ locale }: FloatingButtonsProps) {
   const isRTL = locale === "ar";
 
-  const whatsappNumber = "966501234567";
+  const whatsappNumber = "966558799671";
   const whatsappMessage = isRTL
     ? "مرحبًا، أود الاستفسار عن خدماتكم"
     : "Hello, I would like to inquire about your services";
