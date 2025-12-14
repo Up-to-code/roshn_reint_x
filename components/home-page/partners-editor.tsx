@@ -106,8 +106,8 @@ export function PartnersEditor() {
                       {partner.src ? (
                         <div className="relative h-40 w-full overflow-hidden rounded-lg border-2 border-muted bg-muted/50">
                           <Image
-                            src={partner.src}
-                            alt={partner.alt || 'Partner logo'}
+                            src={typeof partner.src === 'string' ? partner.src : String(partner.src)}
+                            alt={typeof partner.alt === 'string' ? partner.alt : String(partner.alt || 'Partner logo')}
                             fill
                             className="object-contain p-3"
                           />
@@ -128,7 +128,7 @@ export function PartnersEditor() {
                       </Label>
                   <Input
                     id={`partner-src-${partner.id}`}
-                    value={partner.src}
+                    value={String(partner.src || '')}
                     onChange={(e) => updatePartner(partner.id, { src: e.target.value })}
                     placeholder="https://example.com/logo.png"
                     className="text-sm"
@@ -153,7 +153,7 @@ export function PartnersEditor() {
                       </Label>
                       <Input
                         id={`partner-alt-${partner.id}`}
-                        value={partner.alt}
+                        value={String(partner.alt || '')}
                         onChange={(e) => updatePartner(partner.id, { alt: e.target.value })}
                         placeholder="Enter partner name"
                         className="text-sm"
