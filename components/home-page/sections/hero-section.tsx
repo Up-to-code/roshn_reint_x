@@ -85,7 +85,7 @@ export function HeroSection({ content }: HeroSectionProps) {
           
           return (
             <h1 
-              className={`mb-6 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl ${
+              className={`mb-6 text-[48px] font-bold tracking-tight sm:text-[52px] md:text-[56px] lg:text-[60px] xl:text-[64px] ${
                 isRTL ? 'text-right' : 'text-center'
               }`}
               style={{ lineHeight: '1.2' }}

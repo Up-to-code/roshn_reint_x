@@ -22,9 +22,14 @@ export function PartnersBanner({
     setMounted(true);
   }, []);
 
-  // Use default empty array if logos is undefined
-  // Display ALL partners - no limit applied
-  const logosToShow = logos || [];
+  // Filter out partners with empty/invalid image URLs to prevent empty spaces
+  // Display ALL valid partners - no limit applied
+  const logosToShow = (logos || []).filter(
+    (logo) => 
+      logo?.src && 
+      typeof logo.src === 'string' && 
+      logo.src.trim().length > 0
+  );
 
   if (!mounted) {
     return null; // Return nothing during SSR and initial client render
