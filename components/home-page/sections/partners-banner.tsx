@@ -33,7 +33,7 @@ export function PartnersBanner({
 
   if (!mounted) {
     return (
-      <section className={cn("w-full bg-gray-50 py-12", className)}>
+      <section className={cn("w-full bg-gray-50 py-12", className)} dir="ltr">
         <div className="container mx-auto px-4">
           <div className="mb-8 text-center">
             <div className="h-9 w-48 mx-auto bg-gray-200 animate-pulse rounded" />
