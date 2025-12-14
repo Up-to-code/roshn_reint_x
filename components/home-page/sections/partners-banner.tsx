@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 
@@ -84,69 +83,102 @@ export function PartnersBanner({
             )} 
           />
           
-          {/* Scrolling container */}
-          <div 
-            className={cn(
-              "flex transition-all duration-300",
-              "hover:scale-[1.02]"
-            )}
-            style={{ 
-              animation: `${isRTL ? 'scroll-rtl' : 'scroll-ltr'} ${speed}s linear infinite`,
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.animationPlayState = 'paused';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.animationPlayState = 'running';
-            }}
-          >
-            {/* Render 2 sets of logos for seamless loop */}
-            {[...Array(2)].map((_, setIndex) => (
-              <div key={`set-${setIndex}`} className="flex shrink-0">
-                {logosToShow.map((logo, index) => (
-                  <div
-                    key={`${setIndex}-${logo.alt}-${index}`}
-                    className={cn(
-                      "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px] shrink-0",
-                      "items-center justify-center",
-                      "transition-transform duration-300 hover:scale-110",
-                      "bg-white rounded-lg shadow-sm hover:shadow-md",
-                      "p-4"
-                    )}
-                  >
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt}
-                      width={160}
-                      height={160}
-                      className="h-full w-full object-contain transition-all duration-300"
-                      unoptimized
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
+          {/* Scrolling container - using inline-flex for seamless loop */}
+          <div className="inline-flex w-full flex-nowrap">
+            {/* First set of logos */}
+            <div 
+              className={cn(
+                "flex items-center justify-center md:justify-start shrink-0",
+                isRTL ? "animate-scroll-rtl" : "animate-scroll-ltr"
+              )}
+              style={{ 
+                animationDuration: `${speed}s`,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.animationPlayState = 'paused';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.animationPlayState = 'running';
+              }}
+            >
+              {logosToShow.map((logo, index) => (
+                <div
+                  key={`first-${index}`}
+                  className={cn(
+                    "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
+                    "items-center justify-center",
+                    "transition-transform duration-300 hover:scale-110",
+                    "bg-white rounded-lg shadow-sm hover:shadow-md",
+                    "p-4"
+                  )}
+                >
+                  <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="h-full w-full object-contain transition-all duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Second set of logos (duplicate for seamless loop) */}
+            <div 
+              className={cn(
+                "flex items-center justify-center md:justify-start shrink-0",
+                isRTL ? "animate-scroll-rtl" : "animate-scroll-ltr"
+              )}
+              style={{ 
+                animationDuration: `${speed}s`,
+              }}
+              aria-hidden="true"
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.animationPlayState = 'paused';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.animationPlayState = 'running';
+              }}
+            >
+              {logosToShow.map((logo, index) => (
+                <div
+                  key={`second-${index}`}
+                  className={cn(
+                    "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
+                    "items-center justify-center",
+                    "transition-transform duration-300 hover:scale-110",
+                    "bg-white rounded-lg shadow-sm hover:shadow-md",
+                    "p-4"
+                  )}
+                >
+                  <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="h-full w-full object-contain transition-all duration-300"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       <style jsx>{`
         @keyframes scroll-ltr {
-          0% {
+          from {
             transform: translateX(0);
           }
-          100% {
+          to {
             transform: translateX(-100%);
           }
         }
 
         @keyframes scroll-rtl {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
+          from {
             transform: translateX(0);
+          }
+          to {
+            transform: translateX(100%);
           }
         }
 
@@ -163,6 +195,14 @@ export function PartnersBanner({
 
         .animate-fade-in {
           animation: fade-in 0.6s ease-out;
+        }
+
+        .animate-scroll-ltr {
+          animation: scroll-ltr linear infinite;
+        }
+
+        .animate-scroll-rtl {
+          animation: scroll-rtl linear infinite;
         }
       `}</style>
     </section>
