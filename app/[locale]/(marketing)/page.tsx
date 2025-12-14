@@ -103,9 +103,11 @@ export default async function Home({ params }: { params: { locale: string } }) {
     <div className="min-h-screen bg-white">
       <HeroSection content={content.hero} />
       
+      {/* Featured Properties Section */}
+      <ApartmentsPage locale={locale} />
+      
       {/* Our Partners Section */}
-
-      <ApartmentsPage locale={locale} />      {content.partners && content.partners.length > 0 && (
+      {content.partners && content.partners.length > 0 && (
         <>
           <div className="h-[10px]" />
           <PartnersBanner 

@@ -11,7 +11,12 @@ export async function deleteLead(leadId: string) {
       },
     });
 
+    // Revalidate all pages that display interests/leads
     revalidatePath("/dashboard/leads");
+    revalidatePath("/[locale]/dashboard/leads");
+    revalidatePath("/dashboard/interests");
+    revalidatePath("/[locale]/dashboard/interests");
+    
     return { success: true };
   } catch (error) {
     console.error("Error deleting lead:", error);

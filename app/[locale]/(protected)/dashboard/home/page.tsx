@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { HeroEditor } from "@/components/home-page/hero-editor";
-import { BannersEditor } from "@/components/home-page/banners-editor";
 import { AboutUsEditor } from "@/components/home-page/about-us-editor";
 import { TestimonialsEditor } from "@/components/home-page/testimonials-editor";
 import { WhyUsEditor } from "@/components/home-page/why-us-editor";
@@ -106,7 +105,6 @@ export default function HomePageEditor() {
 
   const tabs = [
     { value: "hero", label: t('sections.hero'), component: <HeroEditor /> },
-    { value: "banners", label: t('sections.banners'), component: <BannersEditor /> },
     { value: "about", label: t('sections.about'), component: <AboutUsEditor /> },
     { value: "testimonials", label: t('sections.testimonials'), component: <TestimonialsEditor /> },
     { value: "whyus", label: t('sections.whyus'), component: <WhyUsEditor /> },

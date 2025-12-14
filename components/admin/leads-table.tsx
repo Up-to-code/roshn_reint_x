@@ -18,8 +18,11 @@ import { deleteLead } from "@/actions/delete-lead";
 interface Lead {
   id: string;
   name: string;
+  email?: string;
   phone: string;
+  message?: string;
   propertyTitle: string; 
+  read?: boolean;
   createdAt: Date;
 }
 
@@ -33,15 +36,17 @@ export function LeadsTable({ leads }: LeadsTableProps) {
   const handleExport = () => {
     try {
       // Define CSV headers
-      const headers = ["Name", "Phone", "Source", "Date", "Message"];
+      const headers = ["Name", "Email", "Phone", "Property/Source", "Message", "Date", "Status"];
       
-      // Map data to CSV rows
+      // Map data to CSV rows with all available fields
       const rows = leads.map(lead => [
-        lead.name,
-        lead.phone,
-        lead.propertyTitle,
+        lead.name || "",
+        lead.email || "",
+        lead.phone || "",
+        lead.propertyTitle || "",
+        (lead.message || "").replace(/"/g, '""'), // Escape quotes in message
         format(new Date(lead.createdAt), "PPP"),
-        (lead as any).message || "" // Handle potential missing field gracefully
+        lead.read ? "Read" : "Unread"
       ]);
 
       // Combine headers and rows
@@ -55,10 +60,11 @@ export function LeadsTable({ leads }: LeadsTableProps) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `leads_export_${format(new Date(), "yyyy-MM-dd")}.csv`);
+      link.setAttribute("download", `leads_export_${format(new Date(), "yyyy-MM-dd_HHmmss")}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
       
       toast.success("Leads exported successfully");
     } catch (error) {

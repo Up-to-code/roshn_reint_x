@@ -5,8 +5,9 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Mail, Phone, User, Calendar, Building, Eye, EyeOff } from 'lucide-react';
+import { Search, Mail, Phone, User, Calendar, Building, Eye, EyeOff, Trash2, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -46,6 +47,7 @@ export default function InterestsPage() {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [filterRead, setFilterRead] = useState<'all' | 'unread' | 'read'>('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadInterests();
@@ -76,6 +78,28 @@ export default function InterestsPage() {
       }
     } catch (error) {
       console.error('Error marking as read:', error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm(isRTL ? 'هل أنت متأكد من حذف هذه الرسالة؟' : 'Are you sure you want to delete this message?')) return;
+
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/interests/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setInterests(interests.filter(i => i.id !== id));
+        toast.success(isRTL ? 'تم الحذف بنجاح' : 'Deleted successfully');
+      } else {
+        toast.error(isRTL ? 'فشل الحذف' : 'Failed to delete');
+      }
+    } catch (error) {
+      console.error('Error deleting interest:', error);
+      toast.error(isRTL ? 'حدث خطأ' : 'An error occurred');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -281,6 +305,19 @@ export default function InterestsPage() {
                             {t('actions.markRead')}
                           </Button>
                         )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(interest.id)}
+                          disabled={deletingId === interest.id}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          {deletingId === interest.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

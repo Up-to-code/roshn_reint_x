@@ -9,7 +9,8 @@ import { useState, useEffect } from "react";
 
 const PHONE_NUMBER = "1234567890";
 const WHATSAPP_NUMBER = "1234567890";
-const INSTAGRAM_URL = "https://instagram.com";
+const INSTAGRAM_URL = "https://www.instagram.com/roshnreit?igsh=MXFlbTk5eGwzd3J6MA==";
+const SNAPCHAT_URL = "https://snapchat.com/t/9vzZRHpk";
 const TIKTOK_URL = "https://tiktok.com";
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
@@ -98,6 +99,30 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
               </svg>
             </a>
             
+            {/* Snapchat */}
+            <a
+              href={SNAPCHAT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-yellow-100 p-3 text-yellow-500 transition-all hover:bg-yellow-200 hover:scale-110"
+              aria-label="Snapchat"
+            >
+              <svg
+                className="size-5"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth="0"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 2.5a5.503 5.503 0 0 0-5.32 4.394c-.201 1.109.13 1.97.668 2.502.5.495.496.883.473 1.25-.035.534-.413 1.054-1.503 1.354-1.042.287-1.12.836-1.08 1.157.042.332.324.537.839.882.35.234.664.572.664 1.053 0 .42-.27.85-1.08 1.096-.642.195-1.161.76-1.161 1.341 0 1.139 1.464 2.471 7.5 2.471s7.5-1.332 7.5-2.471c0-.58-.52-1.146-1.161-1.341-.81-.246-1.08-.676-1.08-1.096 0-.481.314-.819.664-1.053.515-.345.797-.55.839-.882.04-.321-.038-.87-1.08-1.157-1.09-.3-1.468-.82-1.503-1.354-.023-.367-.027-.755.473-1.25.538-.532.87-1.393.668-2.502A5.503 5.503 0 0 0 12 2.5Zm2.743 4.145a.75.75 0 1 0-1.486.208.75.75 0 0 0 1.486-.208Zm-4.75-.208a.75.75 0 1 1-1.486.208.75.75 0 0 1 1.486-.208Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </a>
+
             {/* TikTok */}
             <a
               href={TIKTOK_URL}

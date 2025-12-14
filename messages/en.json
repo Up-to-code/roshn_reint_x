@@ -36,7 +36,7 @@
     "addProperty": "Add Property",
     "users": "Users",
     "services": "Services",
-    "interests" : "Interests",
+    "interests" : "Current Frames",
     "leads": "Leads"
   },
   "SaveModal": {
@@ -226,7 +226,6 @@
       "bathrooms": "Bathrooms",
       "area": "Area (m²)",
       "parking": "Parking Spaces",
-      "title": "Property Title",
       "title": "Property Title",
       "description": "Description"
     },
