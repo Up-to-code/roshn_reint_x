@@ -51,13 +51,23 @@ export function CustomUploader({
   acceptedFileTypes = 'all',
   multiple = false,
   maxFiles = 10,
-  maxSize = 10, // 10MB default
+  maxSize,
 }: CustomUploaderProps) {
   const t = useTranslations('uploader');
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Smart default based on bucket type
+  const getDefaultMaxSize = (bucket: StorageBucket, acceptedFileTypes: string): number => {
+    if (bucket === 'VIDEOS' || acceptedFileTypes === 'video') {
+      return 100; // 100MB for videos
+    }
+    return 10; // 10MB default for others
+  };
+
+  const effectiveMaxSize = maxSize ?? getDefaultMaxSize(bucket, acceptedFileTypes);
   
   // Get file type label
   const getFileTypeLabel = () => {
@@ -109,13 +119,20 @@ export function CustomUploader({
 
       // Validate file size
       const fileSizeMB = file.size / (1024 * 1024);
-      if (file.size > maxSize * 1024 * 1024) {
+      if (file.size > effectiveMaxSize * 1024 * 1024) {
         const errorMsg = t('messages.fileTooLarge', { 
           fileName: file.name, 
           size: fileSizeMB.toFixed(2), 
-          maxSize 
+          maxSize: effectiveMaxSize 
         });
         setError(errorMsg);
+        console.error('File size validation failed:', {
+          fileName: file.name,
+          fileSizeMB: fileSizeMB.toFixed(2),
+          maxSizeMB: effectiveMaxSize,
+          bucket,
+          acceptedFileTypes,
+        });
         toast.error(t('errors.fileTooLarge'), {
           description: errorMsg,
         });
@@ -141,12 +158,41 @@ export function CustomUploader({
     let successCount = 0;
     let errorCount = 0;
 
+    // Log bucket configuration before starting uploads
+    const fileType = files[0] ? getFileType(files[0].file) : 'unknown';
+    const targetBucket = bucket === 'IMAGES' && fileType !== 'image' 
+      ? getBucketForFileType(fileType) 
+      : getBucketName(bucket);
+    
+    console.log('Starting upload batch:', {
+      bucket: bucket,
+      targetBucket,
+      fileType,
+      acceptedFileTypes,
+      maxSizeMB: effectiveMaxSize,
+      fileCount: files.length,
+      files: files.map(f => ({
+        name: f.file.name,
+        sizeMB: (f.file.size / (1024 * 1024)).toFixed(2),
+        type: f.file.type,
+      })),
+    });
+
     for (const uploadFile of files) {
       try {
         const fileType = getFileType(uploadFile.file);
         const targetBucket = bucket === 'IMAGES' && fileType !== 'image' 
           ? getBucketForFileType(fileType) 
           : getBucketName(bucket);
+
+        const fileSizeMB = uploadFile.file.size / (1024 * 1024);
+        console.log('Uploading file:', {
+          fileName: uploadFile.file.name,
+          fileSizeMB: fileSizeMB.toFixed(2),
+          fileType,
+          targetBucket,
+          maxSizeMB: effectiveMaxSize,
+        });
 
         const result = await uploadToSupabase(
           uploadFile.file, 
@@ -164,6 +210,13 @@ export function CustomUploader({
             : uf
         ));
 
+        console.log('Upload successful:', {
+          fileName: uploadFile.file.name,
+          url: result.url,
+          path: result.path,
+          targetBucket,
+        });
+
         uploadedUrls.push(result.url);
         successCount++;
         
@@ -180,6 +233,22 @@ export function CustomUploader({
           : errorMessage.includes('Network error') || errorMessage.includes('Failed to fetch')
           ? t('messages.networkError')
           : errorMessage;
+
+        // Enhanced error logging
+        const fileSizeMB = uploadFile.file.size / (1024 * 1024);
+        console.error('Upload error:', {
+          fileName: uploadFile.file.name,
+          fileSizeMB: fileSizeMB.toFixed(2),
+          fileType: getFileType(uploadFile.file),
+          targetBucket,
+          maxSizeMB: effectiveMaxSize,
+          error: err,
+          errorMessage,
+          errorStack: err instanceof Error ? err.stack : undefined,
+          uploadProgress: uploadFiles.find(uf => uf.file === uploadFile.file)?.progress || 0,
+          bucket,
+          acceptedFileTypes,
+        });
 
         setUploadFiles(prev => prev.map(uf => 
           uf.file === uploadFile.file 
@@ -366,7 +435,7 @@ export function CustomUploader({
               </p>
               {multiple && (
                 <p className="text-xs text-muted-foreground">
-                  {t('upToFiles', { maxFiles, maxSize })}
+                  {t('upToFiles', { maxFiles, maxSize: effectiveMaxSize })}
                 </p>
               )}
             </div>
