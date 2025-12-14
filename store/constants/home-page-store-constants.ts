@@ -55,7 +55,6 @@ export const defaultContent: HomePageContent = {
   ],
   hero: {
     title: "Modern Architecture & Real Estate",
-    subtitle: "Discover exceptional properties and innovative architectural designs",
     primaryButton: {
       text: "View Properties",
       link: "/properties",
@@ -188,7 +187,6 @@ const arabicContent: HomePageContent = {
   ],
   hero: {
     title: "مرحبًا بكم في منصتنا المذهلة",
-     subtitle: "اكتشف مستقبل الابتكار الرقمي مع حلولنا المتطورة",
     primaryButton: {
       text: "ابدأ الآن",
       link: "/get-started",
