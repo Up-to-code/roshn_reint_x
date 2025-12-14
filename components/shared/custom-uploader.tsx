@@ -159,15 +159,15 @@ export function CustomUploader({
     let errorCount = 0;
 
     // Log bucket configuration before starting uploads
-    const fileType = files[0] ? getFileType(files[0].file) : 'unknown';
-    const targetBucket = bucket === 'IMAGES' && fileType !== 'image' 
-      ? getBucketForFileType(fileType) 
+    const firstFileType = files[0] ? getFileType(files[0].file) : 'file';
+    const targetBucket = bucket === 'IMAGES' && firstFileType !== 'image' 
+      ? getBucketForFileType(firstFileType) 
       : getBucketName(bucket);
     
     console.log('Starting upload batch:', {
       bucket: bucket,
       targetBucket,
-      fileType,
+      fileType: firstFileType,
       acceptedFileTypes,
       maxSizeMB: effectiveMaxSize,
       fileCount: files.length,

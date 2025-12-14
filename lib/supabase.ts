@@ -88,11 +88,24 @@ export async function uploadToSupabase(
     }
 
     // Try to validate bucket exists (optional - might fail due to RLS)
+    let bucketConfig: { name: string; public: boolean; file_size_limit: number } | null = null;
     try {
       const { data: buckets, error: listError } = await supabase.storage.listBuckets();
       if (!listError && buckets) {
-        const bucketExists = buckets.some(b => b.name === bucket);
-        if (!bucketExists) {
+        const bucketInfo = buckets.find(b => b.name === bucket);
+        if (bucketInfo) {
+          bucketConfig = {
+            name: bucketInfo.name,
+            public: bucketInfo.public,
+            file_size_limit: bucketInfo.file_size_limit || 0,
+          };
+          console.log('Bucket configuration:', {
+            bucket: bucketInfo.name,
+            public: bucketInfo.public,
+            fileSizeLimitMB: (bucketInfo.file_size_limit / (1024 * 1024)).toFixed(2),
+            fileSizeLimitBytes: bucketInfo.file_size_limit,
+          });
+        } else {
           console.warn(`Bucket '${bucket}' might not exist. Attempting upload anyway...`);
         }
       }
@@ -107,12 +120,30 @@ export async function uploadToSupabase(
     }
 
     // Upload file with retry logic for network errors
+    const fileSizeMB = file.size / (1024 * 1024);
     let uploadData;
     let error;
     let retries = 2;
+    let attemptNumber = 0;
+    
+    console.log('Starting upload:', {
+      fileName,
+      fileSizeMB: fileSizeMB.toFixed(2),
+      fileSizeBytes: file.size,
+      bucket,
+      bucketConfig,
+      maxRetries: retries + 1,
+    });
     
     while (retries >= 0) {
+      attemptNumber++;
       try {
+        console.log(`Upload attempt ${attemptNumber}/${retries + 2}:`, {
+          fileName,
+          bucket,
+          fileSizeMB: fileSizeMB.toFixed(2),
+        });
+
         const result = await supabase.storage
           .from(bucket)
           .upload(fileName, file, {
@@ -124,6 +155,12 @@ export async function uploadToSupabase(
         error = result.error;
         
         if (!error) {
+          console.log('Upload successful:', {
+            fileName,
+            path: uploadData?.path,
+            bucket,
+            attemptNumber,
+          });
           break; // Success, exit retry loop
         }
         
@@ -157,12 +194,27 @@ export async function uploadToSupabase(
         // If it's a network error and we have retries left, wait and retry
         if (error.message.includes('fetch') || error.message.includes('network') || error.message.includes('Failed to fetch')) {
           if (retries > 0) {
-            console.warn(`Upload failed, retrying... (${retries} attempts left)`);
+            console.warn(`Upload failed (network error), retrying... (${retries} attempts left):`, {
+              fileName,
+              bucket,
+              error: error.message,
+              attemptNumber,
+            });
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
             retries--;
             continue;
           }
         }
+        
+        // Log error before breaking
+        console.error('Upload error (non-network):', {
+          fileName,
+          bucket,
+          error: error.message,
+          attemptNumber,
+          fileSizeMB: fileSizeMB.toFixed(2),
+          bucketConfig,
+        });
         
         // For other errors or out of retries, throw
         break;
@@ -174,12 +226,24 @@ export async function uploadToSupabase(
                                 networkErr.message.includes('Failed to fetch');
           
           if (isNetworkError) {
-            console.warn(`Network error, retrying... (${retries} attempts left)`);
+            console.warn(`Network error, retrying... (${retries} attempts left):`, {
+              fileName,
+              bucket,
+              error: networkErr instanceof Error ? networkErr.message : String(networkErr),
+              attemptNumber,
+            });
             await new Promise(resolve => setTimeout(resolve, 1000));
             retries--;
             continue;
           }
         }
+        console.error('Upload exception:', {
+          fileName,
+          bucket,
+          error: networkErr,
+          attemptNumber,
+          fileSizeMB: fileSizeMB.toFixed(2),
+        });
         throw networkErr;
       }
     }
@@ -236,15 +300,101 @@ export async function uploadToSupabase(
       errorMessage = err;
     }
     
+    const fileSizeMB = file.size / (1024 * 1024);
+    
     console.error('Supabase upload error:', {
       error: err,
       message: errorMessage,
       bucket,
       fileName,
-      supabaseConfigured: !!supabase
+      fileSizeMB: fileSizeMB.toFixed(2),
+      fileSizeBytes: file.size,
+      fileType: file.type,
+      supabaseConfigured: !!supabase,
+      supabaseUrl: supabaseUrl ? 'configured' : 'missing',
+      errorStack: err instanceof Error ? err.stack : undefined,
     });
     
     throw new Error(errorMessage);
+  }
+}
+
+// Validate video bucket configuration
+export interface VideoBucketValidation {
+  exists: boolean;
+  isPublic: boolean;
+  fileSizeLimitMB: number;
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+export async function validateVideoBucket(): Promise<VideoBucketValidation> {
+  const result: VideoBucketValidation = {
+    exists: false,
+    isPublic: false,
+    fileSizeLimitMB: 0,
+    isValid: false,
+    errors: [],
+    warnings: [],
+  };
+
+  try {
+    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+    
+    if (listError) {
+      result.errors.push(`Failed to list buckets: ${listError.message}`);
+      console.error('Bucket validation error:', listError);
+      return result;
+    }
+
+    if (!buckets) {
+      result.errors.push('No buckets found');
+      return result;
+    }
+
+    const videoBucket = buckets.find(b => b.name === STORAGE_BUCKETS.VIDEOS);
+    
+    if (!videoBucket) {
+      result.errors.push(`Video bucket '${STORAGE_BUCKETS.VIDEOS}' does not exist`);
+      console.warn('Video bucket validation:', result);
+      return result;
+    }
+
+    result.exists = true;
+    result.isPublic = videoBucket.public || false;
+    result.fileSizeLimitMB = (videoBucket.file_size_limit || 0) / (1024 * 1024);
+
+    // Validation checks
+    if (!result.isPublic) {
+      result.warnings.push('Video bucket is not public. Uploads may fail.');
+    }
+
+    if (result.fileSizeLimitMB < 100) {
+      result.warnings.push(`Video bucket file size limit is ${result.fileSizeLimitMB.toFixed(2)}MB. Recommended: 100MB+ for video uploads.`);
+    }
+
+    if (result.fileSizeLimitMB === 0) {
+      result.errors.push('Video bucket has no file size limit configured');
+    }
+
+    result.isValid = result.errors.length === 0;
+
+    console.log('Video bucket validation:', {
+      exists: result.exists,
+      isPublic: result.isPublic,
+      fileSizeLimitMB: result.fileSizeLimitMB.toFixed(2),
+      isValid: result.isValid,
+      errors: result.errors,
+      warnings: result.warnings,
+    });
+
+    return result;
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    result.errors.push(`Validation failed: ${errorMessage}`);
+    console.error('Video bucket validation exception:', err);
+    return result;
   }
 }
 

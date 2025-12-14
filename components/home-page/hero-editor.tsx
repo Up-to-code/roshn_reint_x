@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,9 @@ import { CustomUploader } from "@/components/shared/custom-uploader";
 import { HeroFormBuilder } from "./hero-form-builder";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { ExternalLink, Trash2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { validateVideoBucket, type VideoBucketValidation } from "@/lib/supabase";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const defaultHero = {
   title: "",
@@ -23,6 +26,33 @@ export function HeroEditor() {
   const { data, currentLang, updateHero } = useHomePageStore();
   const content = data?.[currentLang];
   const hero = content?.hero || defaultHero;
+  const [bucketValidation, setBucketValidation] = useState<VideoBucketValidation | null>(null);
+  const [isValidating, setIsValidating] = useState(true);
+
+  useEffect(() => {
+    const checkBucket = async () => {
+      setIsValidating(true);
+      try {
+        const validation = await validateVideoBucket();
+        setBucketValidation(validation);
+        console.log('Video bucket validation result:', validation);
+      } catch (error) {
+        console.error('Failed to validate video bucket:', error);
+        setBucketValidation({
+          exists: false,
+          isPublic: false,
+          fileSizeLimitMB: 0,
+          isValid: false,
+          errors: ['Failed to validate bucket'],
+          warnings: [],
+        });
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    checkBucket();
+  }, []);
 
   if (!content) {
     return (
@@ -69,6 +99,54 @@ export function HeroEditor() {
         <div>
           <label className="text-sm font-medium">{t('backgroundVideo')}</label>
           <div className="space-y-3">
+            {/* Bucket Validation Status */}
+            {!isValidating && bucketValidation && (
+              <>
+                {bucketValidation.isValid && bucketValidation.warnings.length === 0 ? (
+                  <Alert className="border-green-200 bg-green-50">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <AlertTitle className="text-green-800">Video Bucket Ready</AlertTitle>
+                    <AlertDescription className="text-green-700">
+                      Video bucket is configured correctly. Max file size: {bucketValidation.fileSizeLimitMB.toFixed(0)}MB
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <Alert variant={bucketValidation.errors.length > 0 ? "destructive" : "default"} className="border-yellow-200 bg-yellow-50">
+                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                    <AlertTitle className="text-yellow-800">Bucket Configuration Warning</AlertTitle>
+                    <AlertDescription className="text-yellow-700">
+                      <div className="space-y-1">
+                        {bucketValidation.errors.length > 0 && (
+                          <div>
+                            <strong>Errors:</strong>
+                            <ul className="list-disc list-inside ml-2">
+                              {bucketValidation.errors.map((error, i) => (
+                                <li key={i}>{error}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {bucketValidation.warnings.length > 0 && (
+                          <div>
+                            <strong>Warnings:</strong>
+                            <ul className="list-disc list-inside ml-2">
+                              {bucketValidation.warnings.map((warning, i) => (
+                                <li key={i}>{warning}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        <div className="mt-2 text-xs">
+                          Current limit: {bucketValidation.fileSizeLimitMB.toFixed(2)}MB | 
+                          Recommended: 100MB+
+                        </div>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </>
+            )}
+
             <div className="flex gap-2">
               <Input
                 value={hero.backgroundVideo}
