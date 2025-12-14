@@ -448,9 +448,32 @@ export async function GET(request: NextRequest) {
     const settings = await readSettings();
     const homePageData = settings.homePage || defaultHomePageData;
 
+    // Deep merge to ensure hero.backgroundVideo is preserved
     const mergedData = {
-      en: { ...defaultHomePageData.en, ...homePageData.en },
-      ar: { ...defaultHomePageData.ar, ...homePageData.ar },
+      en: {
+        ...defaultHomePageData.en,
+        ...homePageData.en,
+        hero: {
+          ...defaultHomePageData.en.hero,
+          ...(homePageData.en?.hero || {}),
+          // Ensure backgroundVideo is preserved (can be empty string)
+          backgroundVideo: homePageData.en?.hero?.backgroundVideo !== undefined 
+            ? homePageData.en.hero.backgroundVideo 
+            : defaultHomePageData.en.hero.backgroundVideo,
+        },
+      },
+      ar: {
+        ...defaultHomePageData.ar,
+        ...homePageData.ar,
+        hero: {
+          ...defaultHomePageData.ar.hero,
+          ...(homePageData.ar?.hero || {}),
+          // Ensure backgroundVideo is preserved (can be empty string)
+          backgroundVideo: homePageData.ar?.hero?.backgroundVideo !== undefined 
+            ? homePageData.ar.hero.backgroundVideo 
+            : defaultHomePageData.ar.hero.backgroundVideo,
+        },
+      },
     };
 
     if (locale && (locale === 'ar' || locale === 'en')) {
@@ -472,31 +495,86 @@ export async function POST(request: NextRequest) {
   try {
     const homePageData = await request.json();
 
+    console.log('Received home page data:', {
+      hasEn: !!homePageData.en,
+      hasAr: !!homePageData.ar,
+      enHero: homePageData.en?.hero ? {
+        hasTitle: !!homePageData.en.hero.title,
+        hasSubtitle: !!homePageData.en.hero.subtitle,
+        hasBackgroundVideo: !!homePageData.en.hero.backgroundVideo,
+        backgroundVideo: homePageData.en.hero.backgroundVideo,
+      } : null,
+      arHero: homePageData.ar?.hero ? {
+        hasTitle: !!homePageData.ar.hero.title,
+        hasSubtitle: !!homePageData.ar.hero.subtitle,
+        hasBackgroundVideo: !!homePageData.ar.hero.backgroundVideo,
+        backgroundVideo: homePageData.ar.hero.backgroundVideo,
+      } : null,
+    });
+
     if (!homePageData.en || !homePageData.ar) {
+      console.error('Invalid data structure - missing en or ar:', {
+        hasEn: !!homePageData.en,
+        hasAr: !!homePageData.ar,
+      });
       return NextResponse.json(
         { success: false, error: 'Invalid home page data structure' },
         { status: 400 }
       );
     }
 
+    // Ensure hero objects have all required fields including backgroundVideo
+    if (!homePageData.en.hero) {
+      homePageData.en.hero = { ...defaultHomePageData.en.hero };
+    } else {
+      homePageData.en.hero = {
+        ...defaultHomePageData.en.hero,
+        ...homePageData.en.hero,
+        backgroundVideo: homePageData.en.hero.backgroundVideo || '',
+      };
+    }
+
+    if (!homePageData.ar.hero) {
+      homePageData.ar.hero = { ...defaultHomePageData.ar.hero };
+    } else {
+      homePageData.ar.hero = {
+        ...defaultHomePageData.ar.hero,
+        ...homePageData.ar.hero,
+        backgroundVideo: homePageData.ar.hero.backgroundVideo || '',
+      };
+    }
+
     const settings = await readSettings();
 
     const updatedSettings = { ...settings, homePage: homePageData };
 
+    console.log('Saving to database:', {
+      enHeroBackgroundVideo: updatedSettings.homePage?.en?.hero?.backgroundVideo,
+      arHeroBackgroundVideo: updatedSettings.homePage?.ar?.hero?.backgroundVideo,
+    });
+
     const success = await writeSettings(updatedSettings);
 
     if (success) {
+      console.log('Home page data saved successfully');
       return NextResponse.json({ success: true, message: 'Home page data saved successfully' });
     }
 
+    console.error('Failed to save home page data - writeSettings returned false');
     return NextResponse.json(
       { success: false, error: 'Failed to save home page data' },
       { status: 500 }
     );
   } catch (error) {
     console.error('Error saving home page data:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+      });
+    }
     return NextResponse.json(
-      { success: false, error: 'Invalid home page data' },
+      { success: false, error: error instanceof Error ? error.message : 'Invalid home page data' },
       { status: 400 }
     );
   }

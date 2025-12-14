@@ -38,22 +38,114 @@ export const useHomePageStore = create<HomePageStore>((set, get) => ({
     try {
       const { data } = get();
 
+      // Log what we're about to save
+      console.log('Saving home page data:', {
+        hasEn: !!data.en,
+        hasAr: !!data.ar,
+        currentLang: get().currentLang,
+        enHero: data.en?.hero ? {
+          title: data.en.hero.title,
+          subtitle: data.en.hero.subtitle,
+          backgroundVideo: data.en.hero.backgroundVideo,
+        } : null,
+        arHero: data.ar?.hero ? {
+          title: data.ar.hero.title,
+          subtitle: data.ar.hero.subtitle,
+          backgroundVideo: data.ar.hero.backgroundVideo,
+        } : null,
+      });
+
+      // Ensure data structure is complete
+      if (!data.en || !data.ar) {
+        console.error('Invalid data structure - missing en or ar');
+        throw new Error('Invalid data structure');
+      }
+
+      // Ensure hero objects exist and have all required fields
+      if (!data.en.hero) {
+        data.en.hero = { 
+          title: '', 
+          subtitle: '', 
+          backgroundVideo: '', 
+          overlayColor: 'rgba(0,0,0,0.4)', 
+          formFields: [],
+          primaryButton: { text: '', link: '', variant: 'primary' },
+          secondaryButton: { text: '', link: '', variant: 'secondary' },
+        };
+      } else {
+        // Ensure backgroundVideo exists (can be empty string)
+        if (data.en.hero.backgroundVideo === undefined || data.en.hero.backgroundVideo === null) {
+          data.en.hero.backgroundVideo = '';
+        }
+        // Ensure formFields exists
+        if (!data.en.hero.formFields) {
+          data.en.hero.formFields = [];
+        }
+        // Ensure overlayColor exists
+        if (!data.en.hero.overlayColor) {
+          data.en.hero.overlayColor = 'rgba(0,0,0,0.4)';
+        }
+      }
+
+      if (!data.ar.hero) {
+        data.ar.hero = { 
+          title: '', 
+          subtitle: '', 
+          backgroundVideo: '', 
+          overlayColor: 'rgba(0,0,0,0.4)', 
+          formFields: [],
+          primaryButton: { text: '', link: '', variant: 'primary' },
+          secondaryButton: { text: '', link: '', variant: 'secondary' },
+        };
+      } else {
+        // Ensure backgroundVideo exists (can be empty string)
+        if (data.ar.hero.backgroundVideo === undefined || data.ar.hero.backgroundVideo === null) {
+          data.ar.hero.backgroundVideo = '';
+        }
+        // Ensure formFields exists
+        if (!data.ar.hero.formFields) {
+          data.ar.hero.formFields = [];
+        }
+        // Ensure overlayColor exists
+        if (!data.ar.hero.overlayColor) {
+          data.ar.hero.overlayColor = 'rgba(0,0,0,0.4)';
+        }
+      }
+
       const response = await fetch("/api/home-page", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API response error:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText,
+        });
+        throw new Error(`Failed to save: ${response.statusText}`);
+      }
+
       const result = await response.json();
 
       if (result.success) {
+        console.log('Data saved successfully');
         set({ isSaving: false });
         return true;
       } else {
-        throw new Error(result.error);
+        console.error('Save failed:', result.error);
+        throw new Error(result.error || 'Failed to save data');
       }
     } catch (error) {
       console.error("Error saving data:", error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+        });
+      }
       set({ isSaving: false });
       return false;
     }
