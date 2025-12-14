@@ -24,10 +24,7 @@ export function PartnersEditor() {
       addPartner({ 
         id: Date.now().toString(), 
         src: newPartner.src,
-        alt: newPartner.alt,
-        name: newPartner.alt,
-        logo: newPartner.src,
-        link: ""
+        alt: newPartner.alt
       });
       setNewPartner({ src: "", alt: "" });
     }
@@ -38,10 +35,7 @@ export function PartnersEditor() {
       addPartner({
         id: `${Date.now()}-${index}`,
         src: url,
-        alt: `Partner ${partners.length + index + 1}`,
-        name: `Partner ${partners.length + index + 1}`,
-        logo: url,
-        link: ""
+        alt: `Partner ${partners.length + index + 1}`
       });
     });
   };
@@ -132,20 +126,20 @@ export function PartnersEditor() {
                       <Label htmlFor={`partner-src-${partner.id}`} className="text-sm font-medium">
                         Image URL
                       </Label>
-                      <Input
-                        id={`partner-src-${partner.id}`}
-                        value={partner.src}
-                        onChange={(e) => updatePartner(partner.id, { src: e.target.value, logo: e.target.value })}
-                        placeholder="https://example.com/logo.png"
-                        className="text-sm"
-                      />
+                  <Input
+                    id={`partner-src-${partner.id}`}
+                    value={partner.src}
+                    onChange={(e) => updatePartner(partner.id, { src: e.target.value })}
+                    placeholder="https://example.com/logo.png"
+                    className="text-sm"
+                  />
                     </div>
                     
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">Upload Logo</Label>
                       <CustomUploader
                         bucket="IMAGES"
-                        onUploadComplete={(url) => updatePartner(partner.id, { src: url, logo: url })}
+                        onUploadComplete={(url) => updatePartner(partner.id, { src: url })}
                         acceptedFileTypes="image"
                         buttonText="Choose Image"
                         maxSize={10}
@@ -160,7 +154,7 @@ export function PartnersEditor() {
                       <Input
                         id={`partner-alt-${partner.id}`}
                         value={partner.alt}
-                        onChange={(e) => updatePartner(partner.id, { alt: e.target.value, name: e.target.value })}
+                        onChange={(e) => updatePartner(partner.id, { alt: e.target.value })}
                         placeholder="Enter partner name"
                         className="text-sm"
                       />
