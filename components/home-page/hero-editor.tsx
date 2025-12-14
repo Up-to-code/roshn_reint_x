@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { CustomUploader } from "@/components/shared/custom-uploader";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Trash2, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -78,23 +78,22 @@ export function HeroEditor() {
           <label className="mb-2 block text-sm font-medium">
             {t('heroTitle')} 
             <span className="ml-2 text-xs text-muted-foreground">
-              ({currentLang === 'ar' ? 'يمكنك إدخال HTML لتنسيق النص - اضغط Enter لسطر جديد' : 'You can enter HTML to format text - Press Enter for a new line'})
+              ({currentLang === 'ar' ? 'محرر نص منسق - يمكنك تنسيق النص وإضافة أسطر جديدة' : 'Rich text editor - Format text and add new lines'})
             </span>
           </label>
-          <Textarea
+          <RichTextEditor
             value={hero.title || ''}
-            onChange={(e) => updateHero({ title: e.target.value })}
+            onChange={(value) => updateHero({ title: value })}
             placeholder={currentLang === 'ar' 
-              ? 'أدخل العنوان هنا...\nيمكنك استخدام HTML مثل <strong>نص عريض</strong> أو <em>نص مائل</em>\nاضغط Enter لسطر جديد'
-              : 'Enter title here...\nYou can use HTML like <strong>bold</strong> or <em>italic</em>\nPress Enter for a new line'}
-            rows={10}
-            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-            className="min-h-[250px] font-mono text-sm leading-relaxed"
+              ? 'أدخل العنوان هنا... يمكنك استخدام Enter لسطر جديد'
+              : 'Enter title here... Press Enter for a new line'}
+            isRTL={currentLang === 'ar'}
+            className="min-h-[250px]"
           />
           <p className="mt-2 text-xs text-muted-foreground">
             {currentLang === 'ar' 
-              ? '💡 نصيحة: يمكنك استخدام HTML لتنسيق النص (مثل <strong>، <em>، <br>). اضغط Enter لإنشاء سطر جديد.'
-              : '💡 Tip: You can use HTML to format text (like <strong>, <em>, <br>). Press Enter to create a new line.'}
+              ? '💡 نصيحة: استخدم شريط الأدوات لتنسيق النص. اضغط Enter لإنشاء سطر جديد.'
+              : '💡 Tip: Use the toolbar to format text. Press Enter to create a new line.'}
           </p>
         </div>
 
