@@ -279,7 +279,7 @@ export function PartnersEditor() {
               maxFiles={50}
             />
             <p className="text-xs text-muted-foreground italic">
-              💡 Tip: After bulk upload, you can edit each partner's name individually above.
+              💡 Tip: After bulk upload, you can edit each partner&apos;s name individually above.
             </p>
           </div>
         </CardContent>
