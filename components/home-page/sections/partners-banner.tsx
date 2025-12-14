@@ -100,8 +100,8 @@ export function PartnersBanner({
               (e.currentTarget as HTMLElement).style.animationPlayState = 'running';
             }}
           >
-            {/* Render 3 sets of logos for better coverage on large screens */}
-            {[...Array(3)].map((_, setIndex) => (
+            {/* Render 2 sets of logos for seamless loop */}
+            {[...Array(2)].map((_, setIndex) => (
               <div key={`set-${setIndex}`} className="flex shrink-0">
                 {logosToShow.map((logo, index) => (
                   <div
@@ -119,7 +119,7 @@ export function PartnersBanner({
                       alt={logo.alt}
                       width={160}
                       height={160}
-                      className="h-full w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                      className="h-full w-full object-contain transition-all duration-300"
                       unoptimized
                       loading="lazy"
                     />
@@ -137,13 +137,13 @@ export function PartnersBanner({
             transform: translateX(0);
           }
           100% {
-            transform: translateX(calc(-100% / 3));
+            transform: translateX(-50%);
           }
         }
 
         @keyframes scroll-rtl {
           0% {
-            transform: translateX(calc(-100% / 3));
+            transform: translateX(-50%);
           }
           100% {
             transform: translateX(0);
