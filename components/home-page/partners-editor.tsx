@@ -6,9 +6,11 @@ import { useHomePageStore } from "@/store/home-page-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CustomUploader } from "@/components/shared/custom-uploader";
-import { Plus, Trash2, Image as ImageIcon } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, Trash2, Image as ImageIcon, Upload, Info } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 
 export function PartnersEditor() {
@@ -46,148 +48,245 @@ export function PartnersEditor() {
 
   return (
     <div className="space-y-6">
+      {/* Info Alert */}
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Unlimited Partners:</strong> You can add as many partners as you need. All partners will be displayed on your homepage.
+        </AlertDescription>
+      </Alert>
+
       {/* Current Partners Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium">{t('currentPartners')}</h3>
-          <Badge variant="secondary">
-            {partners.length} {partners.length === 1 ? 'Partner' : 'Partners'}
-          </Badge>
-        </div>
-        
-        {partners.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center">
-              <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No partners added yet. Add your first partner below.</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {partners.map((partner) => (
-              <Card key={partner.id} className="relative">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-sm font-medium">Partner #{partners.indexOf(partner) + 1}</CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => removePartner(partner.id)}
-                      className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {/* Partner Image Preview */}
-                  {partner.src && (
-                    <div className="relative h-32 w-full overflow-hidden rounded-lg border bg-muted">
-                      <Image
-                        src={partner.src}
-                        alt={partner.alt || 'Partner logo'}
-                        fill
-                        className="object-contain p-2"
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl">{t('currentPartners')}</CardTitle>
+              <CardDescription className="mt-1">
+                Manage your existing partners. Edit or remove any partner below.
+              </CardDescription>
+            </div>
+            <Badge variant="secondary" className="text-base px-3 py-1">
+              {partners.length} {partners.length === 1 ? 'Partner' : 'Partners'}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {partners.length === 0 ? (
+            <div className="py-12 text-center border-2 border-dashed rounded-lg bg-muted/30">
+              <ImageIcon className="mx-auto h-16 w-16 text-muted-foreground mb-4 opacity-50" />
+              <p className="text-lg font-medium text-muted-foreground mb-2">No partners yet</p>
+              <p className="text-sm text-muted-foreground">
+                Start by adding your first partner using the form below.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {partners.map((partner, index) => (
+                <Card key={partner.id} className="relative border-2 hover:border-primary/50 transition-colors">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-base font-semibold">
+                          Partner #{index + 1}
+                        </CardTitle>
+                        <CardDescription className="text-xs mt-1">
+                          Click to edit details
+                        </CardDescription>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => removePartner(partner.id)}
+                        className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        title="Remove partner"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Partner Image Preview */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Partner Logo</Label>
+                      {partner.src ? (
+                        <div className="relative h-40 w-full overflow-hidden rounded-lg border-2 border-muted bg-muted/50">
+                          <Image
+                            src={partner.src}
+                            alt={partner.alt || 'Partner logo'}
+                            fill
+                            className="object-contain p-3"
+                          />
+                        </div>
+                      ) : (
+                        <div className="relative h-40 w-full overflow-hidden rounded-lg border-2 border-dashed border-muted bg-muted/30 flex items-center justify-center">
+                          <div className="text-center">
+                            <ImageIcon className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                            <p className="text-xs text-muted-foreground">No image</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor={`partner-src-${partner.id}`} className="text-sm font-medium">
+                        Image URL
+                      </Label>
+                      <Input
+                        id={`partner-src-${partner.id}`}
+                        value={partner.src}
+                        onChange={(e) => updatePartner(partner.id, { src: e.target.value, logo: e.target.value })}
+                        placeholder="https://example.com/logo.png"
+                        className="text-sm"
                       />
                     </div>
-                  )}
-                  
-                  <Input
-                    value={partner.src}
-                    onChange={(e) => updatePartner(partner.id, { src: e.target.value, logo: e.target.value })}
-                    placeholder={t('logoImageUrl')}
-                    className="text-xs"
-                  />
-                  
-                  <CustomUploader
-                    bucket="IMAGES"
-                    onUploadComplete={(url) => updatePartner(partner.id, { src: url, logo: url })}
-                    acceptedFileTypes="image"
-                    buttonText="Upload Logo"
-                    maxSize={10}
-                    multiple={false}
-                  />
-                  
-                  <Input
-                    value={partner.alt}
-                    onChange={(e) => updatePartner(partner.id, { alt: e.target.value, name: e.target.value })}
-                    placeholder={t('altText')}
-                    className="text-xs"
-                  />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Upload Logo</Label>
+                      <CustomUploader
+                        bucket="IMAGES"
+                        onUploadComplete={(url) => updatePartner(partner.id, { src: url, logo: url })}
+                        acceptedFileTypes="image"
+                        buttonText="Choose Image"
+                        maxSize={10}
+                        multiple={false}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor={`partner-alt-${partner.id}`} className="text-sm font-medium">
+                        Partner Name / Alt Text <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id={`partner-alt-${partner.id}`}
+                        value={partner.alt}
+                        onChange={(e) => updatePartner(partner.id, { alt: e.target.value, name: e.target.value })}
+                        placeholder="Enter partner name"
+                        className="text-sm"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        This text appears when the image cannot load
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Add New Partner Section */}
-      <Card className="border-dashed">
+      <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
         <CardHeader>
-          <CardTitle className="text-lg">{t('addNewPartner')}</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Add unlimited partners. No limit on the number of partner images you can upload.
-          </p>
+          <div className="flex items-center gap-2">
+            <Plus className="h-5 w-5 text-primary" />
+            <CardTitle className="text-xl">{t('addNewPartner')}</CardTitle>
+          </div>
+          <CardDescription className="mt-2">
+            Add a new partner to your homepage. You can add unlimited partners - no restrictions!
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <Input
-              value={newPartner.src}
-              onChange={(e) => setNewPartner({ ...newPartner, src: e.target.value })}
-              placeholder={t('logoImageUrl')}
-            />
+        <CardContent className="space-y-6">
+          {/* Single Partner Upload */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b">
+              <Upload className="h-4 w-4 text-muted-foreground" />
+              <h4 className="font-semibold text-base">Add Single Partner</h4>
+            </div>
             
-            <CustomUploader
-              bucket="IMAGES"
-              onUploadComplete={(url) => setNewPartner({ ...newPartner, src: url })}
-              acceptedFileTypes="image"
-              buttonText="Upload Partner Logo"
-              maxSize={10}
-              multiple={false}
-            />
-            
-            {newPartner.src && (
-              <div className="relative h-24 w-full overflow-hidden rounded-lg border bg-muted">
-                <Image
-                  src={newPartner.src}
-                  alt="Preview"
-                  fill
-                  className="object-contain p-2"
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="new-partner-src" className="text-sm font-medium">
+                  Partner Logo Image URL (Optional)
+                </Label>
+                <Input
+                  id="new-partner-src"
+                  value={newPartner.src}
+                  onChange={(e) => setNewPartner({ ...newPartner, src: e.target.value })}
+                  placeholder="https://example.com/partner-logo.png"
+                  className="text-sm"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Or upload an image using the button below
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Upload Partner Logo</Label>
+                <CustomUploader
+                  bucket="IMAGES"
+                  onUploadComplete={(url) => setNewPartner({ ...newPartner, src: url })}
+                  acceptedFileTypes="image"
+                  buttonText="Upload Image"
+                  maxSize={10}
+                  multiple={false}
                 />
               </div>
-            )}
-            
-            <Input
-              value={newPartner.alt}
-              onChange={(e) => setNewPartner({ ...newPartner, alt: e.target.value })}
-              placeholder={t('altText')}
-            />
-            
-            <Button 
-              onClick={handleAddPartner} 
-              className="w-full"
-              disabled={!newPartner.src || !newPartner.alt}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              {t('addPartner')}
-            </Button>
+              
+              {newPartner.src && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Preview</Label>
+                  <div className="relative h-32 w-full overflow-hidden rounded-lg border-2 border-primary/20 bg-muted/50">
+                    <Image
+                      src={newPartner.src}
+                      alt="Preview"
+                      fill
+                      className="object-contain p-3"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="new-partner-alt" className="text-sm font-medium">
+                  Partner Name / Alt Text <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="new-partner-alt"
+                  value={newPartner.alt}
+                  onChange={(e) => setNewPartner({ ...newPartner, alt: e.target.value })}
+                  placeholder="Enter partner name (e.g., Company Name)"
+                  className="text-sm"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Required: This identifies your partner
+                </p>
+              </div>
+              
+              <Button 
+                onClick={handleAddPartner} 
+                className="w-full"
+                size="lg"
+                disabled={!newPartner.src || !newPartner.alt}
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                Add Partner
+              </Button>
+            </div>
           </div>
 
           {/* Bulk Upload Option */}
-          <div className="border-t pt-4">
-            <p className="text-sm font-medium mb-2">Bulk Upload (Optional)</p>
-            <p className="text-xs text-muted-foreground mb-3">
-              Upload multiple partner logos at once. You can add names/alt text after uploading.
+          <div className="space-y-4 pt-6 border-t-2">
+            <div className="flex items-center gap-2">
+              <Upload className="h-4 w-4 text-muted-foreground" />
+              <h4 className="font-semibold text-base">Bulk Upload (Optional)</h4>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Upload multiple partner logos at once (up to 50 images). You can edit the names after uploading.
             </p>
             <CustomUploader
               bucket="IMAGES"
               onMultipleUploadComplete={handleMultipleUpload}
               acceptedFileTypes="image"
-              buttonText="Upload Multiple Partner Logos"
+              buttonText="Upload Multiple Logos (Up to 50)"
               maxSize={10}
               multiple={true}
               maxFiles={50}
             />
+            <p className="text-xs text-muted-foreground italic">
+              💡 Tip: After bulk upload, you can edit each partner's name individually above.
+            </p>
           </div>
         </CardContent>
       </Card>
