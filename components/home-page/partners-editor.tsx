@@ -178,7 +178,7 @@ export function PartnersEditor() {
             <CardTitle className="text-xl">{t('addNewPartner')}</CardTitle>
           </div>
           <CardDescription className="mt-2">
-            Add a new partner to your homepage. You can add unlimited partners - no restrictions!
+            Add a new partner to your homepage. You can add unlimited partners with no restrictions!
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -267,16 +267,16 @@ export function PartnersEditor() {
               <h4 className="font-semibold text-base">Bulk Upload (Optional)</h4>
             </div>
             <p className="text-sm text-muted-foreground">
-              Upload multiple partner logos at once (up to 50 images). You can edit the names after uploading.
+              Upload multiple partner logos at once (unlimited). You can edit the names after uploading.
             </p>
             <CustomUploader
               bucket="IMAGES"
               onMultipleUploadComplete={handleMultipleUpload}
               acceptedFileTypes="image"
-              buttonText="Upload Multiple Logos (Up to 50)"
+              buttonText="Upload Multiple Logos (Unlimited)"
               maxSize={10}
               multiple={true}
-              maxFiles={50}
+              maxFiles={1000}
             />
             <p className="text-xs text-muted-foreground italic">
               💡 Tip: After bulk upload, you can edit each partner&apos;s name individually above.

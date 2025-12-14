@@ -48,16 +48,22 @@ export function PartnersBanner({
         {/* Infinite Scroll Container */}
         <div className="relative m-auto w-full overflow-hidden">
           <div 
-            className="flex w-max animate-infinite-scroll hover:[animation-play-state:paused]"
-            style={{ animationDuration: `${speed}s` }}
+            className={cn(
+              "flex w-max animate-infinite-scroll hover:[animation-play-state:paused]",
+              isRTL && "[animation-direction:reverse]"
+            )}
+            style={{ 
+              animationDuration: `${speed}s`,
+              animationTimingFunction: 'linear'
+            }}
           >
-            {/* Render 4 sets of logos to ensure seamless loop on large screens */}
-            {[...Array(4)].map((_, setIndex) => (
-              <div key={`set-${setIndex}`} className="flex">
+            {/* Render 2 sets of logos to ensure seamless loop - animation moves 50% (one set) */}
+            {[...Array(2)].map((_, setIndex) => (
+              <div key={`set-${setIndex}`} className="flex shrink-0">
                 {logosToShow.map((logo, index) => (
                   <div
                     key={`${setIndex}-${logo.alt}-${index}`}
-                    className="mx-12 flex h-[200px] w-[150px] items-center justify-center"
+                    className="mx-8 flex h-[200px] w-[150px] shrink-0 items-center justify-center"
                   >
                     <Image
                       src={logo.src}
@@ -65,6 +71,7 @@ export function PartnersBanner({
                       width={150}
                       height={200}
                       className="h-full w-full object-contain"
+                      unoptimized
                     />
                   </div>
                 ))}

@@ -78,27 +78,28 @@ export function HeroSection({ content }: HeroSectionProps) {
           </div>
         )}
 
-        {/* Main Title - Support RTL and rich text HTML */}
+        {/* Main Title - Support RTL and rich text HTML with better spacing */}
         {(() => {
           const isRTL = content.title && /[\u0600-\u06FF]/.test(content.title);
           const hasHTML = content.title && /<[^>]+>/.test(content.title);
           
           return (
             <h1 
-              className={`mb-6 text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl ${
+              className={`mb-6 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl ${
                 isRTL ? 'text-right' : 'text-center'
               }`}
+              style={{ lineHeight: '1.2' }}
               dir={isRTL ? 'rtl' : 'ltr'}
             >
               {hasHTML ? (
                 <div 
-                  className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl [&_*]:text-inherit [&_*]:font-inherit"
+                  className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl [&_*]:text-inherit [&_*]:font-inherit [&_*]:leading-[1.2] [&_p]:mb-4 [&_p]:last:mb-0 [&_strong]:font-bold [&_em]:italic [&_br]:block [&_br]:h-2"
                   dangerouslySetInnerHTML={{ __html: content.title }}
                 />
               ) : (
-                <span className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl whitespace-pre-line">
+                <span className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl">
                   {content.title ? content.title.split('\n').map((line, index) => (
-                    <span key={index} className="block">
+                    <span key={index} className="block mb-2 last:mb-0" style={{ lineHeight: '1.2' }}>
                       {line.trim() || '\u00A0'}
                     </span>
                   )) : '\u00A0'}

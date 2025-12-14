@@ -44,7 +44,6 @@ async function getHomePageData(locale: string) {
     return {
       hero: {
         title: locale === 'ar' ? 'مرحباً بكم' : 'Welcome',
-        subtitle: locale === 'ar' ? 'نحن هنا لمساعدتك' : 'We are here to help you',
         primaryButton: { text: locale === 'ar' ? 'ابدأ الآن' : 'Get Started', link: "/signup", variant: "primary" as const },
         secondaryButton: { text: locale === 'ar' ? 'اعرف المزيد' : 'Learn More', link: "/about", variant: "secondary" as const },
         backgroundVideo: "",
