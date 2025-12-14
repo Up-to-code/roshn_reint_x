@@ -22,8 +22,7 @@ export function PartnersBanner({
     setMounted(true);
   }, []);
 
-  // Filter out partners with empty/invalid image URLs to prevent empty spaces
-  // Display ALL valid partners - no limit applied
+  // Filter out partners with empty/invalid image URLs
   const logosToShow = (logos || []).filter(
     (logo) => 
       logo?.src && 
@@ -32,12 +31,11 @@ export function PartnersBanner({
   );
 
   if (!mounted) {
-    return null; // Return nothing during SSR and initial client render
+    return null;
   }
 
-  // If no logos provided, don't render anything
   if (logosToShow.length === 0) {
-    return null; // Completely hide the component when no data
+    return null;
   }
 
   return (
@@ -53,16 +51,12 @@ export function PartnersBanner({
         {/* Infinite Scroll Container */}
         <div className="relative m-auto w-full overflow-hidden">
           <div 
-            className={cn(
-              "flex w-max animate-infinite-scroll hover:[animation-play-state:paused]",
-              isRTL && "[animation-direction:reverse]"
-            )}
+            className="flex"
             style={{ 
-              animationDuration: `${speed}s`,
-              animationTimingFunction: 'linear'
+              animation: `${isRTL ? 'scroll-rtl' : 'scroll-ltr'} ${speed}s linear infinite`,
             }}
           >
-            {/* Render 2 sets of logos to ensure seamless loop - animation moves 50% (one set) */}
+            {/* Render 2 sets of logos for seamless loop */}
             {[...Array(2)].map((_, setIndex) => (
               <div key={`set-${setIndex}`} className="flex shrink-0">
                 {logosToShow.map((logo, index) => (
@@ -85,6 +79,30 @@ export function PartnersBanner({
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes scroll-ltr {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        @keyframes scroll-rtl {
+          0% {
+            transform: translateX(-50%);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
+
+        .flex:hover {
+          animation-play-state: paused !important;
+        }
+      `}</style>
     </section>
   );
 }
