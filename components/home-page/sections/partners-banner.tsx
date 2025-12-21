@@ -10,8 +10,8 @@ interface PartnersBannerProps {
   className?: string;
 }
 
-export function PartnersBanner({ 
-  logos = [], 
+export function PartnersBanner({
+  logos = [],
   speed = 30,
   className
 }: PartnersBannerProps) {
@@ -25,9 +25,9 @@ export function PartnersBanner({
 
   // Filter out partners with empty/invalid image URLs
   const logosToShow = (logos || []).filter(
-    (logo) => 
-      logo?.src && 
-      typeof logo.src === 'string' && 
+    (logo) =>
+      logo?.src &&
+      typeof logo.src === 'string' &&
       logo.src.trim().length > 0
   );
 
@@ -64,41 +64,35 @@ export function PartnersBanner({
             {isRTL ? "نفخر بالعمل مع أفضل الشركات" : "Trusted by leading companies worldwide"}
           </p>
         </div>
-        
+
         {/* Infinite Scroll Container with gradient masks */}
         <div className="relative m-auto w-full overflow-hidden">
           {/* Gradient overlays for smooth fade effect */}
-          <div 
+          <div
             className={cn(
               "absolute top-0 bottom-0 w-32 z-10 pointer-events-none",
               isRTL ? "right-0 bg-gradient-to-l" : "left-0 bg-gradient-to-r",
               "from-white via-white/80 to-transparent"
-            )} 
+            )}
           />
-          <div 
+          <div
             className={cn(
               "absolute top-0 bottom-0 w-32 z-10 pointer-events-none",
               isRTL ? "left-0 bg-gradient-to-r" : "right-0 bg-gradient-to-l",
               "from-white via-white/80 to-transparent"
-            )} 
+            )}
           />
-          
+
           {/* Scrolling container - using inline-flex for seamless loop */}
           <div className="inline-flex w-full flex-nowrap">
             {/* First set of logos */}
-            <div 
+            <div
               className={cn(
                 "flex items-center justify-center md:justify-start shrink-0",
                 isRTL ? "animate-scroll-rtl" : "animate-scroll-ltr"
               )}
-              style={{ 
+              style={{
                 animationDuration: `${speed}s`,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.animationPlayState = 'paused';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.animationPlayState = 'running';
               }}
             >
               {logosToShow.map((logo, index) => (
@@ -107,37 +101,30 @@ export function PartnersBanner({
                   className={cn(
                     "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
                     "items-center justify-center",
-                    "transition-transform duration-300 hover:scale-110",
-                    "bg-white rounded-lg shadow-sm hover:shadow-md",
+                    "bg-white rounded-lg shadow-sm",
                     "p-4"
                   )}
                 >
                   <img
                     src={logo.src}
                     alt={logo.alt}
-                    className="h-full w-full object-contain transition-all duration-300"
+                    className="h-full w-full object-contain"
                     loading="lazy"
                   />
                 </div>
               ))}
             </div>
-            
+
             {/* Second set of logos (duplicate for seamless loop) */}
-            <div 
+            <div
               className={cn(
                 "flex items-center justify-center md:justify-start shrink-0",
                 isRTL ? "animate-scroll-rtl" : "animate-scroll-ltr"
               )}
-              style={{ 
+              style={{
                 animationDuration: `${speed}s`,
               }}
               aria-hidden="true"
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.animationPlayState = 'paused';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.animationPlayState = 'running';
-              }}
             >
               {logosToShow.map((logo, index) => (
                 <div
@@ -145,15 +132,14 @@ export function PartnersBanner({
                   className={cn(
                     "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
                     "items-center justify-center",
-                    "transition-transform duration-300 hover:scale-110",
-                    "bg-white rounded-lg shadow-sm hover:shadow-md",
+                    "bg-white rounded-lg shadow-sm",
                     "p-4"
                   )}
                 >
                   <img
                     src={logo.src}
                     alt={logo.alt}
-                    className="h-full w-full object-contain transition-all duration-300"
+                    className="h-full w-full object-contain"
                     loading="lazy"
                   />
                 </div>
