@@ -1,5 +1,3 @@
-"use server";
-
 import React from 'react';
 import { getProperties } from '@/app/actions/properties';
 import PropertiesClient from './PropertiesClient';
@@ -12,7 +10,7 @@ export default async function PropertiesDashboardPage({
 }) {
   const result = await getProperties();
   const rawProperties = result.success && result.data ? (result.data as Property[]) : [];
-  
+
   // Serialize dates to strings to avoid hydration mismatches and serialization warnings
   const properties = rawProperties.map(p => ({
     ...p,
