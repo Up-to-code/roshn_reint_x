@@ -41,8 +41,8 @@ export function UserRoleForm({ user }: UserNameFormProps) {
 
   // Fallback for UserRole if it's undefined (e.g. Prisma bundling issues in client components)
   const roles = UserRole ? Object.values(UserRole) : ["ADMIN", "USER"];
-  const [role, setRole] = useState<UserRole>(
-    (user.role as UserRole) || UserRole.USER
+  const [role, setRole] = useState<any>(
+    user.role || (UserRole ? UserRole.USER : "USER")
   );
 
   const form = useForm<FormData>({
