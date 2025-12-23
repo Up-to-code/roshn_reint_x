@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Cairo } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@uploadthing/react/styles.css";
@@ -14,10 +14,16 @@ import { ThemeProvider } from "next-themes";
 import ModalProvider from "@/components/modals/providers";
 import { Toaster } from "sonner";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
- 
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  display: "swap",
+
+const dinNext = localFont({
+  src: [
+    {
+      path: "../../public/DINNextLTArabic-Medium-4.ttf",
+      weight: "500",
+      style: "normal",
+    },
+  ],
+  variable: "--font-din-next",
 });
 
 export const metadata: Metadata = {
@@ -43,7 +49,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <body
-        className={`${cairo.className} bg-background antialiased`}
+        className={`${dinNext.className} bg-background antialiased`}
         suppressHydrationWarning
       >
         <NextIntlClientProvider messages={messages}>
@@ -54,9 +60,9 @@ export default async function RootLayout({
               enableSystem={false}
               disableTransitionOnChange
             >
-               <ModalProvider>{children}</ModalProvider>
-               <Analytics />
-               <SpeedInsights />
+              <ModalProvider>{children}</ModalProvider>
+              <Analytics />
+              <SpeedInsights />
               <Toaster richColors closeButton />
               <TailwindIndicator />
             </ThemeProvider>
