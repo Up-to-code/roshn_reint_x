@@ -1,126 +1,116 @@
 "use client";
 
-import { HeroSection as HeroSectionType } from "@/types/home-page";
 import { useEffect, useRef } from "react";
 
 interface HeroSectionProps {
-  content: HeroSectionType;
+  content: {
+    title?: string;
+    subtitle?: string;
+    accentText?: string;
+    backgroundImage?: string;
+    backgroundVideo?: string;
+    overlayColor?: string;
+  };
 }
 
 export function HeroSection({ content }: HeroSectionProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    // Only run on client side
-    if (typeof window !== 'undefined' && videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log("Video autoplay failed:", error);
-      });
+    if (videoRef.current) {
+      videoRef.current
+        .play()
+        .catch((err) => console.log("Video autoplay failed:", err));
     }
   }, []);
 
-  const Overlay = () => (
-    <div
-      className="absolute inset-0"
-      style={{ backgroundColor: content.overlayColor || 'rgba(0,0,0,0.4)' }}
-      aria-hidden="true"
-    />
-  );
-
-  // Render background - video or image
-  const renderBackground = () => {
-    if (content.backgroundVideo) {
-      return (
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="h-full w-full object-cover"
-        >
-          <source src={content.backgroundVideo} type="video/mp4" />
-          <source src={content.backgroundVideo} type="video/webm" />
-        </video>
-      );
-    }
-
-    if (content.backgroundImage) {
-      return (
-        <img
-          src={content.backgroundImage}
-          alt={content.title || "Hero Background"}
-          className="h-full w-full object-cover"
-        />
-      );
-    }
-
-    return null;
-  };
+  const isHtml = (str: string) => /<[^>]+>/.test(str);
 
   return (
     <section
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900"
       aria-label={content.title || "Hero section"}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900"
     >
-      {/* Background (Video or Image) */}
+      {/* Background */}
       <div className="absolute inset-0 z-0">
-        {renderBackground()}
-        <Overlay />
+        {content.backgroundVideo ? (
+          <video
+            ref={videoRef}
+            src={content.backgroundVideo}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="h-full w-full object-cover"
+          />
+        ) : content.backgroundImage ? (
+          <img
+            src={content.backgroundImage}
+            alt={content.title || "Hero background"}
+            className="h-full w-full object-cover"
+          />
+        ) : null}
+
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            backgroundColor: content.overlayColor ?? "rgba(0,0,0,0.4)",
+          }}
+        />
       </div>
 
-      {/* Content - Strictly Right aligned (RTL) with improved styling */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-8 sm:px-12 md:px-16 py-24 text-white">
-        <div className="flex flex-col items-end space-y-10">
-          {/* Accent Text */}
-          {content.accentText && (
-            <div className="inline-block rounded-full bg-[#FF8C42]/20 px-8 py-3 text-sm font-semibold uppercase tracking-wider text-[#FF8C42] backdrop-blur-sm sm:text-base">
-              {content.accentText}
-            </div>
-          )}
+      {/* Content */}
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 text-white sm:px-12 md:px-16">
+        <div className="flex flex-row-reverse">
+          <div className="flex w-full max-w-4xl flex-col items-end space-y-6 text-right">
+            
+            {/* Accent Text */}
+            {content.accentText && (
+              <span className="inline-flex rounded-full border border-[#FF8C42]/10 bg-[#FF8C42]/20 px-6 py-2 text-sm font-semibold uppercase tracking-widest text-[#FF8C42] backdrop-blur-md">
+                {content.accentText}
+              </span>
+            )}
 
-          {/* Main Title - Impactful Scale & Right Aligned */}
-          {content.title && (
-            <h1
-              className="text-right text-[48px] font-bold tracking-tight sm:text-[64px] md:text-[80px] lg:text-[88px] xl:text-[96px]"
-              style={{ lineHeight: '1.1' }}
-              dir="rtl"
-            >
-              {/<[^>]+>/.test(content.title) ? (
-                <div
-                  className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl [&_*]:text-inherit [&_*]:font-inherit [&_*]:leading-[1.1] [&_p]:mb-4 [&_p]:last:mb-0 [&_strong]:font-bold [&_em]:italic [&_br]:block [&_br]:h-2"
-                  dangerouslySetInnerHTML={{ __html: content.title }}
-                />
-              ) : (
-                <span className="block bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-2xl">
-                  {content.title.split('\n').map((line, index) => (
-                    <span key={index} className="block mb-2 last:mb-0" style={{ lineHeight: '1.2' }}>
-                      {line.trim() || '\u00A0'}
-                    </span>
-                  ))}
-                </span>
-              )}
-            </h1>
-          )}
+            {/* Title */}
+            {content.title && (
+              <h1 className="w-full text-4xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+                {isHtml(content.title) ? (
+                  <span
+                    className="block w-full bg-gradient-to-l from-white via-gray-200 to-gray-400 bg-clip-text text-transparent drop-shadow-lg
+                               [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-extrabold"
+                    dangerouslySetInnerHTML={{ __html: content.title }}
+                  />
+                ) : (
+                  <span className="block w-full bg-gradient-to-l from-white via-gray-200 to-gray-400 bg-clip-text text-transparent drop-shadow-lg whitespace-pre-wrap leading-tight">
+                    {content.title}
+                  </span>
+                )}
+              </h1>
+            )}
 
-          {/* Subtitle - Strictly 24px and Right Aligned */}
-          {content.subtitle && (
-            <div
-              className="max-w-4xl text-right text-[24px] font-medium text-gray-200/90 leading-relaxed"
-              dir="rtl"
-            >
-              {/<[^>]+>/.test(content.subtitle) ? (
-                <div
-                  className="[&_*]:text-inherit [&_*]:font-inherit [&_p]:mb-2 [&_p]:last:mb-0 [&_strong]:font-bold [&_em]:italic"
-                  dangerouslySetInnerHTML={{ __html: content.subtitle }}
-                />
-              ) : (
-                <span>{content.subtitle}</span>
-              )}
-            </div>
-          )}
+            {/* Subtitle — FIXED FULL WIDTH */}
+            {content.subtitle && (
+              <div className="w-full text-right text-2xl font-medium leading-relaxed text-gray-200/90 sm:text-3xl">
+                {isHtml(content.subtitle) ? (
+                  <span
+                    className="block w-full
+                               [&_*]:block
+                               [&_*]:w-full
+                               [&_*]:text-right
+                               [&_*]:text-inherit
+                               [&_strong]:font-bold"
+                    dangerouslySetInnerHTML={{ __html: content.subtitle }}
+                  />
+                ) : (
+                  <span className="block w-full whitespace-pre-wrap">
+                    {content.subtitle}
+                  </span>
+                )}
+              </div>
+            )}
 
-          {/* Buttons & Scroll Indicator - Removed per request */}
+          </div>
         </div>
       </div>
     </section>
