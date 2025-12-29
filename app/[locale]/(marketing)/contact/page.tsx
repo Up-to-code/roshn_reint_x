@@ -353,27 +353,7 @@ export default function ContactPage({ params }: ContactPageProps) {
           </div>
         )}
 
-        {/* Additional CTA Section */}
-        <div className="mt-16 text-center">
-          <Card className="border-2">
-            <CardContent className="p-8 md:p-12">
-              <CardTitle className="mb-4 text-2xl md:text-3xl">
-                {locale === "ar" ? "هل لديك أسئلة أخرى؟" : "Still have questions?"}
-              </CardTitle>
-              <CardDescription className="mx-auto mb-6 max-w-2xl text-base md:mb-8 md:text-lg">
-                {locale === "ar" ? "فريقنا هنا لمساعدتك في الحصول على الإجابات التي تحتاجها." : "Our team is here to help you get the answers you need."}
-              </CardDescription>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button size="lg">
-                  {locale === "ar" ? "جدولة مكالمة" : "Schedule a Call"}
-                </Button>
-                <Button variant="outline" size="lg">
-                  {locale === "ar" ? "محادثة مباشرة" : "Live Chat"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+   
       </div>
     </section>
   );

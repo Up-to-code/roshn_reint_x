@@ -10,6 +10,8 @@ interface Property {
   id: string;
   titleEn: string;
   titleAr: string;
+  descriptionEn?: string | null;
+  descriptionAr?: string | null;
   images: string[];
   price?: number;
   title?: string;
@@ -19,12 +21,34 @@ interface Property {
 
 interface HomePropertiesGridProps {
   locale: string;
+  initialProperties?: Property[];
 }
 
 const ITEMS_PER_PAGE = 12;
 
-export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) {
-  const [properties, setProperties] = useState<Property[]>([]);
+// Smart prose class generator for rich text formatting
+const getProseClasses = (isRTL: boolean) => {
+  const base = "prose prose-sm max-w-none text-slate-600";
+  const direction = isRTL 
+    ? "text-right prose-headings:text-right prose-ul:text-right prose-ol:text-right prose-blockquote:text-right"
+    : "text-left prose-headings:text-left prose-ul:text-left prose-ol:text-left prose-blockquote:text-left";
+  
+  return `${base} ${direction} 
+    [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
+    prose-p:text-sm prose-p:leading-snug prose-p:my-1
+    prose-headings:text-sm prose-headings:font-semibold prose-headings:text-slate-800 prose-headings:my-1 prose-headings:leading-tight
+    prose-strong:text-slate-900 prose-strong:font-semibold prose-em:text-slate-700 prose-em:italic
+    prose-ul:text-sm prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4 prose-ol:text-sm prose-ol:my-1 prose-ol:list-decimal prose-ol:pl-4
+    prose-li:text-sm prose-li:my-0 prose-li:leading-snug
+    prose-a:text-primary prose-a:underline prose-a:font-medium hover:prose-a:text-primary/80 transition-colors
+    prose-blockquote:my-1 prose-blockquote:border-l-2 prose-blockquote:border-slate-300 prose-blockquote:pl-3 prose-blockquote:italic prose-blockquote:text-slate-600
+    prose-code:text-sm prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+    prose-pre:my-1 prose-pre:text-xs prose-img:my-1 prose-img:rounded-md prose-hr:my-2 prose-hr:border-slate-300
+    line-clamp-2 overflow-hidden`.replace(/\s+/g, ' ').trim();
+};
+
+export default function HomePropertiesGrid({ locale, initialProperties }: HomePropertiesGridProps) {
+  const [properties, setProperties] = useState<Property[]>(initialProperties || []);
   const [isPending, startTransition] = useTransition();
   const [currentPage, setCurrentPage] = useState(1);
   const isRTL = locale === "ar";
@@ -53,10 +77,21 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
   }, [locale]);
 
   useEffect(() => {
-    startTransition(() => {
-      fetchProperties();
-    });
-  }, [fetchProperties]);
+    if (!initialProperties || initialProperties.length === 0) {
+      startTransition(() => {
+        fetchProperties();
+      });
+    } else {
+      const localizedData = initialProperties.map((item) => ({
+        ...item,
+        title:
+          locale === "ar"
+            ? item.titleAr || item.titleEn
+            : item.titleEn || item.titleAr,
+      }));
+      setProperties(localizedData);
+    }
+  }, [initialProperties, locale, fetchProperties]);
 
   // Pagination calculations
   const totalPages = Math.ceil(properties.length / ITEMS_PER_PAGE);
@@ -152,6 +187,24 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
                       )}
                     </div>
                   </div>
+                  
+                  {/* Description */}
+                  {(property.descriptionEn || property.descriptionAr) && (() => {
+                    const descriptionHtml = locale === "ar"
+                      ? property.descriptionAr || property.descriptionEn || ""
+                      : property.descriptionEn || property.descriptionAr || "";
+                    if (!descriptionHtml) return null;
+                    
+                    return (
+                      <div className="p-4 pt-3">
+                        <div
+                          className={getProseClasses(isRTL)}
+                          dir={isRTL ? "rtl" : "ltr"}
+                          dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                        />
+                      </div>
+                    );
+                  })()}
                 </Link>
               ))}
             </div>

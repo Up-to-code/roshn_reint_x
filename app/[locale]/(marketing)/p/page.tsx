@@ -34,8 +34,8 @@ export default async function PropertiesPage({ params, searchParams }: Propertie
 
   return (
     <RealEstateListings 
-    
-       locale={locale} 
+      locale={locale}
+      initialProperties={properties}
     />
   );
 }

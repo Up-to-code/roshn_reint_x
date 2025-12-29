@@ -88,8 +88,8 @@ function DescriptionContent({
   return (
     <div
       className={`prose prose-sm max-w-none text-gray-700 leading-relaxed ${
-        isRTL ? "text-right prose-headings:text-right" : "text-left"
-      }`}
+        isRTL ? "text-right prose-headings:text-right" : "text-left prose-headings:text-left"
+      } prose-p:my-3 prose-headings:my-4 prose-headings:font-semibold prose-strong:text-gray-900 prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-a:text-primary prose-a:underline hover:prose-a:text-primary/80`}
       dir={isRTL ? "rtl" : "ltr"}
       dangerouslySetInnerHTML={{ __html: description }}
     />

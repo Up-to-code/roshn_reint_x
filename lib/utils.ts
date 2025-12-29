@@ -261,8 +261,53 @@ export function calculateReadingTime(content: string, locale: Locale = 'ar') {
   return Math.ceil(words / wordsPerMinute)
 }
 
-export function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, '')
+export function stripHtml(html: string): string {
+  if (!html || typeof html !== 'string') return '';
+  
+  // Remove script and style tags completely (including their content)
+  let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  
+  // Remove all HTML tags including attributes (handles multi-line and self-closing tags)
+  text = text.replace(/<[^>]+>/g, '');
+  
+  // Remove any remaining partial tags or malformed HTML
+  text = text.replace(/<[^>]*$/g, '');
+  text = text.replace(/^[^<]*>/g, '');
+  
+  // Decode common HTML entities
+  const entityMap: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&#x27;': "'",
+    '&#x2F;': '/',
+    '&nbsp;': ' ',
+    '&apos;': "'",
+    '&hellip;': '...',
+    '&mdash;': '—',
+    '&ndash;': '–',
+  };
+  
+  text = text.replace(/&[#\w]+;/g, (entity) => {
+    return entityMap[entity.toLowerCase()] || entity;
+  });
+  
+  // Decode numeric entities (&#123; and &#x1F;)
+  text = text.replace(/&#(\d+);/g, (match, dec) => {
+    return String.fromCharCode(parseInt(dec, 10));
+  });
+  
+  text = text.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
+    return String.fromCharCode(parseInt(hex, 16));
+  });
+  
+  // Clean up whitespace - replace multiple spaces/newlines/tabs with single space
+  text = text.replace(/[\s\n\r\t]+/g, ' ').trim();
+  
+  return text;
 }
 
 export function truncateText(text: string, maxLength: number = 100) {
