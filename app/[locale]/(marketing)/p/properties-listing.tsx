@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Building, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { stripHtml } from "@/lib/utils";
 
 interface Property {
   id: string;
@@ -25,27 +26,6 @@ interface HomePropertiesGridProps {
 }
 
 const ITEMS_PER_PAGE = 12;
-
-// Smart prose class generator for rich text formatting
-const getProseClasses = (isRTL: boolean) => {
-  const base = "prose prose-sm max-w-none text-slate-600";
-  const direction = isRTL 
-    ? "text-right prose-headings:text-right prose-ul:text-right prose-ol:text-right prose-blockquote:text-right"
-    : "text-left prose-headings:text-left prose-ul:text-left prose-ol:text-left prose-blockquote:text-left";
-  
-  return `${base} ${direction} 
-    [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
-    prose-p:text-sm prose-p:leading-snug prose-p:my-1
-    prose-headings:text-sm prose-headings:font-semibold prose-headings:text-slate-800 prose-headings:my-1 prose-headings:leading-tight
-    prose-strong:text-slate-900 prose-strong:font-semibold prose-em:text-slate-700 prose-em:italic
-    prose-ul:text-sm prose-ul:my-1 prose-ul:list-disc prose-ul:pl-4 prose-ol:text-sm prose-ol:my-1 prose-ol:list-decimal prose-ol:pl-4
-    prose-li:text-sm prose-li:my-0 prose-li:leading-snug
-    prose-a:text-primary prose-a:underline prose-a:font-medium hover:prose-a:text-primary/80 transition-colors
-    prose-blockquote:my-1 prose-blockquote:border-l-2 prose-blockquote:border-slate-300 prose-blockquote:pl-3 prose-blockquote:italic prose-blockquote:text-slate-600
-    prose-code:text-sm prose-code:bg-slate-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-    prose-pre:my-1 prose-pre:text-xs prose-img:my-1 prose-img:rounded-md prose-hr:my-2 prose-hr:border-slate-300
-    line-clamp-2 overflow-hidden`.replace(/\s+/g, ' ').trim();
-};
 
 export default function HomePropertiesGrid({ locale, initialProperties }: HomePropertiesGridProps) {
   const [properties, setProperties] = useState<Property[]>(initialProperties || []);
@@ -195,13 +175,14 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
                       : property.descriptionEn || property.descriptionAr || "";
                     if (!descriptionHtml) return null;
                     
+                    const plainText = stripHtml(descriptionHtml);
+                    if (!plainText.trim()) return null;
+                    
                     return (
                       <div className="p-4 pt-3">
-                        <div
-                          className={getProseClasses(isRTL)}
-                          dir={isRTL ? "rtl" : "ltr"}
-                          dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-                        />
+                        <p className={`line-clamp-2 text-sm text-slate-600 leading-relaxed ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {plainText}
+                        </p>
                       </div>
                     );
                   })()}
