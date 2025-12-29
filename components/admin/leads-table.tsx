@@ -24,24 +24,38 @@ interface Lead {
   message?: string;
   propertyTitle: string; 
   read?: boolean;
-  createdAt: Date;
+  createdAt: Date | string;
 }
 
 interface LeadsTableProps {
   leads: Lead[];
+  allLeads?: Lead[]; // Optional: all leads for export
+  totalCount?: number; // Total count for display
 }
 
-export function LeadsTable({ leads }: LeadsTableProps) {
+export function LeadsTable({ leads, allLeads, totalCount }: LeadsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
   const router = useRouter();
 
-  const handleExport = () => {
+  const handleExport = async () => {
+    setExporting(true);
     try {
+      let leadsToExport = allLeads || leads;
+      
+      // If we don't have all leads, fetch them from API
+      if (!allLeads && totalCount && totalCount > leads.length) {
+        const res = await fetch("/api/interests");
+        if (res.ok) {
+          leadsToExport = await res.json();
+        }
+      }
+      
       // Define CSV headers
       const headers = ["Name", "Email", "Phone", "Property/Source", "Message", "Date", "Status"];
       
       // Map data to CSV rows with all available fields
-      const rows = leads.map(lead => [
+      const rows = leadsToExport.map(lead => [
         lead.name || "",
         lead.email || "",
         lead.phone || "",
@@ -72,6 +86,8 @@ export function LeadsTable({ leads }: LeadsTableProps) {
     } catch (error) {
       console.error("Export error:", error);
       toast.error("Failed to export leads");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -83,7 +99,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
       const result = await deleteLead(id);
       if (result.success) {
         toast.success("Lead deleted successfully");
-        // Refresh the page to show updated data
+        // Refresh the page to update the server-side data
         router.refresh();
       } else {
         toast.error("Failed to delete lead");
@@ -112,9 +128,14 @@ export function LeadsTable({ leads }: LeadsTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={handleExport} variant="outline" className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200">
-          <Download className="mr-2 h-4 w-4" />
-          Export CSV ({leads.length})
+        <Button 
+          onClick={handleExport} 
+          variant="outline" 
+          className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+          disabled={exporting}
+        >
+          <Download className={`mr-2 h-4 w-4 ${exporting ? 'animate-spin' : ''}`} />
+          {exporting ? 'Exporting...' : `Export CSV${totalCount ? ` (${totalCount})` : ` (${leads.length})`}`}
         </Button>
       </div>
 
@@ -140,7 +161,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  {format(new Date(lead.createdAt), "PPP")}
+                  {format(new Date(typeof lead.createdAt === 'string' ? lead.createdAt : lead.createdAt), "PPP")}
                 </TableCell>
                 <TableCell>
                   <Button
