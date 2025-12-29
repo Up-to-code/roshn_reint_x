@@ -67,7 +67,7 @@ export function HeroSection({ content }: HeroSectionProps) {
           <h1 className="w-full font-bold tracking-tight text-[60px] sm:text-[80px] lg:text-[90px] leading-[1.2] text-white">
             {isHtml(content.title) ? (
               <span
-                className="block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-extrabold"
+                className="block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-bold"
                 dangerouslySetInnerHTML={{ __html: content.title }}
               />
             ) : (
