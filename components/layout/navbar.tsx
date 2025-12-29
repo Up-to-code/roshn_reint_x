@@ -137,7 +137,7 @@ function SocialLinks({ mobile }: { mobile?: boolean }) {
 // Interest Button
 function InterestButton({ mobile, onClick, isRTL }: { mobile?: boolean; onClick?: () => void; isRTL: boolean }) {
   return (
-    <Link href="/about" onClick={onClick}>
+    <Link href="/contact" onClick={onClick}>
       <Button className={cn("rounded-2xl p-5 px-8", mobile && "w-full")} size={mobile ? "lg" : "default"}>
         {isRTL ? "سجل اهتمامك" : "Register Interest"}
       </Button>
