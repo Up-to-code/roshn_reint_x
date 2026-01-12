@@ -18,7 +18,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
     <main 
       dir={isRTL ? "rtl" : "ltr"} 
       lang={locale}
-      className="min-h-screen bg-white py-16 md:py-24"
+      className="min-h-screen bg-white py-24 md:py-32"
     >
       <div className="mx-auto max-w-4xl px-4 md:px-6">
         {/* Header */}
