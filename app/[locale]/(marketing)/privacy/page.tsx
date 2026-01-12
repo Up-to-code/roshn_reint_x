@@ -28,8 +28,8 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
           </h1>
           <p className="text-lg text-gray-600">
             {isRTL 
-              ? "آخر تحديث: يناير 2025" 
-              : "Last Updated: January 2025"}
+              ? `آخر تحديث: ${new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long' })}` 
+              : `Last Updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}`}
           </p>
         </div>
 
