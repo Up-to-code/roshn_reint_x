@@ -4,7 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: "رشن ريت",
-  description: "Real Estate Management Platform",
+  description: "رشن ريت - مشروع درب الحرمين في جدة",
 };
 
 export default function RootLayout({

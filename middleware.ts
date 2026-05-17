@@ -7,5 +7,8 @@ export default createMiddleware(routing);
 
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)", "/(en|ar)/:path*"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|roshn-plus).*)",
+    "/(en|ar)/:path*",
+  ],
 };
