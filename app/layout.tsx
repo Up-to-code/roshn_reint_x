@@ -3,8 +3,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
-  title: "رشن ريت",
-  description: "رشن ريت - مشروع درب الحرمين في جدة",
+  title: "روشن ريت",
+  description: "روشن ريت - مشروع درب الحرمين في جدة",
 };
 
 export default function RootLayout({

@@ -27,8 +27,8 @@ const dinNext = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "رشن ريت",
-  description: "رشن ريت - مشروع درب الحرمين في جدة",
+  title: "روشن ريت",
+  description: "روشن ريت - مشروع درب الحرمين في جدة",
 };
 
 export default async function RootLayout({
