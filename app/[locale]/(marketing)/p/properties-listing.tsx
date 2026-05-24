@@ -18,6 +18,8 @@ interface Property {
   title?: string;
   city?: string;
   district?: string;
+  href?: string;
+  standalone?: boolean;
 }
 
 interface HomePropertiesGridProps {
@@ -32,6 +34,23 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
   const [isPending, startTransition] = useTransition();
   const [currentPage, setCurrentPage] = useState(1);
   const isRTL = locale === "ar";
+
+  const roshnReitProject = useMemo<Property>(
+    () => ({
+      id: "roshn-reit",
+      titleEn: "Roshn Reit",
+      titleAr: "روشن ريت",
+      title: locale === "ar" ? "روشن ريت" : "Roshn Reit",
+      descriptionEn: "Darb Al Haramain project in Jeddah.",
+      descriptionAr: "مشروع درب الحرمين في جدة.",
+      images: ["/logo.png"],
+      city: locale === "ar" ? "جدة" : "Jeddah",
+      district: locale === "ar" ? "درب الحرمين" : "Darb Al Haramain",
+      href: "/roshn-plus",
+      standalone: true,
+    }),
+    [locale]
+  );
 
   const fetchProperties = useCallback(async () => {
     try {
@@ -73,13 +92,21 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
     }
   }, [initialProperties, locale, fetchProperties]);
 
+  const visibleProperties = useMemo(
+    () => [
+      roshnReitProject,
+      ...properties.filter((property) => property.id !== roshnReitProject.id),
+    ],
+    [properties, roshnReitProject]
+  );
+
   // Pagination calculations
-  const totalPages = Math.ceil(properties.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(visibleProperties.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedProperties = useMemo(
-    () => properties.slice(startIndex, endIndex),
-    [properties, startIndex, endIndex]
+    () => visibleProperties.slice(startIndex, endIndex),
+    [visibleProperties, startIndex, endIndex]
   );
 
   const SkeletonCard = () => (
@@ -91,7 +118,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
     </div>
   );
 
-  const isLoading = isPending || properties.length === 0;
+  const isLoading = isPending && visibleProperties.length === 0;
 
   return (
     <section
@@ -106,8 +133,8 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
           </h2>
           <p className="text-lg text-slate-600">
             {locale === "ar"
-              ? `استكشف ${properties.length} عقار متاح`
-              : `Explore ${properties.length} available properties`}
+              ? `استكشف ${visibleProperties.length} عقار متاح`
+              : `Explore ${visibleProperties.length} available properties`}
           </p>
         </div>
 
@@ -123,7 +150,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {paginatedProperties.map((property) => (
                 <Link
-                  href={`/${locale}/p/${property.id}`}
+                  href={property.href || `/${locale}/p/${property.id}`}
                   key={property.id}
                   className="group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl"
                 >
@@ -134,7 +161,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
                         src={property.images[0]}
                         alt={property.title || "Property"}
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className={`${property.standalone ? "object-contain p-12" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
                         sizes="(max-width: 768px) 100vw, 33vw"
                         priority={currentPage === 1}
                       />
@@ -148,11 +175,13 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/40" />
 
                     {/* Price Tag */}
-                    <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} z-20`}>
-                      <span className="inline-block rounded-lg bg-white/90 px-3 py-1 text-sm font-bold text-slate-900 backdrop-blur-sm">
-                        {new Intl.NumberFormat(locale, { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(property.price || 0)}
-                      </span>
-                    </div>
+                    {typeof property.price === "number" && (
+                      <div className={`absolute top-4 ${isRTL ? 'left-4' : 'right-4'} z-20`}>
+                        <span className="inline-block rounded-lg bg-white/90 px-3 py-1 text-sm font-bold text-slate-900 backdrop-blur-sm">
+                          {new Intl.NumberFormat(locale, { style: 'currency', currency: 'SAR', maximumFractionDigits: 0 }).format(property.price)}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Title */}
                     <div className="absolute bottom-5 left-5 right-5 z-20">
@@ -247,8 +276,8 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
             {/* Page Info */}
             <div className={`mt-4 text-center text-sm text-slate-600 ${isRTL ? 'text-right' : ''}`}>
               {isRTL 
-                ? `صفحة ${currentPage} من ${totalPages} - عرض ${startIndex + 1} إلى ${Math.min(endIndex, properties.length)} من ${properties.length}`
-                : `Page ${currentPage} of ${totalPages} - Showing ${startIndex + 1} to ${Math.min(endIndex, properties.length)} of ${properties.length}`
+                ? `صفحة ${currentPage} من ${totalPages} - عرض ${startIndex + 1} إلى ${Math.min(endIndex, visibleProperties.length)} من ${visibleProperties.length}`
+                : `Page ${currentPage} of ${totalPages} - Showing ${startIndex + 1} to ${Math.min(endIndex, visibleProperties.length)} of ${visibleProperties.length}`
               }
             </div>
           </>
