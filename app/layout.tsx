@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
+import { Tajawal } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from '@vercel/speed-insights/next';
+
+const tajawal = Tajawal({
+  subsets: ["arabic", "latin"],
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "روشن ريت",
@@ -13,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="ar" dir="rtl" className={tajawal.variable}>
       <head>
         {/* Google Tag Manager */}
         <script
@@ -27,7 +35,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         />
         {/* End Google Tag Manager */}
       </head>
-      <body>
+      <body className={tajawal.className}>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
