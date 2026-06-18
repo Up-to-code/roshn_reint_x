@@ -6,6 +6,7 @@
   
 :root {
   --background: 33 25% 94%;
+  --brand-grey: #F0EDE8;
   --foreground: 223.8136 0.0000% 3.9388%;
   --card: 223.8136 -172.5242% 100.0000%;
   --card-foreground: 223.8136 0.0000% 3.9388%;
@@ -89,6 +90,11 @@
  
 html {
   scroll-behavior: smooth;
+  background-color: #F0EDE8;
+}
+
+body {
+  background-color: #F0EDE8;
 }
 
 /* Custom scrollbar */
@@ -97,7 +103,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #F0EDE8;
 }
 
 ::-webkit-scrollbar-thumb {
