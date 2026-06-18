@@ -44,7 +44,7 @@ export function WhyUsSection({ content }: WhyUsSectionProps) {
           {content.features.map((feature) => (
             <div
               key={feature.id}
-              className="group rounded-lg border border-gray-200 bg-white p-6 transition-all duration-300 hover:border-gray-400 hover:bg-gray-50 md:p-7"
+              className="group rounded-lg border border-[#E0DDD8] bg-white p-6 shadow-sm transition-all duration-300 hover:border-gray-400 hover:shadow-md md:p-7"
             >
               <div className={`flex items-start gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
                 {/* Icon */}

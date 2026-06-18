@@ -20,6 +20,7 @@ export default async function MarketingLayout({ children, params }: MarketingLay
      */
     <div
       className="relative flex min-h-screen flex-col overflow-hidden bg-background"
+      style={{ backgroundColor: "#F0EDE8" }}
     >
       {/*
        * Pattern decoration layer

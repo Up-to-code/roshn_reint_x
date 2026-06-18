@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +8,36 @@ interface PartnersBannerProps {
   logos?: { src: string; alt: string }[];
   speed?: number;
   className?: string;
+}
+
+// Wrapper that hides itself when the image fails to load
+function PartnerLogoCard({ src, alt, cardKey }: { src: string; alt: string; cardKey: string }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div
+      ref={cardRef}
+      key={cardKey}
+      className={cn(
+        "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
+        "items-center justify-center",
+        "bg-white rounded-lg shadow-sm",
+        "p-4"
+      )}
+    >
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-contain"
+        loading="lazy"
+        onError={() => {
+          if (cardRef.current) {
+            cardRef.current.style.display = "none";
+          }
+        }}
+      />
+    </div>
+  );
 }
 
 export function PartnersBanner({
@@ -104,22 +134,12 @@ export function PartnersBanner({
               }}
             >
               {logosToShow.map((logo, index) => (
-                <div
+                <PartnerLogoCard
                   key={`first-${index}`}
-                  className={cn(
-                    "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
-                    "items-center justify-center",
-                    "bg-white rounded-lg shadow-sm",
-                    "p-4"
-                  )}
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="h-full w-full object-contain"
-                    loading="lazy"
-                  />
-                </div>
+                  cardKey={`first-${index}`}
+                  src={logo.src}
+                  alt={logo.alt}
+                />
               ))}
             </div>
 
@@ -135,22 +155,12 @@ export function PartnersBanner({
               aria-hidden="true"
             >
               {logosToShow.map((logo, index) => (
-                <div
+                <PartnerLogoCard
                   key={`second-${index}`}
-                  className={cn(
-                    "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
-                    "items-center justify-center",
-                    "bg-white rounded-lg shadow-sm",
-                    "p-4"
-                  )}
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="h-full w-full object-contain"
-                    loading="lazy"
-                  />
-                </div>
+                  cardKey={`second-${index}`}
+                  src={logo.src}
+                  alt={logo.alt}
+                />
               ))}
             </div>
           </div>

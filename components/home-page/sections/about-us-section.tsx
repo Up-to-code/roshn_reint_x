@@ -38,12 +38,12 @@ export async function AboutUsSection({ content }: AboutUsSectionProps) {
                 {content.stats.map((stat) => (
                   <div 
                     key={stat.id} 
-                    className="rounded-lg bg-zinc-100 p-4 text-center transition-all duration-300 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+                    className="rounded-lg border border-[#E0DDD8] bg-white p-4 text-center shadow-sm transition-all duration-300 hover:shadow-md"
                   >
-                    <div className="mb-2 text-2xl font-bold text-zinc-900 transition-colors duration-300 dark:text-zinc-100 sm:text-3xl lg:text-4xl">
+                    <div className="mb-2 text-2xl font-bold text-zinc-900 sm:text-3xl lg:text-4xl">
                       {stat.value}
                     </div>
-                    <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 sm:text-sm">
+                    <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 sm:text-sm">
                       {stat.label}
                     </div>
                   </div>
