@@ -19,8 +19,7 @@ export default async function MarketingLayout({ children, params }: MarketingLay
      *   - Background: brand grey (#F0EDE8) — a warm, neutral grey consistent with ROSHN's palette
      */
     <div
-      className="relative flex min-h-screen flex-col overflow-hidden"
-      style={{ backgroundColor: "#F0EDE8" }}
+      className="relative flex min-h-screen flex-col overflow-hidden bg-background"
     >
       {/*
        * Pattern decoration layer
