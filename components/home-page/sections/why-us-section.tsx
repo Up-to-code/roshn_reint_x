@@ -27,7 +27,7 @@ export function WhyUsSection({ content }: WhyUsSectionProps) {
   if (!content.features || content.features.length === 0) return null;
 
   return (
-    <section className="bg-gray-100 py-16 md:py-20">
+    <section className="bg-transparent py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16">

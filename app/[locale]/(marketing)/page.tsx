@@ -99,7 +99,7 @@ export default async function Home({ params }: { params: { locale: string } }) {
   const content = await getHomePageData(locale);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <HeroSection content={content.hero} />
       
       {/* Featured Properties Section */}

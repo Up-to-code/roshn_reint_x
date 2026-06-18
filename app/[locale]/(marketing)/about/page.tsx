@@ -75,7 +75,7 @@ export default async function AboutPage() {
   const aboutData = await getAboutData();
 
   return (
-    <main dir="rtl" lang="ar" className="my-40 w-full bg-[#FFFFFF] text-gray-700">
+    <main dir="rtl" lang="ar" className="my-40 w-full text-gray-700">
       {/* Hero Section */}
       <section className="w-full px-6 py-16 md:px-20" aria-labelledby="hero-title">
         <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
@@ -115,7 +115,7 @@ export default async function AboutPage() {
         <h2 id="vision-mission-title" className="sr-only">الرؤية والرسالة</h2>
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2">
           {/* Vision Card */}
-          <article className="rounded-2xl border-l-4 border-[#D35400] bg-gray-50 p-8 text-right shadow-sm transition-all hover:shadow-md">
+          <article className="rounded-2xl border-l-4 border-[#D35400] bg-white/70 backdrop-blur-sm p-8 text-right shadow-sm transition-all hover:shadow-md">
             <div className="flex items-start gap-4">
               <div className="shrink-0" aria-hidden="true">
                 <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
@@ -145,7 +145,7 @@ export default async function AboutPage() {
           </article>
 
           {/* Mission Card */}
-          <article className="rounded-2xl border-l-4 border-[#D35400] bg-gray-50 p-8 text-right shadow-sm transition-all hover:shadow-md">
+          <article className="rounded-2xl border-l-4 border-[#D35400] bg-white/70 backdrop-blur-sm p-8 text-right shadow-sm transition-all hover:shadow-md">
             <div className="flex items-start gap-4">
               <div className="shrink-0" aria-hidden="true">
                 <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
@@ -209,7 +209,7 @@ export default async function AboutPage() {
             {aboutData.goals.map((goal, index) => (
               <div 
                 key={index}
-                className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm transition-all hover:shadow-md"
+                className="flex items-start gap-4 rounded-lg border border-gray-100 bg-white/70 backdrop-blur-sm p-5 shadow-sm transition-all hover:shadow-md"
               >
                 <div 
                   className="flex size-12 items-center justify-center rounded-full font-bold text-white"

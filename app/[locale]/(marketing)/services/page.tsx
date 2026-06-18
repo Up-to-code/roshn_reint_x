@@ -64,7 +64,7 @@ export default function ServicesPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg">جاري تحميل الخدمات...</div>
       </div>
     );
@@ -72,7 +72,7 @@ export default function ServicesPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mb-4 text-xl text-red-600">{error}</div>
           <button 
@@ -88,14 +88,14 @@ export default function ServicesPage() {
 
   if (!pageData) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg">لم يتم العثور على بيانات الخدمات.</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white" dir="rtl">
+    <div className="min-h-screen" dir="rtl">
       {/* قسم البطل مع التعتيم */}
       <section className="relative flex h-[60vh] items-center justify-center">
         <div className="absolute inset-0">
@@ -126,7 +126,7 @@ export default function ServicesPage() {
       </section>
 
       {/* قسم شبكة الخدمات */}
-      <section className="bg-white py-16 md:py-20">
+      <section className="bg-transparent py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-6">
           {/* العنوان */}
           <div className="mb-12 text-center md:mb-16">

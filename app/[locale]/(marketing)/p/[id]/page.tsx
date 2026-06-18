@@ -127,7 +127,7 @@ export default async function PropertyDetailPage({
   return (
     <div
       dir={isRTL ? "rtl" : "ltr"}
-      className="min-h-screen bg-white px-4 py-8 my-16"
+      className="min-h-screen px-4 py-8 my-16"
     >
       <div className="mx-auto max-w-4xl space-y-6">
         {/* Back Button */}
@@ -171,7 +171,7 @@ export default async function PropertyDetailPage({
         </div>
 
         {/* Description */}
-        <div className="bg-gray-50 rounded-lg p-6">
+        <div className="bg-white/70 backdrop-blur-sm rounded-lg p-6 border border-stone-200">
           <h2 className="mb-4 text-xl font-semibold text-gray-800">
             {isRTL ? "الوصف" : "Description"}
           </h2>

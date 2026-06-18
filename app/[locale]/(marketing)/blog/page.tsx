@@ -55,7 +55,7 @@ export default async function BlogPage({ params }: PageProps) {
 
 function BlogGridSkeleton() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="animate-pulse space-y-8">
           {/* Header Skeleton */}

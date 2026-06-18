@@ -18,7 +18,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
     <main 
       dir={isRTL ? "rtl" : "ltr"} 
       lang={locale}
-      className="min-h-screen bg-white py-24 md:py-32"
+      className="min-h-screen py-24 md:py-32"
     >
       <div className="mx-auto max-w-4xl px-4 md:px-6">
         {/* Header */}
@@ -233,7 +233,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
           </section>
 
           {/* Contact Information */}
-          <section className="mt-12 rounded-lg border border-gray-200 bg-gray-50 p-6">
+          <section className="mt-12 rounded-lg border border-stone-300 bg-white/60 backdrop-blur-sm p-6">
             <h2 className="mb-4 text-xl font-bold text-[#D35400]">
               {isRTL ? "تواصل معنا" : "Contact Us"}
             </h2>

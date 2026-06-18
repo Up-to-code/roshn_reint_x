@@ -33,7 +33,7 @@ export function PartnersBanner({
 
   if (!mounted) {
     return (
-      <section className={cn("w-full bg-gray-50 py-12", className)} dir="ltr">
+      <section className={cn("w-full bg-transparent py-12", className)} dir="ltr">
         <div className="container mx-auto px-4">
           <div className="mb-8 text-center">
             <div className="h-9 w-48 mx-auto bg-gray-200 animate-pulse rounded" />
@@ -53,7 +53,7 @@ export function PartnersBanner({
   }
 
   return (
-    <section className={cn("w-full bg-gradient-to-b from-gray-50 to-white py-16", className)}>
+    <section className={cn("w-full bg-transparent py-16", className)}>
       <div className="container mx-auto px-4">
         {/* Title with fade-in animation */}
         <div className="mb-12 text-center animate-fade-in">
@@ -67,20 +67,28 @@ export function PartnersBanner({
 
         {/* Infinite Scroll Container with gradient masks */}
         <div className="relative m-auto w-full overflow-hidden">
-          {/* Gradient overlays for smooth fade effect */}
+          {/* Gradient overlays for smooth fade effect — brand grey #F0EDE8 */}
           <div
             className={cn(
               "absolute top-0 bottom-0 w-32 z-10 pointer-events-none",
-              isRTL ? "right-0 bg-gradient-to-l" : "left-0 bg-gradient-to-r",
-              "from-white via-white/80 to-transparent"
+              isRTL ? "right-0" : "left-0"
             )}
+            style={{
+              background: isRTL
+                ? "linear-gradient(to left, #F0EDE8, rgba(240,237,232,0.8), transparent)"
+                : "linear-gradient(to right, #F0EDE8, rgba(240,237,232,0.8), transparent)",
+            }}
           />
           <div
             className={cn(
               "absolute top-0 bottom-0 w-32 z-10 pointer-events-none",
-              isRTL ? "left-0 bg-gradient-to-r" : "right-0 bg-gradient-to-l",
-              "from-white via-white/80 to-transparent"
+              isRTL ? "left-0" : "right-0"
             )}
+            style={{
+              background: isRTL
+                ? "linear-gradient(to right, #F0EDE8, rgba(240,237,232,0.8), transparent)"
+                : "linear-gradient(to left, #F0EDE8, rgba(240,237,232,0.8), transparent)",
+            }}
           />
 
           {/* Scrolling container - using inline-flex for seamless loop */}

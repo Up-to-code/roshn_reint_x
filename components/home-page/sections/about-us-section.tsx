@@ -10,7 +10,7 @@ export async function AboutUsSection({ content }: AboutUsSectionProps) {
   const isRTL = locale === "ar";
 
   return (
-    <section className="bg-zinc-50 py-16 dark:bg-zinc-900 md:py-24">
+    <section className="bg-transparent py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 ${isRTL ? "lg:grid-flow-col-dense" : ""}`}>
           {/* Content Section */}

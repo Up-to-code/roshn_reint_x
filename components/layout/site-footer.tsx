@@ -32,7 +32,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   ];
 
   return (
-    <footer className={cn("mt-auto border-t bg-white py-12 text-gray-600", className)}>
+    <footer className={cn("mt-auto border-t border-stone-300 py-12 text-gray-700", className)} style={{ backgroundColor: "#F0EDE8" }}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col gap-8">
           {/* Top Section: Logo, Links, Social */}
