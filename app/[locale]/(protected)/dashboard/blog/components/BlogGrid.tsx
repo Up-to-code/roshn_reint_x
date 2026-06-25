@@ -19,7 +19,10 @@ export function SimpleBlogGrid({ posts, locale }: SimpleBlogGridProps) {
   const featuredPost = posts[0];
   const regularPosts = posts.slice(1);
 
-  const BlogPostCard = ({ post, featured = false }: { post: BlogPost; featured?: boolean }) => (
+  const BlogPostCard = ({ post, featured = false }: { post: BlogPost; featured?: boolean }) => {
+    const displayTitle = (post.title && post.title !== 'Untitled') ? post.title : (post.excerpt || '');
+    const useExcerptAsTitle = !post.title || post.title === 'Untitled';
+    return (
     <Link href={`/${locale}/blog/${post.id}`}>
       <Card className={cn(
         "group flex h-full flex-col overflow-hidden border-0 bg-white shadow-sm transition-all duration-300 hover:shadow-md dark:bg-slate-800",
@@ -34,7 +37,7 @@ export function SimpleBlogGrid({ posts, locale }: SimpleBlogGridProps) {
             )}>
               <Image
                 src={post.thumbnail}
-                alt={post.title}
+                alt={displayTitle}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -52,9 +55,9 @@ export function SimpleBlogGrid({ posts, locale }: SimpleBlogGridProps) {
             "line-clamp-2 font-semibold transition-colors group-hover:text-blue-600",
             featured ? "text-lg md:text-xl" : "text-base"
           )}>
-            {post.title}
+            {displayTitle}
           </CardTitle>
-          {post.excerpt && (
+          {!useExcerptAsTitle && post.excerpt && (
             <CardDescription className="mt-2 line-clamp-2 text-sm">
               {post.excerpt}
             </CardDescription>
@@ -78,7 +81,8 @@ export function SimpleBlogGrid({ posts, locale }: SimpleBlogGridProps) {
         </CardFooter>
       </Card>
     </Link>
-  );
+    );
+  };
 
   return (
     <div className="my-10 min-h-screen bg-white dark:bg-slate-900">

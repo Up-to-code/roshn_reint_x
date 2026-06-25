@@ -23,6 +23,8 @@ export function SimpleBlogPostView({ post, relatedPosts, locale }: SimpleBlogPos
   const currentLocale = useCurrentLocale();
   const isRTL = locale === 'ar';
   const readingTime = calculateReadingTime(post.content, locale);
+  const displayTitle = (post.title && post.title !== 'Untitled') ? post.title : (post.excerpt || '');
+  const useExcerptAsTitle = !post.title || post.title === 'Untitled';
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900">
@@ -51,7 +53,7 @@ export function SimpleBlogPostView({ post, relatedPosts, locale }: SimpleBlogPos
             </Link>
             <span>/</span>
             <span className="max-w-xs truncate font-medium text-foreground">
-              {post.title}
+              {displayTitle}
             </span>
           </div>
 
@@ -62,10 +64,10 @@ export function SimpleBlogPostView({ post, relatedPosts, locale }: SimpleBlogPos
             </Badge>
             
             <h1 className="text-3xl font-bold leading-tight text-foreground md:text-4xl">
-              {post.title}
+              {displayTitle}
             </h1>
 
-            {post.excerpt && (
+            {!useExcerptAsTitle && post.excerpt && (
               <p className="text-lg leading-relaxed text-muted-foreground">
                 {post.excerpt}
               </p>
@@ -95,7 +97,7 @@ export function SimpleBlogPostView({ post, relatedPosts, locale }: SimpleBlogPos
             <div className="relative mb-8 h-64 overflow-hidden rounded-xl md:h-80">
               <Image
                 src={post.headerImage}
-                alt={post.title}
+                alt={displayTitle}
                 fill
                 className="object-cover"
                 priority
@@ -162,7 +164,7 @@ export function SimpleBlogPostView({ post, relatedPosts, locale }: SimpleBlogPos
                       <div className="relative h-40 overflow-hidden">
                         <Image
                           src={relatedPost.thumbnail}
-                          alt={relatedPost.title}
+                          alt={(relatedPost.title && relatedPost.title !== 'Untitled') ? relatedPost.title : (relatedPost.excerpt || '')}
                           fill
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
@@ -170,7 +172,7 @@ export function SimpleBlogPostView({ post, relatedPosts, locale }: SimpleBlogPos
                     )}
                     <CardHeader className="p-4 pb-0">
                       <CardTitle className="line-clamp-2 text-base font-semibold transition-colors group-hover:text-blue-600">
-                        {relatedPost.title}
+                        {(relatedPost.title && relatedPost.title !== 'Untitled') ? relatedPost.title : (relatedPost.excerpt || '')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-2">

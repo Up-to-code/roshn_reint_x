@@ -25,12 +25,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
+  const useExcerptAsTitle = !post.title || post.title === 'Untitled';
+  const displayTitle = useExcerptAsTitle ? (post.excerpt || '') : post.title;
+  const description = useExcerptAsTitle ? post.content.slice(0, 160) : (post.excerpt || post.content.slice(0, 160));
+
   return {
-    title: post.title,
-    description: post.excerpt || post.content.slice(0, 160),
+    title: displayTitle,
+    description,
     openGraph: {
-      title: post.title,
-      description: post.excerpt || post.content.slice(0, 160),
+      title: displayTitle,
+      description,
       images: post.headerImage ? [post.headerImage] : [],
       type: 'article',
       publishedTime: post.createdAt.toISOString(),
@@ -39,8 +43,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.excerpt || post.content.slice(0, 160),
+      title: displayTitle,
+      description,
       images: post.headerImage ? [post.headerImage] : [],
     },
     alternates: {
