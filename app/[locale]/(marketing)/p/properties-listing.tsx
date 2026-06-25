@@ -155,13 +155,13 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
                   className="group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl"
                 >
                   {/* Image */}
-                  <div className="relative aspect-[1/1.4] w-full overflow-hidden">
+                  <div className={`relative aspect-[1/1.4] w-full overflow-hidden ${property.standalone ? "bg-[#424242]" : ""}`}>
                     {property.images?.length > 0 ? (
                       <Image
                         src={property.images[0]}
                         alt={property.title || "Property"}
                         fill
-                        className={`${property.standalone ? "object-contain p-12" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
+                        className={`${property.standalone ? "object-contain p-8" : "object-cover"} transition-transform duration-700 group-hover:scale-105`}
                         sizes="(max-width: 768px) 100vw, 33vw"
                         priority={currentPage === 1}
                       />
