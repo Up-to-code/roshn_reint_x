@@ -59,7 +59,7 @@ export async function PUT(request: NextRequest, context: Context) {
     const post = await prisma.post.update({
       where: { id },
       data: {
-        title: title || 'Untitled',
+        title: title || '',
         content: content || '',
         excerpt: excerpt || '',
         status: status || 'DRAFT',

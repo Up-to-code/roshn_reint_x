@@ -99,7 +99,7 @@ export function Sidebar({ isOpen, onToggle, currentPost, posts = [], onPostSelec
                   )}
                 >
                   <h3 className="truncate text-sm font-medium text-foreground">
-                    {post.title || 'Untitled'}
+                    {post.title || ''}
                   </h3>
                   <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                     {post.excerpt || 'No excerpt'}

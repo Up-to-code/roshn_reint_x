@@ -184,7 +184,7 @@ export const useBlogStore = create<BlogStore>((set, get) => ({
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: postData.title || 'Untitled',
+          title: postData.title || '',
           excerpt: postData.excerpt || '',
           content: postData.content || '',
           status: status,

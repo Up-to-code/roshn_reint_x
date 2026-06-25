@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { RichTextEditor } from './RichTextEditor'
 import { Sidebar } from './Sidebar'
 import { ImageUploadSection } from './ImageUploadSection'
- import { Menu, Sun, Moon, Bell, Settings, BarChart3, Plus } from 'lucide-react'
+import { Menu, Sun, Moon, Bell, Settings, BarChart3, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { SavePostData } from '@/types/editor'
@@ -51,7 +51,7 @@ export function BlogDashboard() {
   const handleSave = async (data: SavePostData) => {
     const saveData = {
       ...data,
-      title: title || 'Untitled',
+      title: title || '',
       excerpt: excerpt || '',
       headerImage,
       thumbnail,
@@ -159,8 +159,8 @@ export function BlogDashboard() {
                 onThumbnailChange={setThumbnail}
               />
 
-              {/* Title & Excerpt */}
-              <div className="space-y-4 rounded-lg border bg-background p-6">
+              {/* Title & Subtitle */}
+              <div className="space-y-2 rounded-lg border bg-background p-6">
                 <Input
                   type="text"
                   value={title}
@@ -171,8 +171,8 @@ export function BlogDashboard() {
                 <Input
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
-                  placeholder="Write a brief excerpt..."
-                  className="h-auto resize-none border-none p-0 text-lg shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  placeholder="Subtitle..."
+                  className="h-auto resize-none border-none p-0 text-lg text-muted-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
               </div>
 
