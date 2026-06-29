@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocale } from "next-intl";
+import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
 
 interface HeroSectionProps {
   content: {
@@ -15,12 +18,85 @@ interface HeroSectionProps {
 
 export function HeroSection({ content }: HeroSectionProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const heroRef = useRef<HTMLDivElement | null>(null);
+  const locale = useLocale();
+  const isRTL = locale === "ar";
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => { });
-    }
+    setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted || !videoRef.current) return;
+    videoRef.current.play().catch(() => { });
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted || !heroRef.current) return;
+
+    // Helper to wrap text nodes in spans for word-by-word stagger
+    const wrapWords = (el: HTMLElement) => {
+      const walker = document.createTreeWalker(
+        el,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      const textNodes: Text[] = [];
+      let node;
+      while ((node = walker.nextNode())) {
+        textNodes.push(node as Text);
+      }
+
+      textNodes.forEach((textNode) => {
+        const text = textNode.nodeValue || "";
+        const words = text.split(/(\s+)/);
+        if (words.length <= 1 && text.trim() === "") return;
+
+        const fragment = document.createDocumentFragment();
+        words.forEach((word) => {
+          if (word.trim() === "") {
+            fragment.appendChild(document.createTextNode(word));
+          } else {
+            const span = document.createElement("span");
+            span.className = "gsap-word inline-block opacity-0 translate-y-4";
+            span.textContent = word;
+            fragment.appendChild(span);
+          }
+        });
+
+        if (textNode.parentNode) {
+          textNode.parentNode.replaceChild(fragment, textNode);
+        }
+      });
+    };
+
+    // Wrap elements with .animate-words
+    const targets = heroRef.current.querySelectorAll(".animate-words");
+    targets.forEach((target) => wrapWords(target as HTMLElement));
+
+    // Animate words using GSAP
+    const words = heroRef.current.querySelectorAll(".gsap-word");
+    if (words.length > 0) {
+      gsap.killTweensOf(words);
+      gsap.fromTo(
+        words,
+        {
+          opacity: 0,
+          y: 20,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.03,
+          ease: "power2.out",
+          delay: 0.1,
+        }
+      );
+    }
+  }, [content, mounted]);
 
   const isHtml = (str: string) => /<[^>]+>/.test(str);
 
@@ -28,7 +104,7 @@ export function HeroSection({ content }: HeroSectionProps) {
     <section className="relative flex min-h-screen items-center justify-start overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
       {/* Background */}
       <div className="absolute inset-0 z-0">
-        {content.backgroundVideo ? (
+        {mounted && content.backgroundVideo ? (
           <video
             ref={videoRef}
             src={content.backgroundVideo}
@@ -38,7 +114,7 @@ export function HeroSection({ content }: HeroSectionProps) {
             preload="auto"
             className="h-full w-full object-cover"
           />
-        ) : content.backgroundImage ? (
+        ) : mounted && content.backgroundImage ? (
           <img
             src={content.backgroundImage}
             alt=""
@@ -52,9 +128,16 @@ export function HeroSection({ content }: HeroSectionProps) {
         />
       </div>
 
-      {/* Content aligned RIGHT - Standard for Arabic/RTL */}
-      <div className="relative z-10 w-full max-w-4xl ml-auto pr-12 sm:pr-16 md:pl-24 py-24 text-white flex flex-col items-end space-y-6 text-right">
-
+      {/* Content alignment based on locale */}
+      <div
+        ref={heroRef}
+        className={cn(
+          "relative z-10 w-full max-w-4xl py-24 text-white flex flex-col space-y-6",
+          isRTL
+            ? "ml-auto pr-12 sm:pr-16 md:pl-24 items-end text-right"
+            : "mr-auto pl-12 sm:pl-16 md:pr-24 items-start text-left"
+        )}
+      >
         {/* Accent Text */}
         {content.accentText && (
           <span className="rounded-full border border-[#FF8C42]/10 bg-[#FF8C42]/20 px-6 py-2 text-sm font-semibold uppercase tracking-widest text-[#FF8C42] backdrop-blur-md">
@@ -67,11 +150,11 @@ export function HeroSection({ content }: HeroSectionProps) {
           <h1 className="w-full font-bold tracking-tight text-[60px] sm:text-[80px] lg:text-[90px] leading-[1.2] text-white">
             {isHtml(content.title) ? (
               <span
-                className="block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-bold"
+                className="animate-words block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-bold"
                 dangerouslySetInnerHTML={{ __html: content.title }}
               />
             ) : (
-              <span className="block w-full">
+              <span className="animate-words block w-full">
                 {content.title}
               </span>
             )}
@@ -80,20 +163,27 @@ export function HeroSection({ content }: HeroSectionProps) {
 
         {/* Subtitle - Bigger with improved spacing */}
         {content.subtitle && (
-          <div className="w-full text-right text-[30px] sm:text-[38px] md:text-[45px] font-medium leading-[1.5] text-gray-200/90 tracking-wide">
+          <div
+            className={cn(
+              "w-full text-[30px] sm:text-[38px] md:text-[45px] font-medium leading-[1.5] text-gray-200/90 tracking-wide",
+              isRTL ? "text-right" : "text-left"
+            )}
+          >
             {isHtml(content.subtitle) ? (
               <span
-                className="block w-full [&_*]:block [&_*]:w-full [&_*]:text-right [&_*]:text-inherit [&_strong]:font-semibold"
+                className={cn(
+                  "animate-words block w-full [&_*]:block [&_*]:w-full [&_*]:text-inherit [&_strong]:font-semibold",
+                  isRTL ? "[&_*]:text-right" : "[&_*]:text-left"
+                )}
                 dangerouslySetInnerHTML={{ __html: content.subtitle }}
               />
             ) : (
-              <span className="block w-full whitespace-pre-wrap">
+              <span className="animate-words block w-full whitespace-pre-wrap">
                 {content.subtitle}
               </span>
             )}
           </div>
         )}
-
       </div>
     </section>
   );

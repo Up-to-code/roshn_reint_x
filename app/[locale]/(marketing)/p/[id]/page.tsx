@@ -148,7 +148,7 @@ export default async function PropertyDetailPage({
         <div>
           <h1 className="mb-2 text-2xl font-bold text-gray-900">{title}</h1>
           <div className="flex items-center text-sm text-gray-600">
-            <MapPin className={`size-4 ${isRTL ? "ml-1" : "mr-1"}`} />
+            <MapPin className={`size-4 text-red-500 ${isRTL ? "ml-1" : "mr-1"}`} />
             <span>
               {property.city}
               {property.district && `, ${property.district}`}
@@ -168,14 +168,6 @@ export default async function PropertyDetailPage({
             title={title}
             isRTL={isRTL}
           />
-        </div>
-
-        {/* Description */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-lg p-6 border border-stone-200">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
-            {isRTL ? "الوصف" : "Description"}
-          </h2>
-          <DescriptionContent description={description} isRTL={isRTL} />
         </div>
 
         {/* Contact / Interest Form */}

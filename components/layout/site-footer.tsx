@@ -43,7 +43,8 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
                 <Image
                   src="https://qtthbbfudgvtstwevhbf.supabase.co/storage/v1/object/public/images/main_logo__5_-images-8-removebg-preview.png"
                   alt="Logo"
-                  fill
+                  width={384}
+                  height={80}
                   className="object-contain object-left"
                 />
               </div>

@@ -3,6 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Define types locally since the import is causing issues
 interface Project {
@@ -25,6 +28,34 @@ interface PortfolioSectionProps {
 }
 
 export function PortfolioSection({ content, className }: PortfolioSectionProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (gridRef.current) {
+      const cards = gridRef.current.querySelectorAll('.portfolio-card');
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
+    }
+  }, [content.projects]);
+
   if (!content.projects || content.projects.length === 0) return null;
 
   return (
@@ -41,7 +72,7 @@ export function PortfolioSection({ content, className }: PortfolioSectionProps) 
         </div>
 
         {/* Portfolio Grid */}
-        <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+        <div ref={gridRef} className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
           {content.projects.map((project, index) => (
             <PortfolioCard 
               key={project.id} 
@@ -62,7 +93,7 @@ interface PortfolioCardProps {
 
 function PortfolioCard({ project, priority = false }: PortfolioCardProps) {
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+    <article className="portfolio-card opacity-0 translate-y-8 group relative overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
       {/* Image Container */}
       <div className="relative h-72 overflow-hidden md:h-80">
         <Image
@@ -79,12 +110,9 @@ function PortfolioCard({ project, priority = false }: PortfolioCardProps) {
       
       {/* Content */}
       <div className="p-6 md:p-8">
-        <h3 className="mb-3 text-xl font-semibold tracking-tight text-black md:text-2xl">
+        <h3 className="mb-6 text-xl font-semibold tracking-tight text-black md:text-2xl">
           {project.title}
         </h3>
-        <p className="mb-6 line-clamp-3 leading-relaxed text-gray-600">
-          {project.description}
-        </p>
         
         {/* CTA Button */}
         <Button 

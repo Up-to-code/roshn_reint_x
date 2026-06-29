@@ -38,9 +38,9 @@ export default function LocaleSwitcherSelect({ label }: Props) {
     <Select value={currentLang} onValueChange={handleLocaleChange}>
       <SelectTrigger
         className={cn(
-          "h-9 w-[100px] border-white/20 bg-white/10 text-white/90 backdrop-blur-xl",
+          "h-9 w-[100px] border-[#F0EDE8]/20 bg-white/10 text-[#F0EDE8]/90 backdrop-blur-xl",
           "focus:ring-1 focus:ring-white/30 focus:ring-offset-0",
-          "hover:border-white/30 hover:bg-white/15",
+          "hover:border-[#F0EDE8]/30 hover:bg-white/15",
           "rounded-xl transition-all duration-300",
           "flex items-center justify-between"
         )}
@@ -51,16 +51,16 @@ export default function LocaleSwitcherSelect({ label }: Props) {
       </SelectTrigger>
       <SelectContent 
         className={cn(
-          "border-white/20 bg-white/10 text-white/90 backdrop-blur-3xl",
+          "border-[#F0EDE8]/20 bg-white/10 text-[#F0EDE8]/90 backdrop-blur-3xl",
           "rounded-xl shadow-2xl"
         )}
       >
         <SelectItem 
           value="ar" 
           className={cn(
-            "focus:bg-white/15 focus:text-white",
+            "focus:bg-white/15 focus:text-[#F0EDE8]",
             "rounded-lg transition-colors",
-            currentLang === 'ar' && "bg-white/15 text-white"
+            currentLang === 'ar' && "bg-white/15 text-[#F0EDE8]"
           )}
         >
           <div className="flex items-center gap-2">
@@ -71,9 +71,9 @@ export default function LocaleSwitcherSelect({ label }: Props) {
         <SelectItem 
           value="en"
           className={cn(
-            "focus:bg-white/15 focus:text-white",
+            "focus:bg-white/15 focus:text-[#F0EDE8]",
             "rounded-lg transition-colors",
-            currentLang === 'en' && "bg-white/15 text-white"
+            currentLang === 'en' && "bg-white/15 text-[#F0EDE8]"
           )}
         >
           <div className="flex items-center gap-2">

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface PartnersBannerProps {
   logos?: { src: string; alt: string }[];
@@ -48,9 +50,31 @@ export function PartnersBanner({
   const [mounted, setMounted] = useState(false);
   const locale = useLocale();
   const isRTL = locale === "ar";
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setMounted(true);
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Using a short timeout to ensure the DOM is ready after mounting
+    setTimeout(() => {
+      if (sectionRef.current) {
+        gsap.fromTo(
+          sectionRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+            }
+          }
+        );
+      }
+    }, 100);
   }, []);
 
   // Filter out partners with empty/invalid image URLs
@@ -83,7 +107,7 @@ export function PartnersBanner({
   }
 
   return (
-    <section className={cn("w-full bg-transparent py-16", className)}>
+    <section ref={sectionRef} className={cn("w-full bg-transparent py-16 opacity-0", className)}>
       <div className="container mx-auto px-4">
         {/* Title with fade-in animation */}
         <div className="mb-12 text-center animate-fade-in">

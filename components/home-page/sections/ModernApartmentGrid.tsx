@@ -1,5 +1,7 @@
 // components/ModernApartmentGrid.tsx
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ModernApartmentCard from './ModernApartmentCard';
 
 interface Apartment {
@@ -28,6 +30,34 @@ const ModernApartmentGrid: React.FC<ModernApartmentGridProps> = ({
   onViewDetails,
   onContactAgent,
 }) => {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (gridRef.current) {
+      const cards = gridRef.current.querySelectorAll('.apartment-card');
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
+    }
+  }, [apartments]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       {/* Header */}
@@ -55,7 +85,7 @@ const ModernApartmentGrid: React.FC<ModernApartmentGridProps> = ({
       </div>
 
       {/* Apartments Grid */}
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+      <div ref={gridRef} className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
         {apartments.map((apartment) => (
           <ModernApartmentCard
             key={apartment.id}

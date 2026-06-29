@@ -24,7 +24,7 @@ export function WhyUsSection({ content }: WhyUsSectionProps) {
   const locale = useLocale();
   const isRTL = locale === "ar";
   
-  if (!content.features || content.features.length === 0) return null;
+  if (!content || !content.features || content.features.length === 0) return null;
 
   return (
     <section className="bg-transparent py-16 md:py-20">

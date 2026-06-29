@@ -1,7 +1,6 @@
 import { HeroSection } from "@/components/home-page/sections/hero-section";
- import { WhyUsSection } from "@/components/home-page/sections/why-us-section";
+import { WhyUsSection } from "@/components/home-page/sections/why-us-section";
 import { AboutUsSection } from "@/components/home-page/sections/about-us-section";
-import { TestimonialsSection } from "@/components/home-page/sections/testimonials-section";
 import { ContactUsSection } from "@/components/home-page/sections/contact-us-section";
 import { PartnersBanner } from "@/components/home-page/sections/partners-banner";
 import ApartmentsPage from "@/components/home-page/sections/ApartmentsPage";

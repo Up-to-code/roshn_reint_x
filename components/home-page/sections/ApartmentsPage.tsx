@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useTransition } from "react";
+import { useState, useEffect, useMemo, useCallback, useTransition, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
 import { Building, ChevronRight } from "lucide-react";
@@ -28,7 +30,13 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
   const [properties, setProperties] = useState<Property[]>([]);
   const [isPending, startTransition] = useTransition();
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
+  const [mounted, setMounted] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
   const isRTL = locale === "ar";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Fetch properties with caching
   const fetchProperties = useCallback(async () => {
@@ -60,10 +68,11 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
 
   // Fetch on mount or locale change
   useEffect(() => {
+    if (!mounted) return;
     startTransition(() => {
       fetchProperties();
     });
-  }, [fetchProperties]);
+  }, [fetchProperties, mounted]);
 
   // Get visible properties based on display count
   const visibleProperties = useMemo(
@@ -72,6 +81,34 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
   );
 
   const hasMore = properties.length > displayCount;
+
+  // Animate cards when they are loaded and visible on scroll
+  useEffect(() => {
+    if (!mounted) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (!isPending && visibleProperties.length > 0 && gridRef.current) {
+      const cards = gridRef.current.querySelectorAll('.property-card');
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%", // Triggers when the top of the grid reaches 85% of the viewport height
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
+    }
+  }, [isPending, visibleProperties, mounted]);
 
   const handleShowMore = () => {
     setDisplayCount(prev => Math.min(prev + LOAD_MORE_COUNT, properties.length));
@@ -109,7 +146,7 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={gridRef} className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading
             ? Array.from({ length: INITIAL_DISPLAY_COUNT }).map((_, i) => (
                 <SkeletonCard key={i} />
@@ -118,7 +155,7 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
                 <Link
                   href={`/${locale}/p/${property.id}`}
                   key={property.id}
-                  className="group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all hover:shadow-2xl"
+                  className="property-card group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all hover:shadow-2xl opacity-0 translate-y-8"
                 >
                   {/* Image */}
                   <div className="relative h-[420px] w-full overflow-hidden">

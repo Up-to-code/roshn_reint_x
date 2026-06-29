@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useTransition } from "react";
+import { useState, useEffect, useMemo, useCallback, useTransition, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
 import { Building, ChevronLeft, ChevronRight } from "lucide-react";
@@ -33,6 +35,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
   const [properties, setProperties] = useState<Property[]>(initialProperties || []);
   const [isPending, startTransition] = useTransition();
   const [currentPage, setCurrentPage] = useState(1);
+  const gridRef = useRef<HTMLDivElement>(null);
   const isRTL = locale === "ar";
 
   const roshnReitProject = useMemo<Property>(
@@ -92,6 +95,32 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
     }
   }, [initialProperties, locale, fetchProperties]);
 
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (gridRef.current) {
+      const cards = gridRef.current.querySelectorAll('.property-list-card');
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
+    }
+  }, [properties, currentPage]);
+
   const visibleProperties = useMemo(
     () => [
       roshnReitProject,
@@ -147,12 +176,12 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
           </div>
         ) : paginatedProperties.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div ref={gridRef} className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {paginatedProperties.map((property) => (
                 <Link
                   href={property.href || `/${locale}/p/${property.id}`}
                   key={property.id}
-                  className="group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl"
+                  className="property-list-card opacity-0 translate-y-8 group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl"
                 >
                   {/* Image */}
                   <div className={`relative aspect-[1/1.4] w-full overflow-hidden ${property.standalone ? "bg-[#424242]" : ""}`}>
@@ -196,25 +225,6 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
                       )}
                     </div>
                   </div>
-                  
-                  {/* Description */}
-                  {(property.descriptionEn || property.descriptionAr) && (() => {
-                    const descriptionHtml = locale === "ar"
-                      ? property.descriptionAr || property.descriptionEn || ""
-                      : property.descriptionEn || property.descriptionAr || "";
-                    if (!descriptionHtml) return null;
-                    
-                    const plainText = stripHtml(descriptionHtml);
-                    if (!plainText.trim()) return null;
-                    
-                    return (
-                      <div className="p-4 pt-3">
-                        <p className={`line-clamp-2 text-sm text-slate-600 leading-relaxed ${isRTL ? 'text-right' : 'text-left'}`}>
-                          {plainText}
-                        </p>
-                      </div>
-                    );
-                  })()}
                 </Link>
               ))}
             </div>

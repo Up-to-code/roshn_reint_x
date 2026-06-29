@@ -1,55 +1,7 @@
-import type { Metadata } from "next";
-import { Tajawal } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ReactNode } from 'react';
 
-const tajawal = Tajawal({
-  subsets: ["arabic", "latin"],
-  weight: ["200", "300", "400", "500", "700", "800", "900"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  title: "روشن ريت",
-  description: "روشن ريت - مشروع درب الحرمين في جدة",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="ar" dir="rtl" className={tajawal.variable}>
-      <head>
-        {/* Google Tag Manager */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-ML25M3LS');`,
-          }}
-        />
-        {/* End Google Tag Manager */}
-      </head>
-      <body className={tajawal.className}>
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-ML25M3LS"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript>
-        {/* End Google Tag Manager (noscript) */}
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
-  );
+// Since we have a root `not-found.tsx` page, a layout file
+// is required by Next.js, even if it's just passing children through.
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return children;
 }

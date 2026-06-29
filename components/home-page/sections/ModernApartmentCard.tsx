@@ -47,7 +47,7 @@ const ModernApartmentCard: React.FC<ModernApartmentCardProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:border-orange-200">
+    <div className="apartment-card opacity-0 translate-y-8 overflow-hidden rounded-xl border border-gray-100 bg-white transition-all duration-300 hover:border-orange-200">
       {/* Image with Status Badge */}
       <div className="relative h-56 w-full">
         <Image

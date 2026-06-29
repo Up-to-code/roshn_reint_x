@@ -461,6 +461,10 @@ export async function GET(request: NextRequest) {
             ? homePageData.en.hero.backgroundVideo 
             : defaultHomePageData.en.hero.backgroundVideo,
         },
+        aboutUs: {
+          ...defaultHomePageData.en.aboutUs,
+          ...(homePageData.en?.aboutUs || {}),
+        },
       },
       ar: {
         ...defaultHomePageData.ar,
@@ -472,6 +476,10 @@ export async function GET(request: NextRequest) {
           backgroundVideo: homePageData.ar?.hero?.backgroundVideo !== undefined 
             ? homePageData.ar.hero.backgroundVideo 
             : defaultHomePageData.ar.hero.backgroundVideo,
+        },
+        aboutUs: {
+          ...defaultHomePageData.ar.aboutUs,
+          ...(homePageData.ar?.aboutUs || {}),
         },
       },
     };

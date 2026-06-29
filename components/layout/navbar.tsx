@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -28,12 +28,10 @@ const SOCIAL_LINKS = [
 
 // Dashboard Banner
 function DashboardBanner({ session, t, isRTL }: { session: any; t: any; isRTL: boolean }) {
-  if (!session) return null;
-
-  const dashboardUrl = session.user.role === "ADMIN" ? "/admin" : "/dashboard";
+  const dashboardUrl = session?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
 
   return (
-    <div className="fixed top-0 z-50 w-full border-b border-gray-600 bg-[#424242] py-2 text-white">
+    <div className={cn("fixed top-0 z-50 w-full border-b border-gray-600 bg-[#424242] py-2 text-[#F0EDE8]/90", !session && "hidden")}>
       <div className="mx-auto max-w-7xl text-center">
         <Link href={dashboardUrl} className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary">
           <Sparkles className="size-4" />
@@ -65,7 +63,7 @@ function NavLinks({ links, mobile, onClick, isRTL }: { links: any[]; mobile?: bo
           href={item.href}
           onClick={onClick}
           className={cn(
-            "font-medium text-gray-200 transition-all hover:text-white",
+            "font-medium text-[#F0EDE8]/80 transition-all hover:text-[#F0EDE8]",
             mobile ? "block px-4 py-3 text-center hover:bg-gray-700" : "px-4 py-2 text-sm"
           )}
         >
@@ -85,7 +83,7 @@ function SocialLinks({ mobile }: { mobile?: boolean }) {
         href={INSTAGRAM_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-lg p-2 text-pink-500 transition-all hover:bg-pink-500/20 hover:text-pink-400"
+        className="rounded-lg p-2 text-[#F0EDE8]/80 transition-all hover:bg-gray-700/50 hover:text-[#F0EDE8]"
         aria-label="Instagram"
       >
         <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
@@ -98,7 +96,7 @@ function SocialLinks({ mobile }: { mobile?: boolean }) {
         href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-lg p-2 text-green-500 transition-all hover:bg-green-500/20 hover:text-green-400"
+        className="rounded-lg p-2 text-[#F0EDE8]/80 transition-all hover:bg-gray-700/50 hover:text-[#F0EDE8]"
         aria-label="WhatsApp"
       >
         <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
@@ -111,7 +109,7 @@ function SocialLinks({ mobile }: { mobile?: boolean }) {
         href={TIKTOK_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-lg p-2 text-black transition-all hover:bg-gray-700 hover:text-white dark:text-white"
+        className="rounded-lg p-2 text-[#F0EDE8]/80 transition-all hover:bg-gray-700/50 hover:text-[#F0EDE8]"
         aria-label="TikTok"
       >
         <svg className="size-5" fill="currentColor" viewBox="0 0 24 24">
@@ -126,45 +124,47 @@ function SocialLinks({ mobile }: { mobile?: boolean }) {
 // Interest Button
 function InterestButton({ mobile, onClick, isRTL }: { mobile?: boolean; onClick?: () => void; isRTL: boolean }) {
   return (
-    <Link href="/contact" onClick={onClick}>
-      <Button className={cn("rounded-2xl p-5 px-8", mobile && "w-full")} size={mobile ? "lg" : "default"}>
+    <Button asChild className={cn("rounded-2xl p-5 px-8", mobile && "w-full")} size={mobile ? "lg" : "default"}>
+      <Link href="/contact" onClick={onClick}>
         {isRTL ? "سجل اهتمامك" : "Register Interest"}
-      </Button>
-    </Link>
+      </Link>
+    </Button>
   );
 }
 
 // Mobile Menu
 function MobileMenu({ isOpen, onClose, navLinks, isRTL }: { isOpen: boolean; onClose: () => void; navLinks: any[]; isRTL: boolean }) {
-  if (!isOpen) return null;
-
   return (
-    <div className="border-t border-gray-600 bg-[#424242] p-6 lg:hidden">
-      <div className="space-y-4">
-        <NavLinks links={navLinks} mobile onClick={onClose} isRTL={isRTL} />
-        <div className="pt-4">
-          <InterestButton mobile onClick={onClose} isRTL={isRTL} />
-        </div>
-      </div>
+    <div 
+      className={cn(
+        "grid transition-all duration-300 ease-in-out lg:hidden",
+        isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+      )}
+    >
+      <div className="overflow-hidden">
+        <div className="border-t border-gray-600 bg-[#424242] p-6">
+          <div className="space-y-4">
+            <NavLinks links={navLinks} mobile onClick={onClose} isRTL={isRTL} />
+            <div className="pt-4">
+              <InterestButton mobile onClick={onClose} isRTL={isRTL} />
+            </div>
+          </div>
 
-      <div className="mt-6 flex items-center justify-between border-t border-gray-600 pt-6">
-        <SocialLinks mobile />
-        <LocaleSwitcher />
+          <div className="mt-6 flex items-center justify-between border-t border-gray-600 pt-6">
+            <SocialLinks mobile />
+            <LocaleSwitcher />
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 // Main NavBar
-export function NavBar() {
+function NavBarContent() {
   const { data: session } = useSession();
   const t = useTranslations("nav");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-
 
   const currentLocale = useLocale();
   const isRTL = currentLocale === "ar";
@@ -177,23 +177,13 @@ export function NavBar() {
     { title: t("contact"), href: "/contact" },
   ];
 
-  if (!mounted) {
-    return (
-      <header className="fixed top-6 z-40 w-full px-4">
-        <div className="mx-auto max-w-7xl">
-          <div className="h-20 animate-pulse rounded-xl bg-[#424242]" />
-        </div>
-      </header>
-    );
-  }
-
   return (
     <>
       <DashboardBanner session={session} t={t} isRTL={isRTL} />
 
       <header className={cn("fixed z-40 w-full px-4", session ? "top-12" : "top-6")}>
         <div className="mx-auto max-w-7xl">
-          <nav className="rounded-xl   bg-[#424242] text-white" dir={isRTL ? "rtl" : "ltr"}>
+          <nav className="rounded-xl   bg-[#424242] text-[#F0EDE8]" dir={isRTL ? "rtl" : "ltr"}>
             {/* Main Navigation Bar */}
             <div className="flex h-20 items-center justify-between px-6">
               <Logo onClick={() => setMobileOpen(false)} />
@@ -215,7 +205,7 @@ export function NavBar() {
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setMobileOpen(!mobileOpen)}
-                  className="p-2 text-gray-400 hover:text-white lg:hidden"
+                  className="p-2 text-gray-400 hover:text-[#F0EDE8] outline-none focus:outline-none focus:ring-0 lg:hidden"
                   aria-label={mobileOpen ? (isRTL ? "إغلاق القائمة" : "Close menu") : (isRTL ? "فتح القائمة" : "Open menu")}
                 >
                   {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
@@ -228,5 +218,19 @@ export function NavBar() {
         </div>
       </header>
     </>
+  );
+}
+
+export function NavBar() {
+  return (
+    <Suspense fallback={
+      <header className="fixed top-6 z-40 w-full px-4">
+        <div className="mx-auto max-w-7xl">
+          <div className="h-20 animate-pulse rounded-xl bg-[#424242]" />
+        </div>
+      </header>
+    }>
+      <NavBarContent />
+    </Suspense>
   );
 }

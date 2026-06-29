@@ -25,7 +25,7 @@ export function ContactUsSection({ content, locale }: ContactUsSectionProps) {
   } | null>(null);
 
   const isRTL = locale === "ar";
-  if (!content.enabled) return null;
+  if (!content || !content.enabled) return null;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
