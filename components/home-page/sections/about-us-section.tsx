@@ -95,8 +95,8 @@ export function AboutUsSection({ content }: AboutUsSectionProps) {
                     </p>
                   ));
                 }
-                if (Array.isArray(textContent)) {
-                  return textContent.map((paragraph, index) => (
+                if (Array.isArray(textContent as any)) {
+                  return (textContent as any[]).map((paragraph: any, index: number) => (
                     <p key={index} className="text-base leading-relaxed lg:text-lg">
                       {typeof paragraph === 'string' ? paragraph : JSON.stringify(paragraph)}
                     </p>
