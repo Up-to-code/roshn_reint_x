@@ -147,7 +147,7 @@ export function HeroSection({ content }: HeroSectionProps) {
 
         {/* Title - Bigger with proper line height */}
         {content.title && (
-          <h1 className="w-full font-sans font-[700] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[80px] 2xl:text-[90px] leading-tight sm:leading-[1.2] text-white">
+          <h1 className="w-full font-sans font-bold tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[80px] 2xl:text-[90px] leading-tight sm:leading-[1.2] text-white">
             {isHtml(content.title) ? (
               <span
                 className="animate-words block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-bold"
@@ -165,7 +165,7 @@ export function HeroSection({ content }: HeroSectionProps) {
         {content.subtitle && (
           <div
             className={cn(
-              "w-full font-sans text-base sm:text-lg md:text-2xl lg:text-[30px] xl:text-[38px] 2xl:text-[45px] font-[700] leading-relaxed sm:leading-[1.5] text-gray-200/90 tracking-wide",
+              "w-full font-sans font-bold text-base sm:text-lg md:text-2xl lg:text-[30px] xl:text-[38px] 2xl:text-[45px] leading-relaxed sm:leading-normal text-gray-200/90 tracking-wide",
               isRTL ? "text-right" : "text-left"
             )}
           >
