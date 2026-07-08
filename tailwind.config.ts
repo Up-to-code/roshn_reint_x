@@ -62,14 +62,17 @@ const config = {
   		},
   		fontFamily: {
   			sans: [
+  				'var(--font-tajawal)',
   				'var(--font-sans)',
                     ...fontFamily.sans
                 ],
   			heading: [
+  				'var(--font-tajawal)',
   				'var(--font-heading)',
                     ...fontFamily.sans
                 ],
   			satoshi: [
+  				'var(--font-tajawal)',
   				'var(--font-satoshi)',
                     ...fontFamily.sans
                 ]

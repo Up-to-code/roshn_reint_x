@@ -132,10 +132,10 @@ export function HeroSection({ content }: HeroSectionProps) {
       <div
         ref={heroRef}
         className={cn(
-          "relative z-10 w-full max-w-4xl py-24 text-white flex flex-col space-y-6",
+          "relative z-10 w-full max-w-4xl px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-20 md:py-24 text-white flex flex-col space-y-4 sm:space-y-6",
           isRTL
-            ? "ml-auto pr-12 sm:pr-16 md:pl-24 items-end text-right"
-            : "mr-auto pl-12 sm:pl-16 md:pr-24 items-start text-left"
+            ? "ml-auto md:pr-16 lg:pr-24 items-end text-right"
+            : "mr-auto md:pl-16 lg:pl-24 items-start text-left"
         )}
       >
         {/* Accent Text */}
@@ -147,7 +147,7 @@ export function HeroSection({ content }: HeroSectionProps) {
 
         {/* Title - Bigger with proper line height */}
         {content.title && (
-          <h1 className="w-full font-bold tracking-tight text-[60px] sm:text-[80px] lg:text-[90px] leading-[1.2] text-white">
+          <h1 className="w-full font-bold tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[80px] 2xl:text-[90px] leading-tight sm:leading-[1.2] text-white">
             {isHtml(content.title) ? (
               <span
                 className="animate-words block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-bold"
@@ -165,7 +165,7 @@ export function HeroSection({ content }: HeroSectionProps) {
         {content.subtitle && (
           <div
             className={cn(
-              "w-full text-[30px] sm:text-[38px] md:text-[45px] font-medium leading-[1.5] text-gray-200/90 tracking-wide",
+              "w-full text-base sm:text-lg md:text-2xl lg:text-[30px] xl:text-[38px] 2xl:text-[45px] font-medium leading-relaxed sm:leading-[1.5] text-gray-200/90 tracking-wide",
               isRTL ? "text-right" : "text-left"
             )}
           >

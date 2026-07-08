@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import localFont from "next/font/local";
+import { Tajawal } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@uploadthing/react/styles.css";
@@ -14,6 +15,13 @@ import { ThemeProvider } from "next-themes";
 import ModalProvider from "@/components/modals/providers";
 import { Toaster } from "sonner";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
+
+const tajawal = Tajawal({
+  subsets: ["arabic", "latin"],
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+  variable: "--font-tajawal",
+  display: "swap",
+});
 
 const dinNext = localFont({
   src: [
@@ -62,7 +70,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* End Google Tag Manager */}
       </head>
       <body
-        className={`${dinNext.className} bg-background antialiased`}
+        className={`${tajawal.variable} ${dinNext.className} bg-background antialiased`}
         suppressHydrationWarning
       >
         {/* Google Tag Manager (noscript) */}

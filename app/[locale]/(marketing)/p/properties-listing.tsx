@@ -38,23 +38,6 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
   const gridRef = useRef<HTMLDivElement>(null);
   const isRTL = locale === "ar";
 
-  const roshnReitProject = useMemo<Property>(
-    () => ({
-      id: "roshn-reit",
-      titleEn: "Roshn Reit",
-      titleAr: "روشن ريت",
-      title: locale === "ar" ? "روشن ريت" : "Roshn Reit",
-      descriptionEn: "Darb Al Haramain project in Jeddah.",
-      descriptionAr: "مشروع درب الحرمين في جدة.",
-      images: ["/logo.png"],
-      city: locale === "ar" ? "جدة" : "Jeddah",
-      district: locale === "ar" ? "درب الحرمين" : "Darb Al Haramain",
-      href: "/roshn-plus",
-      standalone: true,
-    }),
-    [locale]
-  );
-
   const fetchProperties = useCallback(async () => {
     try {
       const res = await fetch("/api/properties", {
@@ -122,11 +105,8 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
   }, [properties, currentPage]);
 
   const visibleProperties = useMemo(
-    () => [
-      roshnReitProject,
-      ...properties.filter((property) => property.id !== roshnReitProject.id),
-    ],
-    [properties, roshnReitProject]
+    () => properties,
+    [properties]
   );
 
   // Pagination calculations
