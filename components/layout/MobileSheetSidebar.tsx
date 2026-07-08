@@ -56,7 +56,7 @@ export function MobileSheetSidebar({ links }: MobileSheetSidebarProps) {
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <Icons.logo className="size-6" />
-                <span className="font-satoshi text-lg font-bold">
+                <span className="font-sans text-lg font-bold">
                   {siteConfig.name}
                 </span>
               </Link>

@@ -28,7 +28,7 @@ function SignInModal({
           <a href={siteConfig.url}>
             <Icons.logo className="size-10" />
           </a>
-          <h3 className="font-satoshi text-2xl font-black">
+          <h3 className="font-sans text-2xl font-black">
             Sign In
           </h3>
           <p className="text-sm text-gray-500">

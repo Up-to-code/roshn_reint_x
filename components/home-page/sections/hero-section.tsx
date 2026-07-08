@@ -132,7 +132,7 @@ export function HeroSection({ content }: HeroSectionProps) {
       <div
         ref={heroRef}
         className={cn(
-          "relative z-10 w-full max-w-4xl px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-20 md:py-24 text-white flex flex-col space-y-4 sm:space-y-6",
+          "relative z-10 w-full max-w-4xl px-4 sm:px-6 md:px-8 lg:px-12 py-16 sm:py-20 md:py-24 text-white flex flex-col space-y-4 sm:space-y-6 font-sans",
           isRTL
             ? "ml-auto md:pr-16 lg:pr-24 items-end text-right"
             : "mr-auto md:pl-16 lg:pl-24 items-start text-left"
@@ -140,14 +140,14 @@ export function HeroSection({ content }: HeroSectionProps) {
       >
         {/* Accent Text */}
         {content.accentText && (
-          <span className="rounded-full border border-[#FF8C42]/10 bg-[#FF8C42]/20 px-6 py-2 text-sm font-semibold uppercase tracking-widest text-[#FF8C42] backdrop-blur-md">
+          <span className="font-sans rounded-full border border-[#FF8C42]/10 bg-[#FF8C42]/20 px-6 py-2 text-sm font-semibold uppercase tracking-widest text-[#FF8C42] backdrop-blur-md">
             {content.accentText}
           </span>
         )}
 
         {/* Title - Bigger with proper line height */}
         {content.title && (
-          <h1 className="w-full font-bold tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[80px] 2xl:text-[90px] leading-tight sm:leading-[1.2] text-white">
+          <h1 className="w-full font-sans font-[700] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-[60px] xl:text-[80px] 2xl:text-[90px] leading-tight sm:leading-[1.2] text-white">
             {isHtml(content.title) ? (
               <span
                 className="animate-words block w-full [&_*]:text-inherit [&_*]:font-inherit [&_strong]:font-bold"
@@ -165,7 +165,7 @@ export function HeroSection({ content }: HeroSectionProps) {
         {content.subtitle && (
           <div
             className={cn(
-              "w-full text-base sm:text-lg md:text-2xl lg:text-[30px] xl:text-[38px] 2xl:text-[45px] font-medium leading-relaxed sm:leading-[1.5] text-gray-200/90 tracking-wide",
+              "w-full font-sans text-base sm:text-lg md:text-2xl lg:text-[30px] xl:text-[38px] 2xl:text-[45px] font-[700] leading-relaxed sm:leading-[1.5] text-gray-200/90 tracking-wide",
               isRTL ? "text-right" : "text-left"
             )}
           >
