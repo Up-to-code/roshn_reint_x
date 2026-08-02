@@ -15,6 +15,7 @@ import { ThemeProvider } from "next-themes";
 import ModalProvider from "@/components/modals/providers";
 import { Toaster } from "sonner";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
+import { PostHogProvider } from "@/components/providers/posthog-provider";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -83,22 +84,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           ></iframe>
         </noscript>
         {/* End Google Tag Manager (noscript) */}
-        <NextIntlClientProvider messages={messages}>
-          <SessionProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="light"
-              enableSystem={false}
-              disableTransitionOnChange
-            >
-              <ModalProvider>{children}</ModalProvider>
-              <Analytics />
-              <SpeedInsights />
-              <Toaster richColors closeButton />
-              <TailwindIndicator />
-            </ThemeProvider>
-          </SessionProvider>
-        </NextIntlClientProvider>
+        <PostHogProvider>
+          <NextIntlClientProvider messages={messages}>
+            <SessionProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                enableSystem={false}
+                disableTransitionOnChange
+              >
+                <ModalProvider>{children}</ModalProvider>
+                <Analytics />
+                <SpeedInsights />
+                <Toaster richColors closeButton />
+                <TailwindIndicator />
+              </ThemeProvider>
+            </SessionProvider>
+          </NextIntlClientProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

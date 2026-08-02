@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { stripHtml } from '@/lib/utils';
+import posthog from 'posthog-js';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -49,6 +50,9 @@ export default function PropertiesClient({ initialProperties, locale }: Properti
       const result = await deleteProperty(id);
       
       if (result.success) {
+        posthog.capture('property_deleted', {
+          property_id: id,
+        });
         toast.success(commonT('success'));
         // Optimistic update
         setProperties(prev => prev.filter(p => p.id !== id));

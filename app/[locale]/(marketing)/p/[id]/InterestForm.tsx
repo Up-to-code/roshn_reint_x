@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Send, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 interface InterestFormProps {
   propertyTitle: string;
@@ -44,6 +45,9 @@ export default function InterestForm({ propertyTitle, propertyId }: InterestForm
       });
 
       if (res.ok) {
+        posthog.capture("property_interest_submitted", {
+          property_id: propertyId,
+        });
         setSuccess(true);
         setForm({ name: "", email: "", phone: "", message: "" });
         toast.success(

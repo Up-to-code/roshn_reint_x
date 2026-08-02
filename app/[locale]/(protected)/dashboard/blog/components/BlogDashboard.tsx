@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { SavePostData } from '@/types/editor'
 import { toast } from 'sonner'
 import { useBlogStore } from '@/store/useBlogStore';
+import posthog from 'posthog-js'
 
 export function BlogDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -60,6 +61,11 @@ export function BlogDashboard() {
     const result = await savePost(saveData)
     
     if (result) {
+      posthog.capture('blog_post_saved', {
+        post_id: result.id,
+        post_status: data.status,
+        save_action: currentPost ? 'updated' : 'created',
+      })
       toast.success(`Post ${data.status === 'draft' ? 'saved as draft' : 'published'}!`)
     } else {
       toast.error('Failed to save post')

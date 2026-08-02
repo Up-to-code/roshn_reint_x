@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, Edit, Save, X, ImageIcon } from "lucide-react";
 import { CustomUploader } from "@/components/shared/custom-uploader";
+import posthog from "posthog-js";
 
 interface Service {
   id: string;
@@ -116,6 +117,15 @@ export default function ServicesEditor() {
         body: JSON.stringify(editingService),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to save service');
+      }
+
+      const savedService = await response.json();
+      posthog.capture('service_saved', {
+        service_id: savedService.id,
+        save_action: editingService.id ? 'updated' : 'created',
+      });
       await fetchData();
       setEditingService(null);
     } catch (error) {
@@ -127,7 +137,14 @@ export default function ServicesEditor() {
     if (!confirm('هل أنت متأكد من حذف هذه الخدمة؟')) return;
 
     try {
-      await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Failed to delete service');
+      }
+
+      posthog.capture('service_deleted', {
+        service_id: id,
+      });
       await fetchData();
     } catch (error) {
       console.error('Error deleting service:', error);

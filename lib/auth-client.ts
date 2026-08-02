@@ -1,6 +1,7 @@
 "use client";
 
 import { createAuthClient } from "better-auth/react";
+import posthog from "posthog-js";
 
 // Get baseURL with fallback for client-side
 const getBaseURL = () => {
@@ -14,4 +15,9 @@ export const authClient = createAuthClient({
   baseURL: getBaseURL(),
 });
 
-export const { signIn, signOut, signUp, useSession } = authClient;
+export const { signIn, signUp, useSession } = authClient;
+
+export const signOut = (...args: Parameters<typeof authClient.signOut>) => {
+  posthog.reset();
+  return authClient.signOut(...args);
+};

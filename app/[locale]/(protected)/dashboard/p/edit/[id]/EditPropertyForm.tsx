@@ -14,6 +14,7 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import { 
   ArrowLeft, 
   X, 
@@ -175,6 +176,11 @@ export default function EditPropertyForm({ property, locale }: EditPropertyFormP
       try {
         const result = await updateProperty(property.id, formData);
         if (result.success) {
+          posthog.capture('property_updated', {
+            property_id: property.id,
+            city: formData.city || undefined,
+            image_count: formData.images.length,
+          });
           setHasChanges(false);
           router.refresh(); // Refresh server data
           resolve(true);
