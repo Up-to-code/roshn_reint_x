@@ -1,7 +1,31 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useLocale } from "next-intl";
+
+const IMAGE_URL_PATTERN = /^(?:https?:\/\/|\/)/i;
+
+function FeatureIcon({ icon, title }: Pick<Feature, "icon" | "title">) {
+  const value = icon?.trim();
+
+  if (!value) return null;
+
+  if (IMAGE_URL_PATTERN.test(value)) {
+    return (
+      <Image
+        src={value}
+        alt=""
+        width={32}
+        height={32}
+        className="size-full object-contain"
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return <span aria-label={title}>{value}</span>;
+}
 
 export interface WhyUsSection {
   title: string;
@@ -48,8 +72,8 @@ export function WhyUsSection({ content }: WhyUsSectionProps) {
             >
               <div className={`flex items-start gap-4 ${isRTL ? "flex-row-reverse" : ""}`}>
                 {/* Icon */}
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-xl text-gray-700 transition-colors group-hover:bg-gray-500 group-hover:text-white">
-                  {feature.icon}
+                <div className="flex size-12 shrink-0 overflow-hidden items-center justify-center rounded-lg bg-gray-200 p-2 text-xl text-gray-700 transition-colors group-hover:bg-gray-500 group-hover:text-white">
+                  <FeatureIcon icon={feature.icon} title={feature.title} />
                 </div>
                 
                 {/* Content */}
