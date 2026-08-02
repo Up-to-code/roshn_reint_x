@@ -96,39 +96,8 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen" dir="rtl">
-      {/* Hero Section */}
-      <section className="relative flex h-[60vh] items-center justify-center">
-        <div className="absolute inset-0">
-          {pageData.heroImage ? (
-            <Image
-              src={pageData.heroImage}
-              alt="صورة الخدمات الرئيسية"
-              fill
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="size-full bg-gradient-to-br from-orange-50 to-gray-100"></div>
-          )}
-          <div className="absolute inset-0 bg-black opacity-40"></div>
-        </div>
-
-        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center text-white">
-          <ScrollReveal direction="up">
-            <h1 className="mb-6 text-5xl font-black tracking-tight md:text-6xl">
-              {pageData.title || "خدماتنا"}
-            </h1>
-          </ScrollReveal>
-          <ScrollReveal direction="up" delay={2}>
-            <p className="text-xl font-light leading-relaxed md:text-2xl">
-              {pageData.subtitle || "حلول شاملة لتحويل وجودك الرقمي ودفع نمو أعمالك"}
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
-
       {/* Services — alternating full-width sections */}
-      <section className="bg-transparent py-16 md:py-24">
+      <section className="bg-transparent pb-16 pt-32 md:pb-24 md:pt-36">
         <div className="mx-auto max-w-7xl px-6">
           {/* Section heading */}
           <ScrollReveal direction="up">
