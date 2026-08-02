@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import posthog from "posthog-js";
 
 interface ContactPageProps {
   params: {
@@ -138,6 +139,7 @@ export default function ContactPage({ params }: ContactPageProps) {
       const result = await response.json();
 
       if (response.ok) {
+        posthog.capture("contact_form_submitted");
         setStatus({
           type: 'success',
           message: locale === "ar" ? "تم إرسال رسالتك بنجاح!" : "Your message has been sent successfully!"

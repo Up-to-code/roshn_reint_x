@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import { 
   ArrowLeft, 
   X, 
@@ -290,6 +291,11 @@ function CreatePropertyForm({ locale }: { locale: string }) {
       try {
         const result = await createProperty(formData);
         if (result.success) {
+          posthog.capture('property_created', {
+            property_id: result.data?.id,
+            city: formData.city || undefined,
+            image_count: formData.images.length,
+          });
           resolve(true);
         } else {
           reject(new Error(result.error || 'Failed to create property'));

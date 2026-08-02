@@ -7,6 +7,7 @@ import {
 } from "react";
 import { signOut, useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,7 @@ function DeleteAccountModal({
       },
     }).then(async (res) => {
       if (res.status === 200) {
+        posthog.capture("account_deleted");
         // delay to allow for the route change to complete
         await new Promise((resolve) =>
           setTimeout(() => {

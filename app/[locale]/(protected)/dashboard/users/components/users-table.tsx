@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 interface UsersTableProps {
   initialUsers: User[];
@@ -62,6 +63,9 @@ export function UsersTable({ initialUsers }: UsersTableProps) {
         )
       );
 
+      posthog.capture("user_role_updated", {
+        role: newRole,
+      });
       toast.success("User role updated successfully!");
     } catch (error) {
       console.error(error);
