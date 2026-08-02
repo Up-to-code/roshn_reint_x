@@ -2,7 +2,6 @@
 
 import { useState, Suspense } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
 import { Menu, X, Sparkles, Phone } from "lucide-react";
@@ -47,7 +46,13 @@ function Logo({ onClick }: { onClick: () => void }) {
   return (
     <Link href="/" onClick={onClick} className="flex items-center">
       <div className="relative flex h-[100px] w-[160px] items-center justify-center">
-        <Image src={LOGO_URL} alt="Logo" width={160} height={100} className="object-contain" />
+        <img
+          src={LOGO_URL}
+          alt="روشن ريت"
+          width={160}
+          height={100}
+          className="size-full object-contain"
+        />
       </div>
     </Link>
   );
