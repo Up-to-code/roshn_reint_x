@@ -89,7 +89,7 @@ const defaultContent: HomePageContent = {
   aboutUs: {
     title: "About Our Company",
     content: "We are a team of passionate professionals dedicated to delivering exceptional digital solutions.",
-    image: "/images/about-us.jpg",
+    image: "/jeddah-skyline.png",
     stats: [
       {
         id: '1',
@@ -202,7 +202,7 @@ const arabicContent: HomePageContent = {
   aboutUs: {
     title: "عن شركتنا",
     content: "نحن فريق من المحترفين المتحمسين المكرسين لتقديم حلول رقمية استثنائية.",
-    image: "/images/about-us.jpg",
+    image: "/jeddah-skyline.png",
     stats: [
       {
         id: '1',

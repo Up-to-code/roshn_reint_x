@@ -8,7 +8,9 @@ export default createMiddleware(routing);
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|roshn-plus).*)",
-    "/(en|ar)/:path*",
+    // Only localize application routes. Public assets (anything with a file
+    // extension) must stay at their root URL instead of being redirected to
+    // paths such as `/ar/logo.png`.
+    "/((?!api|_next|roshn-plus|.*\\..*).*)",
   ],
 };
