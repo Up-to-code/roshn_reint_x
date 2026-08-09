@@ -1,78 +1,10 @@
 import React from "react";
-import { prisma } from "@/lib/db";
+import { aboutModule } from "@/lib/about/about-module";
 
-// Force dynamic rendering so updates appear immediately
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
-// Default fallback data
-const defaultAboutData = {
-  hero: {
-    title: "من نحن",
-    subtitle: "درة العقارية، مطور عقاري معتمد من وزارة الإسكان، تقدم مجموعة متكاملة من الخدمات العقارية. مقرها في مدينة جدة، بدأت أولى أعمالها في عام 2017. وصلت إلى أكثر من 51 مشروعًا سكنيًا، واستطاعت من خلال أسعارها التنافسية تغطية شريحة واسعة ومكَّنت آلاف العائلات من تملك منازلهم.",
-    image: "https://dorrah.sa/wp-content/uploads/2023/12/2023-12-24-20.34.01.jpg"
-  },
-  vision: {
-    title: "الرؤية",
-    description: "تقديم خدمات عقارية متميزة ومتكاملة من خلال الابتكار والاستدامة والتميز في كل جانب."
-  },
-  mission: {
-    title: "الرسالة",
-    description: "توفير فرص استثمارية وسكنية استثنائية في قطاع العقارات وتحقيق تجربة فريدة لعملائنا."
-  },
-  goals: [
-    "توفير خدمات متكاملة تمتد من فكرة شراء العقار إلى ما بعد البيع",
-    "تسهيل عمليات البحث عن العقار واختياره وشرائه وتملكه",
-    "تنويع خيارات المساحات والديكور وكذلك المنطقة السكنية"
-  ],
-  tagline: "توفير فرص استثمارية وسكنية استثنائية في قطاع العقارات، وتحقيق تجربة متفوقة لعملائنا."
-};
-
-interface AboutData {
-  hero: {
-    title: string;
-    subtitle: string;
-    image: string;
-  };
-  vision: {
-    title: string;
-    description: string;
-  };
-  mission: {
-    title: string;
-    description: string;
-  };
-  goals: string[];
-  tagline: string;
-}
-
-// Robust data fetching
-async function getAboutData(): Promise<AboutData> {
-  try {
-    const existing = await prisma.aboutPage.findUnique({ 
-      where: { id: 'default' } 
-    });
-
-    if (existing && existing.data) {
-      const fetchedData = existing.data as unknown as AboutData;
-      return {
-        hero: { ...defaultAboutData.hero, ...fetchedData.hero },
-        vision: { ...defaultAboutData.vision, ...fetchedData.vision },
-        mission: { ...defaultAboutData.mission, ...fetchedData.mission },
-        goals: fetchedData.goals || defaultAboutData.goals,
-        tagline: fetchedData.tagline || defaultAboutData.tagline
-      };
-    }
-  } catch (error) {
-    console.error('SERVER ERROR: Failed to fetch About Page data:', error);
-    // Return default data on error to prevent page crash
-  }
-  
-  return defaultAboutData;
-}
+export const revalidate = 300;
 
 export default async function AboutPage() {
-  const aboutData = await getAboutData();
+  const aboutData = await aboutModule.get();
 
   return (
     <main dir="rtl" lang="ar" className="my-40 w-full text-gray-700">

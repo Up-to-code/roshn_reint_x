@@ -18,7 +18,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
- import { UpgradeCard } from "@/components/dashboard/upgrade-card";
 import { Icons } from "@/components/shared/icons";
 import { Link } from "@/i18n/routing";
 
@@ -99,7 +98,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                           <Fragment key={`link-fragment-${item.title}`}>
                             {isSidebarExpanded ? (
                               <Link
-                                href={item.disabled ? "#" : item.href as any}
+                                href={item.href}
+                                aria-disabled={item.disabled}
+                                onClick={item.disabled ? (event) => event.preventDefault() : undefined}
                                 className={cn(
                                   "flex items-center gap-3 rounded-md p-2 text-sm font-medium transition-all duration-200",
                                   isRTL && "flex-row-reverse",
@@ -125,7 +126,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                               <Tooltip key={`tooltip-${item.title}`}>
                                 <TooltipTrigger asChild>
                                   <Link
-                                    href={item.disabled ? "#" : item.href as any}
+                                    href={item.href}
+                                    aria-disabled={item.disabled}
+                                    onClick={item.disabled ? (event) => event.preventDefault() : undefined}
                                     className={cn(
                                       "flex items-center justify-center gap-3 rounded-md py-2 text-sm font-medium transition-all duration-200",
                                       isRTL && "flex-row-reverse",

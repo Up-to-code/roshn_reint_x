@@ -91,7 +91,7 @@ export default function PropertyImageGallery({
           {images.map((image, index) => (
             <button
               key={index}
-              className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 transition-all hover:border-primary ${
+              className={`relative shrink-0 overflow-hidden rounded-md border-2 transition-all hover:border-primary ${
                 index === currentImageIndex 
                   ? 'border-primary ring-2 ring-primary ring-offset-2' 
                   : 'border-muted-foreground/20'

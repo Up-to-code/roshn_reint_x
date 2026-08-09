@@ -7,7 +7,7 @@ import localFont from "next/font/local";
 import { Tajawal } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import "@uploadthing/react/styles.css";
+import Script from "next/script";
 
 import "@/styles/globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
@@ -16,6 +16,8 @@ import ModalProvider from "@/components/modals/providers";
 import { Toaster } from "sonner";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { PostHogProvider } from "@/components/providers/posthog-provider";
+import { GoogleAnalytics } from "@/components/providers/google-analytics";
+import { PageTransition } from "@/components/providers/page-transition";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -58,18 +60,22 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-G9PD0DJV58" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-G9PD0DJV58');`,
-          }}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-G9PD0DJV58"
+          strategy="afterInteractive"
         />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-G9PD0DJV58');
+          `}
+        </Script>
         {/* Google Tag Manager */}
-        <script
+        <Script
+          id="google-tag-manager"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -103,6 +109,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 enableSystem={false}
                 disableTransitionOnChange
               >
+                <GoogleAnalytics />
+                <PageTransition />
                 <ModalProvider>{children}</ModalProvider>
                 <Analytics />
                 <SpeedInsights />

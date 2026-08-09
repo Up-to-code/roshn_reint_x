@@ -5,12 +5,12 @@ export interface HomePageData {
 }
 
 export interface Partner {
-  alt: string | number | readonly string[] | undefined;
-  src: string | number | readonly string[] | undefined;
+  alt: string;
+  src: string;
   id: string;
   name: string;
-  logo: string; // image url
-  link?: string; // optional link
+  logo: string;
+  link?: string;
 }
 
 export interface HomePageContent {
@@ -23,7 +23,7 @@ export interface HomePageContent {
   contactUs: ContactUsSection;
 }
 
-export interface HeroFormField {
+interface HeroFormField {
   name: string;
   label: string;
   type: string;
@@ -116,14 +116,14 @@ export interface ContactUsSection {
   map: MapSettings;
 }
 
-export interface ContactInfo {
+interface ContactInfo {
   address: string;
   phone: string;
   email: string;
   workingHours: string;
 }
 
-export interface ContactForm {
+interface ContactForm {
   enabled: boolean;
   fields: ContactFormField[];
 }
@@ -135,7 +135,7 @@ export interface ContactFormField {
   type: string;
 }
 
-export interface MapSettings {
+interface MapSettings {
   enabled: boolean;
   embedCode: string;
 }

@@ -1,7 +1,10 @@
-import { User, UserRole } from "@prisma/client";
-import type { Icon } from "lucide-react";
+import type { UserRole } from "@/lib/users/user-core";
+import type { ComponentProps } from "react";
 
 import { Icons } from "@/components/shared/icons";
+import { Link } from "@/i18n/routing";
+
+type AppHref = ComponentProps<typeof Link>["href"];
 
 export type SiteConfig = {
   name: string;
@@ -17,7 +20,7 @@ export type SiteConfig = {
 
 export type NavItem = {
   title: string;
-  href: string;
+  href: AppHref;
   badge?: number;
   disabled?: boolean;
   external?: boolean;

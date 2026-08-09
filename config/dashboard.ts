@@ -1,17 +1,4 @@
-import { IconName } from "@/components/shared/icons";
-import { UserRole } from "@prisma/client";
-
-export interface SidebarNavItem {
-  title: string; // translation key
-  items: {
-    href: string;
-    icon: IconName;
-    title: string; // translation key
-    badge?: number;
-    authorizeOnly?: UserRole;
-    disabled?: boolean;
-  }[];
-}
+import type { SidebarNavItem } from "@/types";
 
 // Use translation keys here; the component will call `t(title)` dynamically
 export const sidebarLinks: SidebarNavItem[] = [
@@ -21,7 +8,6 @@ export const sidebarLinks: SidebarNavItem[] = [
       { href: "/dashboard", icon: "dashboard", title: "sidebar.dashboard" },
       { href: "/dashboard/p", icon: "building", title: "sidebar.properties" },
       { href: "/dashboard/p/create", icon: "plus", title: "sidebar.addProperty" },
-      // { href: "/admin", icon: "briefcase", title: "sidebar.adminPanel", authorizeOnly: UserRole.ADMIN },
       { href: "/dashboard/blog", icon: "blog", title: "sidebar.blog" },
       //  { href: "/admin/forms", icon: "post", title: "sidebar.forms" },
       // { href: "/admin/blogs", icon: "blog", title: "sidebar.blogs" },

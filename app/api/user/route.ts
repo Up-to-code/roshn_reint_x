@@ -1,20 +1,14 @@
-import { getCurrentUser } from "@/lib/session";
-import { db } from "@/lib/db";
+import { requireAuthenticated } from "@/lib/authorization";
+import { authorizationErrorResponse } from "@/lib/http/authorization-response";
+import { userModule } from "@/lib/users/user-module";
 
 export async function DELETE() {
-  const currentUser = await getCurrentUser();
-  
-  if (!currentUser) {
-    return new Response("Not authenticated", { status: 401 });
-  }
-
   try {
-    await db.user.delete({
-      where: {
-        id: currentUser.id,
-      },
-    });
+    const currentUser = await requireAuthenticated();
+    await userModule.delete(currentUser.id);
   } catch (error) {
+    const denied = authorizationErrorResponse(error);
+    if (denied) return denied;
     return new Response("Internal server error", { status: 500 });
   }
 

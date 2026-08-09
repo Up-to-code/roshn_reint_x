@@ -1,22 +1,13 @@
-import React from 'react';
-import { getProperties } from '@/app/actions/properties';
 import PropertiesClient from './PropertiesClient';
-import { Property } from '@prisma/client';
+import { serializeProperty } from '@/lib/properties/property-core';
+import { propertyModule } from '@/lib/properties/property-module';
 
 export default async function PropertiesDashboardPage({
   params: { locale },
 }: {
   params: { locale: string };
 }) {
-  const result = await getProperties();
-  const rawProperties = result.success && result.data ? (result.data as Property[]) : [];
-
-  // Serialize dates to strings to avoid hydration mismatches and serialization warnings
-  const properties = rawProperties.map(p => ({
-    ...p,
-    createdAt: p.createdAt.toISOString(),
-    updatedAt: p.updatedAt.toISOString(),
-  }));
+  const properties = (await propertyModule.list()).map(serializeProperty);
 
   return (
     <PropertiesClient initialProperties={properties} locale={locale} />

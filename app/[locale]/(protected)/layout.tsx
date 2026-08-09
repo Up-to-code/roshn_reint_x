@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
  
 import { sidebarLinks } from "@/config/dashboard";
-import { getCurrentUser } from "@/lib/session";
+import { requireAdmin } from "@/lib/authorization";
  import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
  import { UserAccountNav } from "@/components/layout/user-account-nav";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { MobileSheetSidebar } from "@/components/layout/MobileSheetSidebar";
  import { Separator } from "@/components/ui/separator";
-import DashboardWrapper from "@/components/layout/DashboardWrapper";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -19,19 +18,10 @@ export default async function DashboardLayout({ children, params }: ProtectedLay
   const resolvedParams = params instanceof Promise ? await params : params;
   const locale = resolvedParams.locale || "en";
   
-  // Check if user is authenticated
   let user;
   try {
-    user = await getCurrentUser();
-    
-    // Only redirect if user is definitely not authenticated
-    // Check for both id and email to ensure it's a valid user object
-    if (!user || !user.id || !user.email) {
-      redirect(`/${locale}/login`);
-    }
-  } catch (error) {
-    // If there's an error checking session, redirect to login
-    // This prevents crashes but ensures security
+    user = await requireAdmin();
+  } catch {
     redirect(`/${locale}/login`);
   }
 
@@ -43,8 +33,6 @@ export default async function DashboardLayout({ children, params }: ProtectedLay
   }));
 
   return (
-    <DashboardWrapper>
-
     <div className="relative flex min-h-screen w-full bg-background transition-colors duration-300">
       {/* Sidebar */}
       <DashboardSidebar links={filteredLinks} />
@@ -90,7 +78,6 @@ export default async function DashboardLayout({ children, params }: ProtectedLay
           </div>
         </main>
       </div>
-    </div>      </DashboardWrapper>
-
+    </div>
   );
 }

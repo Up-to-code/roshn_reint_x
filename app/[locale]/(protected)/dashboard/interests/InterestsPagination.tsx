@@ -3,12 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
+import { interestListHref, type InterestReadFilter } from "./interest-query";
 
 interface InterestsPaginationProps {
   currentPage: number;
   totalPages: number;
   search: string;
-  filterRead: 'all' | 'unread' | 'read';
+  filterRead: InterestReadFilter;
   isRTL: boolean;
 }
 
@@ -16,17 +17,8 @@ export function InterestsPagination({ currentPage, totalPages, search, filterRea
   const router = useRouter();
   const pathname = usePathname();
 
-  const createPageUrl = (page: number) => {
-    const params = new URLSearchParams();
-    if (search) params.set('search', search);
-    if (filterRead !== 'all') params.set('filter', filterRead);
-    if (page > 1) params.set('page', page.toString());
-    const query = params.toString();
-    return query ? `${pathname}?${query}` : pathname;
-  };
-
   const handlePageChange = (page: number) => {
-    router.push(createPageUrl(page));
+    router.push(interestListHref(pathname, search, filterRead, page));
   };
 
   if (totalPages <= 1) return null;
@@ -57,4 +49,3 @@ export function InterestsPagination({ currentPage, totalPages, search, filterRea
     </div>
   );
 }
-

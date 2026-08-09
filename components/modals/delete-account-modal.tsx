@@ -67,10 +67,8 @@ function DeleteAccountModal({
         <h3 className="text-lg font-semibold">Delete Account</h3>
         <p className="text-center text-sm text-muted-foreground">
           <b>Warning:</b> This will permanently delete your account and your
-          active subscription!
+          associated data. This action cannot be undone.
         </p>
-
-        {/* TODO: Use getUserSubscriptionPlan(session.user.id) to display the user's subscription if he have a paid plan */}
       </div>
 
       <form
@@ -134,4 +132,3 @@ export function useDeleteAccountModal() {
     [setShowDeleteAccountModal, DeleteAccountModalCallback],
   );
 }
-

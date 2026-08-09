@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useTransition, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 
 interface Property {
   id: string;
-  titleEn: string;
+  titleEn: string | null;
   titleAr: string;
-  descriptionEn: string;
-  descriptionAr: string;
+  descriptionEn: string | null;
+  descriptionAr: string | null;
   images: string[];
   title?: string;
   description?: string;
@@ -21,58 +21,21 @@ interface Property {
 
 interface HomePropertiesGridProps {
   locale: string;
+  initialProperties: Property[];
 }
 
 const INITIAL_DISPLAY_COUNT = 6;
 const LOAD_MORE_COUNT = 6;
 
-export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [isPending, startTransition] = useTransition();
+export default function HomePropertiesGrid({ locale, initialProperties }: HomePropertiesGridProps) {
+  const properties = useMemo(() => initialProperties.map(item => ({
+    ...item,
+    title: (locale === "ar" ? item.titleAr || item.titleEn : item.titleEn || item.titleAr) || "",
+    description: (locale === "ar" ? item.descriptionAr || item.descriptionEn : item.descriptionEn || item.descriptionAr) || "",
+  })), [initialProperties, locale]);
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
-  const [mounted, setMounted] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const isRTL = locale === "ar";
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Fetch properties with caching
-  const fetchProperties = useCallback(async () => {
-    try {
-      const res = await fetch("/api/properties", {
-        next: { revalidate: 60 },
-      });
-      if (!res.ok) throw new Error("Failed to load properties");
-
-      const data: Property[] = await res.json();
-
-      const localizedData = data.map((item) => ({
-        ...item,
-        title:
-          locale === "ar"
-            ? item.titleAr || item.titleEn
-            : item.titleEn || item.titleAr,
-        description:
-          locale === "ar"
-            ? item.descriptionAr || item.descriptionEn
-            : item.descriptionEn || item.descriptionAr,
-      }));
-
-      setProperties(localizedData);
-    } catch (error) {
-      console.error("Error fetching properties:", error);
-    }
-  }, [locale]);
-
-  // Fetch on mount or locale change
-  useEffect(() => {
-    if (!mounted) return;
-    startTransition(() => {
-      fetchProperties();
-    });
-  }, [fetchProperties, mounted]);
 
   // Get visible properties based on display count
   const visibleProperties = useMemo(
@@ -84,10 +47,9 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
 
   // Animate cards when they are loaded and visible on scroll
   useEffect(() => {
-    if (!mounted) return;
     gsap.registerPlugin(ScrollTrigger);
 
-    if (!isPending && visibleProperties.length > 0 && gridRef.current) {
+    if (visibleProperties.length > 0 && gridRef.current) {
       const cards = gridRef.current.querySelectorAll('.property-card');
       if (cards.length > 0) {
         gsap.fromTo(
@@ -108,24 +70,11 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
         );
       }
     }
-  }, [isPending, visibleProperties, mounted]);
+  }, [visibleProperties]);
 
   const handleShowMore = () => {
     setDisplayCount(prev => Math.min(prev + LOAD_MORE_COUNT, properties.length));
   };
-
-  // Skeleton Card Component
-  const SkeletonCard = () => (
-    <div className="animate-pulse overflow-hidden rounded-2xl bg-white shadow-md">
-      <div className="h-[420px] w-full bg-slate-200" />
-      <div className="space-y-3 p-4">
-        <div className="h-5 w-3/4 rounded bg-slate-200" />
-        <div className="h-4 w-1/2 rounded bg-slate-200" />
-      </div>
-    </div>
-  );
-
-  const isLoading = isPending || properties.length === 0;
 
   return (
     <section
@@ -147,11 +96,7 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
 
         {/* Grid */}
         <div ref={gridRef} className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {isLoading
-            ? Array.from({ length: INITIAL_DISPLAY_COUNT }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))
-            : visibleProperties.map((property) => (
+          {visibleProperties.map((property) => (
                 <Link
                   href={`/${locale}/p/${property.id}`}
                   key={property.id}
@@ -187,7 +132,7 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
         </div>
 
         {/* Show More Button */}
-        {!isLoading && hasMore && (
+        {hasMore && (
           <div className="mt-12 flex justify-center">
             <Button
               onClick={handleShowMore}
@@ -206,7 +151,7 @@ export default function HomePropertiesGrid({ locale }: HomePropertiesGridProps) 
         )}
 
         {/* View All Link */}
-        {!isLoading && properties.length > 0 && (
+        {properties.length > 0 && (
           <div className="mt-8 text-center">
             <Link
               href={`/${locale}/p`}

@@ -33,7 +33,7 @@ function EditorSkeleton() {
 }
 
 const RichTextEditorClient = dynamic(
-  () => import('./RichTextEditor.client.tsx').then(mod => mod.RichTextEditorClient),
+  () => import('./RichTextEditor.client').then(mod => mod.RichTextEditorClient),
   {
     ssr: false,
     loading: () => <EditorSkeleton />

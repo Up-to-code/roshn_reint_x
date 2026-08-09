@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { prisma } from '@/lib/db'
+import { publishingModule } from '@/lib/publishing/publishing-module'
 import { Suspense } from 'react'
 import { Locale } from '@/lib/i18n'
 import { SimpleBlogPostView } from '@/app/[locale]/(protected)/dashboard/blog/components/BlogPostView'
@@ -12,9 +12,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, id } = params
   
-  const post = await prisma.post.findUnique({
-    where: { id, status: 'PUBLISHED' }
-  })
+  const post = await publishingModule.getPublic(id)
 
   if (!post) {
     return {
@@ -54,10 +52,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { id: true }
-  })
+  const posts = await publishingModule.publicIds()
 
   return posts.flatMap(post => 
     ['ar', 'en'].map(locale => ({
@@ -68,36 +63,14 @@ export async function generateStaticParams() {
 }
 
 async function BlogPostContent({ locale, id }: { locale: Locale; id: string }) {
-  const post = await prisma.post.findUnique({
-    where: { id, status: 'PUBLISHED' }
-  })
+  const post = await publishingModule.getPublic(id)
 
   if (!post) {
     notFound()
   }
 
-  // Get related posts
-  const relatedPosts = await prisma.post.findMany({
-    where: {
-      status: 'PUBLISHED',
-      id: { not: post.id }
-    },
-    take: 3,
-    orderBy: { createdAt: 'desc' }
-  })
-
-  // Normalize the status field
-  const normalizedPost = {
-    ...post,
-    status: post.status.toLowerCase() as 'published',
-  }
-
-  const normalizedRelatedPosts = relatedPosts.map(post => ({
-    ...post,
-    status: post.status.toLowerCase() as 'published',
-  }))
-
-  return <SimpleBlogPostView post={normalizedPost} relatedPosts={normalizedRelatedPosts} locale={locale} />
+  const relatedPosts = await publishingModule.relatedPublic(post.id, 3)
+  return <SimpleBlogPostView post={post} relatedPosts={relatedPosts} locale={locale} />
 }
 
 export default async function BlogPostPage({ params }: PageProps) {

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { getTranslations } from '@/lib/i18n-server'
-import { prisma } from '@/lib/db'
+import { publishingModule } from '@/lib/publishing/publishing-module'
 import { Suspense } from 'react'
 import { Locale } from '@/lib/i18n'
 import { SimpleBlogGrid } from '../../(protected)/dashboard/blog/components/BlogGrid'
@@ -28,19 +28,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function BlogContent({ locale }: { locale: Locale }) {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    orderBy: { createdAt: 'desc' },
-    take: 12
-  })
-
-  // Normalize the status field
-  const normalizedPosts = posts.map(post => ({
-    ...post,
-    status: post.status.toLowerCase() as 'published',
-  }))
-
-  return <SimpleBlogGrid posts={normalizedPosts} locale={locale} />
+  const posts = await publishingModule.listPublic(12)
+  return <SimpleBlogGrid posts={posts} locale={locale} />
 }
 
 export default async function BlogPage({ params }: PageProps) {

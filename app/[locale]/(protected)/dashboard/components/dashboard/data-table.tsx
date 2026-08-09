@@ -8,7 +8,7 @@ import {
   } from "@/components/ui/table"
   
   interface DataTableProps {
-    data: any[]
+    data: Array<Record<string, unknown>>
     columns: string[]
     title: string
   }
@@ -28,12 +28,12 @@ import {
             </TableHeader>
             <TableBody>
               {data.map((item) => (
-                <TableRow key={item.id}>
+                <TableRow key={String(item.id)}>
                   {columns.map((column) => (
                     <TableCell key={column}>
-                      {typeof item[column] === 'object' 
-                        ? JSON.stringify(item[column])
-                        : String(item[column] || '-')
+                      {typeof item[column] === 'object'
+                        ? item[column] instanceof Date ? item[column].toLocaleString() : JSON.stringify(item[column])
+                        : String(item[column] ?? '-')
                       }
                     </TableCell>
                   ))}

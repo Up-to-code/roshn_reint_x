@@ -24,7 +24,9 @@ export function PartnersEditor() {
       addPartner({ 
         id: Date.now().toString(), 
         src: newPartner.src,
-        alt: newPartner.alt
+        alt: newPartner.alt,
+        name: newPartner.alt,
+        logo: newPartner.src,
       });
       setNewPartner({ src: "", alt: "" });
     }
@@ -35,7 +37,9 @@ export function PartnersEditor() {
       addPartner({
         id: `${Date.now()}-${index}`,
         src: url,
-        alt: `Partner ${partners.length + index + 1}`
+        alt: `Partner ${partners.length + index + 1}`,
+        name: `Partner ${partners.length + index + 1}`,
+        logo: url,
       });
     });
   };
@@ -44,7 +48,7 @@ export function PartnersEditor() {
     <div className="space-y-6">
       {/* Info Alert */}
       <Alert>
-        <Info className="h-4 w-4" />
+        <Info className="size-4" />
         <AlertDescription>
           <strong>Unlimited Partners:</strong> You can add as many partners as you need. All partners will be displayed on your homepage.
         </AlertDescription>
@@ -68,7 +72,7 @@ export function PartnersEditor() {
         <CardContent>
           {partners.length === 0 ? (
             <div className="py-12 text-center border-2 border-dashed rounded-lg bg-muted/30">
-              <ImageIcon className="mx-auto h-16 w-16 text-muted-foreground mb-4 opacity-50" />
+              <ImageIcon className="mx-auto size-16 text-muted-foreground mb-4 opacity-50" />
               <p className="text-lg font-medium text-muted-foreground mb-2">No partners yet</p>
               <p className="text-sm text-muted-foreground">
                 Start by adding your first partner using the form below.
@@ -92,10 +96,10 @@ export function PartnersEditor() {
                         variant="ghost" 
                         size="sm" 
                         onClick={() => removePartner(partner.id)}
-                        className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        className="size-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                         title="Remove partner"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="size-4" />
                       </Button>
                     </div>
                   </CardHeader>
@@ -115,7 +119,7 @@ export function PartnersEditor() {
                       ) : (
                         <div className="relative h-40 w-full overflow-hidden rounded-lg border-2 border-dashed border-muted bg-muted/30 flex items-center justify-center">
                           <div className="text-center">
-                            <ImageIcon className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                            <ImageIcon className="mx-auto size-8 text-muted-foreground mb-2" />
                             <p className="text-xs text-muted-foreground">No image</p>
                           </div>
                         </div>
@@ -174,7 +178,7 @@ export function PartnersEditor() {
       <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Plus className="h-5 w-5 text-primary" />
+            <Plus className="size-5 text-primary" />
             <CardTitle className="text-xl">{t('addNewPartner')}</CardTitle>
           </div>
           <CardDescription className="mt-2">
@@ -185,7 +189,7 @@ export function PartnersEditor() {
           {/* Single Partner Upload */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b">
-              <Upload className="h-4 w-4 text-muted-foreground" />
+              <Upload className="size-4 text-muted-foreground" />
               <h4 className="font-semibold text-base">Add Single Partner</h4>
             </div>
             
@@ -254,7 +258,7 @@ export function PartnersEditor() {
                 size="lg"
                 disabled={!newPartner.src || !newPartner.alt}
               >
-                <Plus className="mr-2 h-5 w-5" />
+                <Plus className="mr-2 size-5" />
                 Add Partner
               </Button>
             </div>
@@ -263,7 +267,7 @@ export function PartnersEditor() {
           {/* Bulk Upload Option */}
           <div className="space-y-4 pt-6 border-t-2">
             <div className="flex items-center gap-2">
-              <Upload className="h-4 w-4 text-muted-foreground" />
+              <Upload className="size-4 text-muted-foreground" />
               <h4 className="font-semibold text-base">Bulk Upload (Optional)</h4>
             </div>
             <p className="text-sm text-muted-foreground">

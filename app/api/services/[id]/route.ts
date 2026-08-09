@@ -1,36 +1,24 @@
-// app/api/admin/services/[id]/route.ts
-import { prisma } from '@/lib/db';
-import { NextResponse } from 'next/server';
- 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
+import { adminRouteGuard } from "@/lib/http/authorization-response";
+import { serviceModule } from "@/lib/services/service-module";
+
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
   try {
-    const data = await request.json();
-    
-    const service = await prisma.service.update({
-      where: { id: params.id },
-      data
-    });
-    
-    return NextResponse.json(service);
+    const service = await serviceModule.update(params.id, await request.json());
+    return service ? NextResponse.json(service) : NextResponse.json({ error: "Service not found" }, { status: 404 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update service' }, { status: 500 });
+    if (error instanceof ZodError) return NextResponse.json({ error: "Invalid service", details: error.errors }, { status: 400 });
+    return NextResponse.json({ error: "Failed to update service" }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    await prisma.service.delete({
-      where: { id: params.id }
-    });
-    
-    return NextResponse.json({ message: 'Service deleted' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete service' }, { status: 500 });
-  }
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
+  return (await serviceModule.delete(params.id))
+    ? NextResponse.json({ success: true })
+    : NextResponse.json({ error: "Service not found" }, { status: 404 });
 }

@@ -1,14 +1,13 @@
-export type PostStatus = 'draft' | 'published' | 'archived'
-export type StorageBucket = 'IMAGES' | 'VIDEOS' | 'DOCUMENTS'
+type PostStatus = 'draft' | 'published' | 'archived'
 
 export interface BlogPost {
   id: string
   title: string
   content: string
-  excerpt: string
+  excerpt: string | null
   status: PostStatus
-  headerImage?: string
-  thumbnail?: string
+  headerImage?: string | null
+  thumbnail?: string | null
   createdAt: Date
   updatedAt: Date
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, type ComponentProps } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Link } from "@/i18n/routing";
-import { Menu, X, Sparkles, Phone } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
 
 const LocaleSwitcher = dynamic(() => import("@/components/LocaleSwitcher"), {
@@ -14,19 +15,18 @@ const LocaleSwitcher = dynamic(() => import("@/components/LocaleSwitcher"), {
   loading: () => <div className="size-8 animate-pulse rounded-md bg-gray-600" />,
 });
 
-const LOGO_URL = "https://qtthbbfudgvtstwevhbf.supabase.co/storage/v1/object/public/images/logo.png";
-const WHATSAPP_NUMBER = "1234567890";
-const PHONE_NUMBER = "1234567890";
+import { siteAssets } from "@/lib/site-assets";
+
+const LOGO_URL = siteAssets.logo;
 const INSTAGRAM_URL = "https://www.instagram.com/roshnreit?igsh=MXFlbTk5eGwzd3J6MA==";
 const WHATSAPP_URL = `https://wa.me/966558799671`;
 const TIKTOK_URL = "https://tiktok.com";
 
-const SOCIAL_LINKS = [
-  { icon: Phone, href: `https://wa.me/${WHATSAPP_NUMBER}`, label: "Call", color: "text-blue-500 hover:text-blue-400" },
-];
+type Session = ReturnType<typeof useSession>["data"];
+type NavLink = { title: string; href: ComponentProps<typeof Link>["href"] };
 
 // Dashboard Banner
-function DashboardBanner({ session, t, isRTL }: { session: any; t: any; isRTL: boolean }) {
+function DashboardBanner({ session, label }: { session: Session; label: string }) {
   const dashboardUrl = session?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
 
   return (
@@ -34,7 +34,7 @@ function DashboardBanner({ session, t, isRTL }: { session: any; t: any; isRTL: b
       <div className="mx-auto max-w-7xl text-center">
         <Link href={dashboardUrl} className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary">
           <Sparkles className="size-4" />
-          {t("goToDashboard")}
+          {label}
         </Link>
       </div>
     </div>
@@ -46,12 +46,13 @@ function Logo({ onClick }: { onClick: () => void }) {
   return (
     <Link href="/" onClick={onClick} className="flex items-center">
       <div className="relative flex h-[100px] w-[160px] items-center justify-center">
-        <img
+        <Image
           src={LOGO_URL}
           alt="روشن ريت"
           width={160}
           height={100}
           className="size-full object-contain"
+          priority
         />
       </div>
     </Link>
@@ -59,12 +60,12 @@ function Logo({ onClick }: { onClick: () => void }) {
 }
 
 // Navigation Links (without icons)
-function NavLinks({ links, mobile, onClick, isRTL }: { links: any[]; mobile?: boolean; onClick?: () => void; isRTL: boolean }) {
+function NavLinks({ links, mobile, onClick }: { links: NavLink[]; mobile?: boolean; onClick?: () => void }) {
   return (
     <>
       {links.map((item) => (
         <Link
-          key={item.href}
+          key={item.title}
           href={item.href}
           onClick={onClick}
           className={cn(
@@ -138,7 +139,7 @@ function InterestButton({ mobile, onClick, isRTL }: { mobile?: boolean; onClick?
 }
 
 // Mobile Menu
-function MobileMenu({ isOpen, onClose, navLinks, isRTL }: { isOpen: boolean; onClose: () => void; navLinks: any[]; isRTL: boolean }) {
+function MobileMenu({ isOpen, onClose, navLinks, isRTL }: { isOpen: boolean; onClose: () => void; navLinks: NavLink[]; isRTL: boolean }) {
   return (
     <div 
       className={cn(
@@ -149,7 +150,7 @@ function MobileMenu({ isOpen, onClose, navLinks, isRTL }: { isOpen: boolean; onC
       <div className="overflow-hidden">
         <div className="border-t border-gray-600 bg-[#424242] p-6">
           <div className="space-y-4">
-            <NavLinks links={navLinks} mobile onClick={onClose} isRTL={isRTL} />
+            <NavLinks links={navLinks} mobile onClick={onClose} />
             <div className="pt-4">
               <InterestButton mobile onClick={onClose} isRTL={isRTL} />
             </div>
@@ -174,7 +175,7 @@ function NavBarContent() {
   const currentLocale = useLocale();
   const isRTL = currentLocale === "ar";
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { title: t("home"), href: "/" },
     { title: t("projects"), href: "/p" },
     { title: t("services"), href: "/services" },
@@ -184,7 +185,7 @@ function NavBarContent() {
 
   return (
     <>
-      <DashboardBanner session={session} t={t} isRTL={isRTL} />
+      <DashboardBanner session={session} label={t("goToDashboard")} />
 
       <header className={cn("fixed z-40 w-full px-4", session ? "top-12" : "top-6")}>
         <div className="mx-auto max-w-7xl">
@@ -195,7 +196,7 @@ function NavBarContent() {
 
               {/* Desktop Navigation */}
               <div className="hidden items-center gap-2 lg:flex">
-                <NavLinks links={navLinks} onClick={() => { }} isRTL={isRTL} />
+                <NavLinks links={navLinks} />
               </div>
 
               {/* Right Section */}

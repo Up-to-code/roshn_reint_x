@@ -14,8 +14,7 @@ async function main() {
   console.log('🧹 Cleaning existing data...');
   try {
     await prisma.event.deleteMany();
-    await prisma.contact.deleteMany();
-    await prisma.interest.deleteMany();
+    await prisma.inquiry.deleteMany();
     await prisma.property.deleteMany();
     await prisma.post.deleteMany();
     await prisma.service.deleteMany();
@@ -133,38 +132,9 @@ async function main() {
     },
   ];
   
-  // Create contacts using raw SQL - check if email column exists first
-  const createdContacts = [];
-  for (const contact of contactData) {
-    const id = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    try {
-      // Try with email column
-      await prisma.$executeRawUnsafe(
-        `INSERT INTO contacts (id, name, "phoneNumber", message, email, "createdAt", "updatedAt") 
-         VALUES ($1, $2, $3, $4, $5, NOW(), NOW())`,
-        id,
-        contact.name,
-        contact.phoneNumber,
-        contact.message,
-        contact.email || null
-      );
-    } catch (error: any) {
-      // If email column doesn't exist, insert without it
-      if (error.code === 'P2010' || error.message?.includes('email')) {
-        await prisma.$executeRawUnsafe(
-          `INSERT INTO contacts (id, name, "phoneNumber", message, "createdAt", "updatedAt") 
-           VALUES ($1, $2, $3, $4, NOW(), NOW())`,
-          id,
-          contact.name,
-          contact.phoneNumber,
-          contact.message
-        );
-      } else {
-        throw error;
-      }
-    }
-    createdContacts.push({ id, ...contact });
-  }
+  const createdContacts = await Promise.all(contactData.map(contact => prisma.inquiry.create({
+    data: { kind: 'CONTACT', name: contact.name, phone: contact.phoneNumber, email: contact.email, message: contact.message, propertyTitle: 'General Inquiry', source: 'seed' },
+  })));
   const contacts = { count: createdContacts.length };
   console.log(`✅ Created ${contacts.count} contacts\n`);
 
@@ -333,9 +303,10 @@ async function main() {
 
   // Seed Interests
   console.log('💼 Creating property interests...');
-  const interests = await prisma.interest.createMany({
+  const interests = await prisma.inquiry.createMany({
     data: [
       {
+        kind: 'PROPERTY_INTEREST',
         name: 'Omar Al-Harbi',
         email: 'omar.alharbi@example.com',
         phone: '+966506789012',
@@ -343,6 +314,7 @@ async function main() {
         propertyTitle: property1.titleEn,
       },
       {
+        kind: 'PROPERTY_INTEREST',
         name: 'Noura Al-Qahtani',
         phone: '+966507890123',
         message: 'Would like to schedule a viewing for the apartment in Jeddah.',

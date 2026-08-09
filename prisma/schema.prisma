@@ -15,15 +15,6 @@ model AboutPage {
   @@map("about_page")
 }
 
-model AboutSettings {
-  id        String   @id
-  data      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("about_settings")
-}
-
 model Account {
   id           String    @id @default(cuid())
   accountId    String
@@ -41,18 +32,6 @@ model Account {
   @@map("account")
 }
 
-model Contact {
-  id          String   @id @default(cuid())
-  name        String
-  phoneNumber String
-  message     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  email       String?
-
-  @@map("contacts")
-}
-
 model Event {
   id          String   @id @default(cuid())
   type        String
@@ -63,38 +42,29 @@ model Event {
   updatedAt   DateTime @updatedAt
 
   @@map("events")
+  @@index([createdAt])
 }
 
-model Interest {
+model Inquiry {
   id            String    @id @default(cuid())
+  kind          InquiryKind @default(PROPERTY_INTEREST)
   name          String
   email         String?
   phone         String
   message       String?
   propertyTitle String
   propertyId    String?
+  source        String?
+  reason        String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   read          Boolean   @default(false)
   property      Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
 
   @@map("interests")
-}
-
-model MapLocation {
-  id          String   @id @default(cuid())
-  name        String
-  address     String?
-  latitude    Float
-  longitude   Float
-  city        String?
-  country     String?
-  description String?
-  enabled     Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("map_locations")
+  @@index([kind, createdAt])
+  @@index([kind, read, createdAt])
+  @@index([propertyId])
 }
 
 model Post {
@@ -109,6 +79,7 @@ model Post {
   updatedAt   DateTime   @updatedAt
 
   @@map("posts")
+  @@index([status, createdAt])
 }
 
 model Property {
@@ -123,9 +94,11 @@ model Property {
   images        String[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
-  interests     Interest[]
+  inquiries     Inquiry[]
 
   @@map("properties")
+  @@index([city])
+  @@index([createdAt])
 }
 
 model Service {
@@ -212,7 +185,8 @@ enum PostStatus {
   ARCHIVED
 }
 
-enum UserRole {
-  ADMIN
-  USER
+enum InquiryKind {
+  CONTACT
+  PROPERTY_INTEREST
+  LANDING_LEAD
 }

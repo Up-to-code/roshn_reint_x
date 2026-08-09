@@ -5,6 +5,7 @@ import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
 interface PartnersBannerProps {
   logos?: { src: string; alt: string }[];
@@ -21,17 +22,18 @@ function PartnerLogoCard({ src, alt, cardKey }: { src: string; alt: string; card
       ref={cardRef}
       key={cardKey}
       className={cn(
-        "mx-6 md:mx-10 flex h-[120px] w-[120px] md:h-[160px] md:w-[160px]",
+        "mx-6 md:mx-10 flex size-[120px] md:size-[160px]",
         "items-center justify-center",
         "bg-white rounded-lg shadow-sm",
         "p-4"
       )}
     >
-      <img
+      <Image
         src={src}
         alt={alt}
-        className="h-full w-full object-contain"
-        loading="lazy"
+        width={160}
+        height={160}
+        className="size-full object-contain"
         onError={() => {
           if (cardRef.current) {
             cardRef.current.style.display = "none";
@@ -124,7 +126,7 @@ export function PartnersBanner({
           {/* Gradient overlays for smooth fade effect — brand grey #F0EDE8 */}
           <div
             className={cn(
-              "absolute top-0 bottom-0 w-32 z-10 pointer-events-none",
+              "absolute inset-y-0 w-32 z-10 pointer-events-none",
               isRTL ? "right-0" : "left-0"
             )}
             style={{
@@ -135,7 +137,7 @@ export function PartnersBanner({
           />
           <div
             className={cn(
-              "absolute top-0 bottom-0 w-32 z-10 pointer-events-none",
+              "absolute inset-y-0 w-32 z-10 pointer-events-none",
               isRTL ? "left-0" : "right-0"
             )}
             style={{

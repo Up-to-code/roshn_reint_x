@@ -1,14 +1,9 @@
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { NextResponse } from "next/server";
+import { adminRouteGuard } from "@/lib/http/authorization-response";
+import { userModule } from "@/lib/users/user-module";
 
 export async function GET() {
-  try {
-    const users = await prisma.user.findMany()
-    return NextResponse.json(users)
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    )
-  }
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
+  return NextResponse.json(await userModule.list());
 }

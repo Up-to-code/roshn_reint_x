@@ -1,83 +1,83 @@
 "use client";
 
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { RichTextEditor } from './RichTextEditor'
 import { Sidebar } from './Sidebar'
 import { ImageUploadSection } from './ImageUploadSection'
-import { Menu, Sun, Moon, Bell, Settings, BarChart3, Plus } from 'lucide-react'
+import { Menu, Sun, Moon, BarChart3, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { SavePostData } from '@/types/editor'
+import { BlogPost, SavePostData } from '@/types/editor'
 import { toast } from 'sonner'
-import { useBlogStore } from '@/store/useBlogStore';
 import posthog from 'posthog-js'
+import { parseEditorPost, publishingStats } from '@/lib/publishing/publishing-core'
 
-export function BlogDashboard() {
+async function responseJson(response: Response) {
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  return data;
+}
+
+type EditorDraft = Pick<SavePostData, 'title' | 'excerpt' | 'headerImage' | 'thumbnail'>;
+const emptyDraft: EditorDraft = { title: '', excerpt: '', headerImage: '', thumbnail: '' };
+
+const draftFromPost = (post: BlogPost): EditorDraft => ({
+  title: post.title,
+  excerpt: post.excerpt || '',
+  headerImage: post.headerImage || '',
+  thumbnail: post.thumbnail || '',
+});
+
+export function BlogDashboard({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
-  const [title, setTitle] = useState('')
-  const [excerpt, setExcerpt] = useState('')
-  const [headerImage, setHeaderImage] = useState('')
-  const [thumbnail, setThumbnail] = useState('')
-  
-  const {
-    posts,
-    currentPost,
-    isLoading,
-    isSaving,
-    stats,
-    setCurrentPost,
-    loadPosts,
-    savePost
-  } = useBlogStore()
-
-  useEffect(() => {
-    loadPosts()
-  }, [loadPosts])
-
-  useEffect(() => {
-    if (currentPost) {
-      setTitle(currentPost.title)
-      setExcerpt(currentPost.excerpt)
-      setHeaderImage(currentPost.headerImage || '')
-      setThumbnail(currentPost.thumbnail || '')
-    } else {
-      setTitle('')
-      setExcerpt('')
-      setHeaderImage('')
-      setThumbnail('')
-    }
-  }, [currentPost])
+  const [draft, setDraft] = useState<EditorDraft>(emptyDraft)
+  const [posts, setPosts] = useState(initialPosts)
+  const [currentPost, setCurrentPost] = useState<BlogPost | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const stats = useMemo(() => publishingStats(posts), [posts])
 
   const handleSave = async (data: SavePostData) => {
     const saveData = {
       ...data,
-      title: title || '',
-      excerpt: excerpt || '',
-      headerImage,
-      thumbnail,
+      ...draft,
     }
 
-    const result = await savePost(saveData)
-    
-    if (result) {
+    setIsSaving(true)
+    try {
+      const editingId = currentPost?.id;
+      const response = await fetch(editingId ? `/api/posts/${editingId}` : '/api/posts', {
+        method: editingId ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...saveData, status: saveData.status.toUpperCase() }),
+      });
+      const result = parseEditorPost(await responseJson(response));
+      setPosts(current => editingId
+        ? current.map(post => post.id === result.id ? result : post)
+        : [result, ...current]);
+      setCurrentPost(result);
+      setDraft(draftFromPost(result));
       posthog.capture('blog_post_saved', {
         post_id: result.id,
         post_status: data.status,
         save_action: currentPost ? 'updated' : 'created',
       })
       toast.success(`Post ${data.status === 'draft' ? 'saved as draft' : 'published'}!`)
-    } else {
-      toast.error('Failed to save post')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to save post')
+    } finally {
+      setIsSaving(false)
     }
   }
 
   const handleNewPost = () => {
     setCurrentPost(null)
+    setDraft(emptyDraft)
   }
 
   const handlePostSelect = (post: typeof currentPost) => {
     setCurrentPost(post)
+    setDraft(post ? draftFromPost(post) : emptyDraft)
     setSidebarOpen(false)
   }
 
@@ -87,7 +87,7 @@ export function BlogDashboard() {
         <Sidebar
           isOpen={sidebarOpen}
           onToggle={() => setSidebarOpen(!sidebarOpen)}
-          currentPost={currentPost}
+          currentPost={currentPost ?? undefined}
           posts={posts}
           onPostSelect={handlePostSelect}
           onNewPost={handleNewPost}
@@ -136,14 +136,6 @@ export function BlogDashboard() {
                 New Post
               </Button>
               
-              <Button variant="ghost" size="sm">
-                <Bell className="size-4" />
-              </Button>
-              
-              <Button variant="ghost" size="sm">
-                <Settings className="size-4" />
-              </Button>
-              
               <Button
                 onClick={() => setDarkMode(!darkMode)}
                 variant="ghost"
@@ -159,24 +151,24 @@ export function BlogDashboard() {
             <div className="mx-auto max-w-4xl space-y-6">
               {/* Image Upload Section */}
               <ImageUploadSection
-                headerImage={headerImage}
-                thumbnail={thumbnail}
-                onHeaderImageChange={setHeaderImage}
-                onThumbnailChange={setThumbnail}
+                headerImage={draft.headerImage || undefined}
+                thumbnail={draft.thumbnail || undefined}
+                onHeaderImageChange={(headerImage) => setDraft(current => ({ ...current, headerImage }))}
+                onThumbnailChange={(thumbnail) => setDraft(current => ({ ...current, thumbnail }))}
               />
 
               {/* Title & Subtitle */}
               <div className="space-y-2 rounded-lg border bg-background p-6">
                 <Input
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={draft.title}
+                  onChange={(event) => setDraft(current => ({ ...current, title: event.target.value }))}
                   placeholder="Post title..."
                   className="h-auto border-none p-0 text-3xl font-bold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
                 <Input
-                  value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
+                  value={draft.excerpt}
+                  onChange={(event) => setDraft(current => ({ ...current, excerpt: event.target.value }))}
                   placeholder="Subtitle..."
                   className="h-auto resize-none border-none p-0 text-lg text-muted-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
@@ -184,11 +176,9 @@ export function BlogDashboard() {
 
               {/* Rich Text Editor */}
               <RichTextEditor
+                key={currentPost?.id || 'new'}
                 initialContent={currentPost?.content}
                 onSave={handleSave}
-                onContentChange={(content) => {
-                  // Auto-save functionality can be implemented here
-                }}
                 isLoading={isSaving}
               />
             </div>

@@ -1,142 +1,48 @@
+import { NextRequest, NextResponse } from "next/server";
 
-// app/api/properties/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
-import { unstable_cache } from 'next/cache'
-import { EventsService } from '@/lib/api/events-service'
+import { AuthorizationError, requireAdmin } from "@/lib/authorization";
+import { PropertyModuleError } from "@/lib/properties/property-core";
+import { propertyModule } from "@/lib/properties/property-module";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+function errorResponse(error: unknown) {
+  if (error instanceof AuthorizationError) {
+    return NextResponse.json({ error: error.message }, { status: error.status });
+  }
+  if (error instanceof PropertyModuleError) {
+    const status = error.code === "NOT_FOUND" ? 404 : 400;
+    return NextResponse.json({ error: error.message, details: error.details }, { status });
+  }
+  console.error("Property request failed:", error);
+  return NextResponse.json({ error: "Property request failed" }, { status: 500 });
+}
+
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // Cache individual property for 5 minutes
-    const getCachedProperty = unstable_cache(
-      async () => {
-        return await prisma.property.findUnique({
-          where: { id: params.id },
-          select: {
-            id: true,
-            titleEn: true,
-            titleAr: true,
-            descriptionEn: true,
-            descriptionAr: true,
-            city: true,
-            district: true,
-            images: true,
-            createdAt: true,
-            updatedAt: true,
-          }
-        })
-      },
-      [`property-${params.id}`],
-      {
-        revalidate: 300, // 5 minutes
-        tags: ['properties', `property-${params.id}`]
-      }
-    )
-    
-    const property = await getCachedProperty()
-    
-    if (!property) {
-      return NextResponse.json(
-        { error: 'Property not found' }, 
-        { status: 404 }
-      )
-    }
-    
-    const response = NextResponse.json(property)
-    
-    // Set cache headers
-    response.headers.set(
-      'Cache-Control',
-      'public, s-maxage=300, stale-while-revalidate=600'
-    )
-    
-    return response
+    const property = await propertyModule.getById(params.id);
+    if (!property) throw new PropertyModuleError("Property not found", "NOT_FOUND");
+    const response = NextResponse.json(property);
+    response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
+    return response;
   } catch (error) {
-    console.error('Failed to fetch property:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch property' }, 
-      { status: 500 }
-    )
+    return errorResponse(error);
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const data = await request.json()
-    
-    const property = await prisma.property.update({
-      where: { id: params.id },
-      data
-    })
-    
-    // Create event for property update
-    await EventsService.create({
-      type: 'property_updated',
-      title: `Property Updated: ${property.titleEn}`,
-      description: `Property "${property.titleEn}" was updated`,
-      metadata: {
-        propertyId: property.id,
-        titleEn: property.titleEn,
-        titleAr: property.titleAr,
-        city: property.city,
-      },
-    });
-    
-    return NextResponse.json(property)
+    await requireAdmin();
+    return NextResponse.json(await propertyModule.update(params.id, await request.json()));
   } catch (error) {
-    console.error('Failed to update property:', error)
-    return NextResponse.json(
-      { error: 'Failed to update property' }, 
-      { status: 500 }
-    )
+    return errorResponse(error);
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    // First check if property exists
-    const existingProperty = await prisma.property.findUnique({
-      where: { id: params.id },
-      select: { id: true, titleEn: true }
-    })
-    
-    if (!existingProperty) {
-      return NextResponse.json(
-        { error: 'Property not found' }, 
-        { status: 404 }
-      )
-    }
-    
-    await prisma.property.delete({
-      where: { id: params.id }
-    })
-    
-    // Create event for property deletion
-    await EventsService.create({
-      type: 'property_deleted',
-      title: `Property Deleted: ${existingProperty.titleEn}`,
-      description: `Property "${existingProperty.titleEn}" was deleted`,
-      metadata: {
-        propertyId: existingProperty.id,
-        titleEn: existingProperty.titleEn,
-      },
-    });
-    
-    return NextResponse.json({ message: 'Property deleted successfully' })
+    await requireAdmin();
+    await propertyModule.delete(params.id);
+    return NextResponse.json({ message: "Property deleted successfully" });
   } catch (error) {
-    console.error('Failed to delete property:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete property' }, 
-      { status: 500 }
-    )
+    return errorResponse(error);
   }
 }

@@ -1,100 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
-import { unstable_cache } from 'next/cache'
-
-// Cache posts list for 60 seconds
-const getCachedPosts = unstable_cache(
-  async () => {
-    return await prisma.post.findMany({
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        excerpt: true,
-        status: true,
-        headerImage: true,
-        thumbnail: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      where: {
-        status: 'PUBLISHED'
-      },
-      orderBy: { updatedAt: 'desc' }
-    })
-  },
-  ['posts-list'],
-  {
-    revalidate: 60, // Revalidate every 60 seconds
-    tags: ['posts']
-  }
-)
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
+import { getCurrentUser } from "@/lib/session";
+import { adminRouteGuard } from "@/lib/http/authorization-response";
+import { publishingModule } from "@/lib/publishing/publishing-module";
 
 export async function GET() {
   try {
-    const posts = await getCachedPosts()
-    
-    // Convert Date objects to strings for JSON serialization
-    const serializedPosts = posts.map(post => ({
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString()
-    }))
-    
-    const response = NextResponse.json(serializedPosts)
-    
-    // Set cache headers
-    response.headers.set(
-      'Cache-Control',
-      'public, s-maxage=60, stale-while-revalidate=300'
-    )
-    
-    return response
+    const user = await getCurrentUser();
+    const isAdmin = user?.role === "ADMIN";
+    const posts = isAdmin ? await publishingModule.listEditor() : await publishingModule.listPublic();
+    const response = NextResponse.json(posts.map(post => ({ ...post, createdAt: post.createdAt.toISOString(), updatedAt: post.updatedAt.toISOString() })));
+    response.headers.set("Cache-Control", isAdmin ? "private, no-store" : "public, s-maxage=60, stale-while-revalidate=300");
+    return response;
   } catch (error) {
-    console.error('Failed to fetch posts:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch posts', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
+    console.error("Failed to fetch posts:", error);
+    return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
   try {
-    const { title, content, excerpt, status, headerImage, thumbnail } = await request.json()
-    
-    // Validate required fields
-    if (!title || !content) {
-      return NextResponse.json(
-        { error: 'Title and content are required' },
-        { status: 400 }
-      )
-    }
-
-    const post = await prisma.post.create({
-      data: {
-        title: title || '',
-        content: content || '',
-        excerpt: excerpt || '',
-        status: status || 'DRAFT',
-        headerImage: headerImage || null,
-        thumbnail: thumbnail || null,
-      }
-    })
-    
-    // Convert Date objects to strings
-    const serializedPost = {
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString()
-    }
-    
-    return NextResponse.json(serializedPost, { status: 201 })
+    return NextResponse.json(publishingModule.serialize(await publishingModule.create(await request.json())), { status: 201 });
   } catch (error) {
-    console.error('Failed to create post:', error)
-    return NextResponse.json(
-      { error: 'Failed to create post', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
+    if (error instanceof ZodError) return NextResponse.json({ error: "Invalid post", details: error.errors }, { status: 400 });
+    console.error("Failed to create post:", error);
+    return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
   }
 }

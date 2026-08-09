@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserRole, User } from "@prisma/client";
+import type { UserRole } from "@/lib/users/user-core";
 import {
   Table,
   TableBody,
@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import posthog from "posthog-js";
 
 interface UsersTableProps {
-  initialUsers: User[];
+  initialUsers: Array<{ id: string; name: string | null; email: string | null; role: string | null; createdAt: Date; updatedAt: Date }>;
 }
 
 export function UsersTable({ initialUsers }: UsersTableProps) {
@@ -93,7 +93,7 @@ export function UsersTable({ initialUsers }: UsersTableProps) {
               <TableCell>{user.email}</TableCell>
               <TableCell>
                 <Select
-                  value={user.role}
+                  value={user.role || "USER"}
                   onValueChange={(value: UserRole) =>
                     handleRoleChange(user.id, value)
                   }

@@ -23,6 +23,46 @@ export const routing = defineRouting({
       en: "/dashboard/settings",
       ar: "/dashboard/settings",
     },
+    "/dashboard/p": {
+      en: "/dashboard/p",
+      ar: "/dashboard/p",
+    },
+    "/dashboard/p/create": {
+      en: "/dashboard/p/create",
+      ar: "/dashboard/p/create",
+    },
+    "/dashboard/blog": {
+      en: "/dashboard/blog",
+      ar: "/dashboard/blog",
+    },
+    "/dashboard/home": {
+      en: "/dashboard/home",
+      ar: "/dashboard/home",
+    },
+    "/dashboard/about": {
+      en: "/dashboard/about",
+      ar: "/dashboard/about",
+    },
+    "/dashboard/forms": {
+      en: "/dashboard/forms",
+      ar: "/dashboard/forms",
+    },
+    "/dashboard/interests": {
+      en: "/dashboard/interests",
+      ar: "/dashboard/interests",
+    },
+    "/dashboard/services": {
+      en: "/dashboard/services",
+      ar: "/dashboard/services",
+    },
+    "/dashboard/leads": {
+      en: "/dashboard/leads",
+      ar: "/dashboard/leads",
+    },
+    "/dashboard/users": {
+      en: "/dashboard/users",
+      ar: "/dashboard/users",
+    },
     "/login": {
       en: "/login",
       ar: "/login",
@@ -90,10 +130,7 @@ export const routing = defineRouting({
   },
 });
 
-// ✅ الأنواع (types)
 export type Locale = (typeof routing.locales)[number];
 export type Pathnames = keyof typeof routing["pathnames"];
 
-// ✅ wrappers بتاعت Next-intl Navigation
-export const { Link, redirect, usePathname, useRouter } =
-  createNavigation(routing);
+export const { Link } = createNavigation(routing);

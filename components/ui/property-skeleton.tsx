@@ -1,28 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function PropertyCardSkeleton() {
-  return (
-    <div className="group relative block overflow-hidden rounded-2xl bg-white shadow-md transition-all hover:shadow-2xl">
-      <div className="relative aspect-[1/1.4] w-full overflow-hidden">
-        <Skeleton className="h-full w-full" />
-      </div>
-      <div className="absolute inset-x-6 bottom-6 z-10">
-        <Skeleton className="h-6 w-3/4" />
-      </div>
-    </div>
-  );
-}
-
-export function PropertyGridSkeleton({ count = 6 }: { count?: number }) {
-  return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: count }).map((_, i) => (
-        <PropertyCardSkeleton key={i} />
-      ))}
-    </div>
-  );
-}
-
 export function PropertyDetailSkeleton() {
   return (
     <div className="min-h-screen bg-background">
@@ -48,4 +25,3 @@ export function PropertyDetailSkeleton() {
     </div>
   );
 }
-

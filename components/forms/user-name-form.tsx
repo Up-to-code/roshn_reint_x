@@ -8,7 +8,7 @@ import { useSession } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { userNameSchema } from "@/lib/validations/user";
+import { userNameInputSchema } from "@/lib/users/user-core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
   const [isPending, startTransition] = useTransition();
   const updateUserNameWithId = updateUserName.bind(null, user.id);
 
-  const checkUpdate = (value) => {
+  const checkUpdate = (value: string) => {
     setUpdated(user.name !== value);
   };
 
@@ -34,7 +34,7 @@ export function UserNameForm({ user }: UserNameFormProps) {
     register,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(userNameSchema),
+    resolver: zodResolver(userNameInputSchema),
     defaultValues: {
       name: user?.name || "",
     },
@@ -100,4 +100,3 @@ export function UserNameForm({ user }: UserNameFormProps) {
     </form>
   );
 }
-
