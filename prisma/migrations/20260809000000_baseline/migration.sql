@@ -214,3 +214,5 @@ ALTER TABLE "interests" ADD CONSTRAINT "interests_propertyId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- Fresh databases only. Existing installations must use scripts/adopt-legacy-database.sql,
+-- resolve this migration as applied, and deploy through `bun run db:deploy`.

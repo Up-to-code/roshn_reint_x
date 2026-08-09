@@ -18,6 +18,7 @@
     "lint": "next lint",
     "preview": "next build && next start",
     "postinstall": "prisma generate",
+    "db:deploy": "bun run scripts/deploy-database.ts",
     "setup-storage": "bun run scripts/provision-media-storage.ts",
     "seed": "bun run scripts/seed.ts"
   },

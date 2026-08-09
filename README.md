@@ -29,7 +29,20 @@ bun run setup-storage
 
 `setup-storage` idempotently creates or updates the canonical image, video, and file buckets. It requires `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
 
-For an existing database that predates Prisma migration tracking, back it up, run `scripts/adopt-legacy-database.sql`, then mark `20260809000000_baseline` as applied. Fresh databases should use `prisma migrate deploy`.
+Deploy migrations through the guarded command:
+
+```bash
+bun run db:deploy
+```
+
+It refuses to run the baseline over an existing untracked schema. For a database that predates Prisma migration tracking, first back it up, apply `scripts/adopt-legacy-database.sql` with your PostgreSQL client, then record the one-time adoption:
+
+```bash
+bunx prisma migrate resolve --applied 20260809000000_baseline
+bun run db:deploy
+```
+
+Fresh databases can run `bun run db:deploy` directly. Deployment automation must use this command instead of calling `prisma migrate deploy` directly.
 
 ## Architecture
 
