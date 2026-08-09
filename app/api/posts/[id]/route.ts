@@ -1,117 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
+import { getCurrentUser } from "@/lib/session";
+import { adminRouteGuard } from "@/lib/http/authorization-response";
+import { publishingModule } from "@/lib/publishing/publishing-module";
 
-interface Context {
-  params: {
-    id: string
+type Context = { params: { id: string } };
+
+export async function GET(_request: NextRequest, { params }: Context) {
+  const user = await getCurrentUser();
+  const post = user?.role === "ADMIN" ? await publishingModule.getEditor(params.id) : await publishingModule.getPublic(params.id);
+  if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 });
+  return NextResponse.json({ ...post, createdAt: post.createdAt.toISOString(), updatedAt: post.updatedAt.toISOString() });
+}
+
+export async function PUT(request: NextRequest, { params }: Context) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
+  try {
+    const post = await publishingModule.update(params.id, await request.json());
+    return post ? NextResponse.json(publishingModule.serialize(post)) : NextResponse.json({ error: "Post not found" }, { status: 404 });
+  } catch (error) {
+    if (error instanceof ZodError) return NextResponse.json({ error: "Invalid post", details: error.errors }, { status: 400 });
+    return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
   }
 }
 
-export async function GET(request: NextRequest, context: Context) {
-  try {
-    const { id } = context.params
-    
-    const post = await prisma.post.findUnique({
-      where: { id }
-    })
-    
-    if (!post) {
-      return NextResponse.json(
-        { error: 'Post not found' },
-        { status: 404 }
-      )
-    }
-    
-    // Convert Date objects to strings
-    const serializedPost = {
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString()
-    }
-    
-    return NextResponse.json(serializedPost)
-  } catch (error) {
-    console.error('Failed to fetch post:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch post', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function PUT(request: NextRequest, context: Context) {
-  try {
-    const { id } = context.params
-    const { title, content, excerpt, status, headerImage, thumbnail } = await request.json()
-    
-    // Check if post exists
-    const existingPost = await prisma.post.findUnique({
-      where: { id }
-    })
-    
-    if (!existingPost) {
-      return NextResponse.json(
-        { error: 'Post not found' },
-        { status: 404 }
-      )
-    }
-
-    const post = await prisma.post.update({
-      where: { id },
-      data: {
-        title: title || '',
-        content: content || '',
-        excerpt: excerpt || '',
-        status: status || 'DRAFT',
-        headerImage: headerImage || null,
-        thumbnail: thumbnail || null,
-        updatedAt: new Date()
-      }
-    })
-    
-    // Convert Date objects to strings
-    const serializedPost = {
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString()
-    }
-    
-    return NextResponse.json(serializedPost)
-  } catch (error) {
-    console.error('Failed to update post:', error)
-    return NextResponse.json(
-      { error: 'Failed to update post', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function DELETE(request: NextRequest, context: Context) {
-  try {
-    const { id } = context.params
-    
-    // Check if post exists
-    const existingPost = await prisma.post.findUnique({
-      where: { id }
-    })
-    
-    if (!existingPost) {
-      return NextResponse.json(
-        { error: 'Post not found' },
-        { status: 404 }
-      )
-    }
-
-    await prisma.post.delete({
-      where: { id }
-    })
-    
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Failed to delete post:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete post', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
-  }
+export async function DELETE(_request: NextRequest, { params }: Context) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
+  return (await publishingModule.delete(params.id))
+    ? NextResponse.json({ success: true })
+    : NextResponse.json({ error: "Post not found" }, { status: 404 });
 }

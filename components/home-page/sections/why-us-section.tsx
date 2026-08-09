@@ -33,7 +33,7 @@ export interface WhyUsSection {
   features: Feature[];
 }
 
-export interface Feature {
+interface Feature {
   id: string;
   icon: string;
   title: string;

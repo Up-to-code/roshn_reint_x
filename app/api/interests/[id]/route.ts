@@ -1,68 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { NextRequest, NextResponse } from "next/server";
+import { adminRouteGuard } from "@/lib/http/authorization-response";
+import { inquiryModule } from "@/lib/inquiries/inquiry-module";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
   try {
-    const body = await request.json();
-    const { read } = body;
-
-    // Try to update with read field, fallback without it if field doesn't exist
-    try {
-      const interest = await prisma.interest.update({
-        where: { id: params.id },
-        data: { read: read ?? false },
-      });
-
-      return NextResponse.json(interest);
-    } catch (updateError: any) {
-      // If read field doesn't exist, just return the interest without updating read
-      if (updateError?.message?.includes('read') || updateError?.message?.includes('Unknown argument')) {
-        const interest = await prisma.interest.findUnique({
-          where: { id: params.id },
-        });
-
-        if (!interest) {
-          return NextResponse.json(
-            { error: 'Interest not found' },
-            { status: 404 }
-          );
-        }
-
-        return NextResponse.json(interest);
-      }
-      throw updateError;
-    }
-  } catch (error) {
-    console.error('Failed to update interest:', error);
-    return NextResponse.json(
-      { error: 'Failed to update interest' },
-      { status: 500 }
-    );
+    const { read } = await request.json();
+    if (typeof read !== "boolean") return NextResponse.json({ error: "read must be a boolean" }, { status: 400 });
+    const interest = await inquiryModule.markRead(params.id, read);
+    return interest ? NextResponse.json(interest) : NextResponse.json({ error: "Interest not found" }, { status: 404 });
+  } catch {
+    return NextResponse.json({ error: "Interest not found" }, { status: 404 });
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
   try {
-    await prisma.interest.delete({
-      where: { id: params.id },
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Failed to delete interest:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete interest' },
-      { status: 500 }
-    );
+    const deleted = await inquiryModule.delete(params.id, "PROPERTY_INTEREST");
+    return deleted ? NextResponse.json({ success: true }) : NextResponse.json({ error: "Interest not found" }, { status: 404 });
+  } catch {
+    return NextResponse.json({ error: "Interest not found" }, { status: 404 });
   }
 }
-
-

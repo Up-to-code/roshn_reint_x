@@ -1,8 +1,7 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/session";
-import { db } from "@/lib/db";
-import { userNameSchema } from "@/lib/validations/user";
+import { requireSelfOrAdmin } from "@/lib/authorization";
+import { userModule } from "@/lib/users/user-module";
 import { revalidatePath } from "next/cache";
 
 export type FormData = {
@@ -11,28 +10,13 @@ export type FormData = {
 
 export async function updateUserName(userId: string, data: FormData) {
   try {
-    const user = await getCurrentUser();
+    await requireSelfOrAdmin(userId);
 
-    if (!user || user.id !== userId) {
-      throw new Error("Unauthorized");
-    }
-
-    const { name } = userNameSchema.parse(data);
-
-    // Update the user name.
-    await db.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        name: name,
-      },
-    })
+    await userModule.setName(userId, data);
 
     revalidatePath('/dashboard/settings');
     return { status: "success" };
-  } catch (error) {
-    // console.log(error)
+  } catch {
     return { status: "error" }
   }
 }

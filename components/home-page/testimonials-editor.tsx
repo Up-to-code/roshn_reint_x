@@ -91,12 +91,12 @@ export function TestimonialsEditor() {
                     onClick={() => updateTestimonial(testimonial.id, { rating: star })}
                     className="text-yellow-400"
                   >
-                    <Star className={`h-4 w-4 ${star <= testimonial.rating ? 'fill-current' : ''}`} />
+                    <Star className={`size-4 ${star <= testimonial.rating ? 'fill-current' : ''}`} />
                   </button>
                 ))}
               </div>
               <Button variant="outline" size="sm" onClick={() => removeTestimonial(testimonial.id)}>
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="size-4" />
                 {t('remove')}
               </Button>
             </div>
@@ -144,7 +144,7 @@ export function TestimonialsEditor() {
               acceptedFileTypes="image"
             />
             <Button onClick={handleAddTestimonial} className="w-full">
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 size-4" />
               {t('addTestimonial')}
             </Button>
           </div>

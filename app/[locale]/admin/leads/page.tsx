@@ -1,23 +1,11 @@
-import { db } from "@/lib/db";
+import { inquiryModule } from "@/lib/inquiries/inquiry-module";
 import { LeadsTable } from "@/components/admin/leads-table";
 import { getTranslations } from "next-intl/server";
 
 export default async function LeadsPage() {
   const t = await getTranslations("admin.leads");
   
-  // Fetch leads where source is one of our landing pages
-  // Or just show all 'Interest' entries that have a propertyTitle set? 
-  // For now, let's fetch strictly the ones we know are from landing pages based on propertyTitle, 
-  // or simple all interests to be safe.
-  const leads = await db.interest.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-     // Optional: Filter by specific sources if needed
-     // where: {
-     //   propertyTitle: { in: ["Roshn Residence", "Roshn Hills"] }
-     // }
-  });
+  const { items: leads } = await inquiryModule.list({ kind: "LANDING_LEAD", pageSize: 100 });
 
   return (
     <div className="space-y-6 p-6">

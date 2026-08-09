@@ -1,40 +1,19 @@
 import { NextResponse } from "next/server";
-  import { prisma } from "@/lib/db"; // Your prisma client instance
-import { getCurrentUser } from "@/lib/session";
+import { ZodError } from "zod";
+import { requireAdmin } from "@/lib/authorization";
+import { authorizationErrorResponse } from "@/lib/http/authorization-response";
+import { userModule } from "@/lib/users/user-module";
+import { UserAdministrationError } from "@/lib/users/user-core";
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
-    const user = await getCurrentUser();
-
-    // 1. Check if user is authenticated and is an ADMIN
-    if (!user || user.role !== "ADMIN") {
-      return new NextResponse("Forbidden", { status: 403 });
-    }
-
-    const body = await request.json();
-    const { role } = body;
-
-    // 2. Validate the role
-    if (role !== "ADMIN" && role !== "USER") {
-      return new NextResponse("Invalid role", { status: 400 });
-    }
-
-    // 3. Update the user in the database
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: params.id,
-      },
-      data: {
-        role: role,
-      },
-    });
-
-    return NextResponse.json(updatedUser);
+    const actor = await requireAdmin();
+    return NextResponse.json(await userModule.setRole(actor.id, params.id, await request.json()));
   } catch (error) {
-    console.error("Error updating user role:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    const denied = authorizationErrorResponse(error);
+    if (denied) return denied;
+    if (error instanceof ZodError) return NextResponse.json({ error: "Invalid role", details: error.errors }, { status: 400 });
+    if (error instanceof UserAdministrationError) return NextResponse.json({ error: error.code }, { status: error.code === "NOT_FOUND" ? 404 : 409 });
+    return NextResponse.json({ error: "Failed to update user role" }, { status: 500 });
   }
 }

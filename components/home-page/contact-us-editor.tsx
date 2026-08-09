@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
+import type { ContactFormField, ContactUsSection } from "@/types/home-page";
 
 export function ContactUsEditor() {
   const t = useTranslations('homePageEditor.contactUs');
   const { data, currentLang, updateContactUs } = useHomePageStore();
   const contactData = data[currentLang].contactUs;
 
-  const updateField = (field: string, value: any) => {
+  const updateField = (field: keyof Pick<ContactUsSection, "title" | "subtitle" | "description">, value: string) => {
     updateContactUs({ [field]: value });
   };
 
@@ -20,7 +21,11 @@ export function ContactUsEditor() {
     updateContactUs({ contactInfo: { ...contactData.contactInfo, [field]: value } });
   };
 
-  const updateFormField = (index: number, field: string, value: any) => {
+  const updateFormField = <K extends keyof ContactFormField>(
+    index: number,
+    field: K,
+    value: ContactFormField[K],
+  ) => {
     const updatedFields = contactData.form.fields.map((f, i) => 
       i === index ? { ...f, [field]: value } : f
     );
@@ -117,13 +122,13 @@ export function ContactUsEditor() {
                 <option value="textarea">{t('fieldTypes.textarea')}</option>
               </select>
               <Button variant="outline" size="sm" onClick={() => removeFormField(index)}>
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="size-4" />
               </Button>
             </div>
           ))}
         </div>
         <Button variant="outline" onClick={addFormField} className="w-full">
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 size-4" />
           {t('addField')}
         </Button>
       </div>

@@ -1,5 +1,6 @@
-import { db } from "@/lib/db";
+import { inquiryModule } from "@/lib/inquiries/inquiry-module";
 import InterestsClient from "./InterestsClient";
+import type { InterestReadFilter } from "./interest-query";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -15,53 +16,15 @@ export default async function InterestsPage({ params, searchParams }: InterestsP
   
   const currentPage = Math.max(1, parseInt(resolvedSearchParams.page || "1", 10));
   const search = resolvedSearchParams.search || "";
-  const filterRead = (resolvedSearchParams.filter as "all" | "unread" | "read") || "all";
-  const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-
-  // Build where clause for filtering
-  const where: any = {};
-  
-  if (filterRead === "unread") {
-    where.read = false;
-  } else if (filterRead === "read") {
-    where.read = true;
-  }
-
-  // Add search filter if provided
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { email: { contains: search, mode: "insensitive" } },
-      { phone: { contains: search } },
-      { propertyTitle: { contains: search, mode: "insensitive" } },
-      { message: { contains: search, mode: "insensitive" } },
-    ];
-  }
-
-  // Fetch paginated interests and counts
-  const [rawInterests, totalCount, allCount, unreadCount, readCount] = await Promise.all([
-    db.interest.findMany({
-      where,
-      include: {
-        property: {
-          select: {
-            id: true,
-            titleEn: true,
-            titleAr: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip,
-      take: ITEMS_PER_PAGE,
-    }),
-    db.interest.count({ where }), // Filtered count
-    db.interest.count(), // Total count (all)
-    db.interest.count({ where: { read: false } }), // Unread count
-    db.interest.count({ where: { read: true } }), // Read count
+  const filterRead: InterestReadFilter = resolvedSearchParams.filter === "read" || resolvedSearchParams.filter === "unread"
+    ? resolvedSearchParams.filter
+    : "all";
+  const read = filterRead === "all" ? undefined : filterRead === "read";
+  const [{ items: rawInterests, total: totalCount }, counts] = await Promise.all([
+    inquiryModule.list({ kind: "PROPERTY_INTEREST", search, read, page: currentPage, pageSize: ITEMS_PER_PAGE }),
+    inquiryModule.counts("PROPERTY_INTEREST"),
   ]);
+  const { all: allCount, unread: unreadCount, read: readCount } = counts;
 
   // Serialize dates to strings to avoid hydration mismatches and serialization warnings
   const interests = rawInterests.map(interest => ({
@@ -71,8 +34,6 @@ export default async function InterestsPage({ params, searchParams }: InterestsP
   }));
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-  const startIndex = skip + 1;
-  const endIndex = Math.min(skip + ITEMS_PER_PAGE, totalCount);
 
   return (
     <InterestsClient
@@ -83,8 +44,6 @@ export default async function InterestsPage({ params, searchParams }: InterestsP
       allCount={allCount}
       unreadCount={unreadCount}
       readCount={readCount}
-      startIndex={startIndex}
-      endIndex={endIndex}
       search={search}
       filterRead={filterRead}
       locale={locale}

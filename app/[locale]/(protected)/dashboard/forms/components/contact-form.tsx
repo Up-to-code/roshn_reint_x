@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,31 +17,13 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ initialData, onSubmit, onClose, isOpen }: ContactFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    phoneNumber: '',
-    message: '',
-    email: '',
-  });
+  const [formData, setFormData] = useState(() => ({
+    name: initialData?.name || '',
+    phoneNumber: initialData?.phoneNumber || '',
+    message: initialData?.message || '',
+    email: initialData?.email || '',
+  }));
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name,
-        phoneNumber: initialData.phoneNumber,
-        message: initialData.message || '',
-        email: initialData.email || '',
-      });
-    } else {
-      setFormData({
-        name: '',
-        phoneNumber: '',
-        message: '',
-        email: '',
-      });
-    }
-  }, [initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

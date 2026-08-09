@@ -4,23 +4,14 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Link, type Pathnames } from "@/i18n/routing";
-import { Phone } from "lucide-react";
-import { useState, useEffect } from "react";
 
-const PHONE_NUMBER = "1234567890";
-const WHATSAPP_NUMBER = "1234567890";
 const INSTAGRAM_URL = "https://www.instagram.com/roshnreit?igsh=MXFlbTk5eGwzd3J6MA==";
 const WHATSAPP_URL = `https://wa.me/966558799671`;
 const TIKTOK_URL = "https://tiktok.com";
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   const t = useTranslations("footer");
-  const [year, setYear] = useState<number | null>(null);
-
-  // Only set the year on client side to avoid hydration mismatch
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const year = new Date().getFullYear();
 
   const footerLinks: Array<{ label: string; href: Pathnames }> = [
     { label: t("home"), href: "/" },
@@ -41,15 +32,16 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
             <div className="flex flex-col items-center gap-4 md:items-start">
               <div className="relative h-20 w-96">
                 <Image
-                  src="https://qtthbbfudgvtstwevhbf.supabase.co/storage/v1/object/public/images/main_logo__5_-images-8-removebg-preview.png"
+                  src={"/logo.png"}
                   alt="Logo"
                   width={384}
                   height={80}
                   className="object-contain object-left"
+                  priority
                 />
               </div>
-              <p className="text-sm text-gray-500">
-                © {year || "2024"} {t("brandName")}. {t("rightsReserved")}.
+              <p className="text-sm text-gray-500" suppressHydrationWarning>
+                © {year} {t("brandName")}. {t("rightsReserved")}.
               </p>
             </div>
 

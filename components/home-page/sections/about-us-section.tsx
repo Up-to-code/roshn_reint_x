@@ -2,9 +2,10 @@
 
 import { AboutUsSection as AboutUsSectionType } from "@/types/home-page";
 import { useLocale } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
 interface AboutUsSectionProps {
   content: AboutUsSectionType;
@@ -13,17 +14,11 @@ interface AboutUsSectionProps {
 export function AboutUsSection({ content }: AboutUsSectionProps) {
   const locale = useLocale();
   const isRTL = locale === "ar";
-  const [mounted, setMounted] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
     gsap.registerPlugin(ScrollTrigger);
 
     if (sectionRef.current) {
@@ -57,7 +52,7 @@ export function AboutUsSection({ content }: AboutUsSectionProps) {
         }
       );
     }
-  }, [isRTL, mounted]);
+  }, [isRTL]);
 
   if (!content) return null;
 
@@ -95,13 +90,6 @@ export function AboutUsSection({ content }: AboutUsSectionProps) {
                     </p>
                   ));
                 }
-                if (Array.isArray(textContent as any)) {
-                  return (textContent as any[]).map((paragraph: any, index: number) => (
-                    <p key={index} className="text-base leading-relaxed lg:text-lg">
-                      {typeof paragraph === 'string' ? paragraph : JSON.stringify(paragraph)}
-                    </p>
-                  ));
-                }
                 return null;
               })()}
             </div>
@@ -130,9 +118,11 @@ export function AboutUsSection({ content }: AboutUsSectionProps) {
           <div ref={imageRef} className={`${isRTL ? "lg:order-1" : "lg:order-2"} opacity-0`}>
             {typeof content.image === 'string' && content.image && (
               <div className="group relative overflow-hidden rounded-xl">
-                <img
+                <Image
                   src={content.image}
                   alt={typeof content.title === 'string' ? content.title : ''}
+                  width={960}
+                  height={640}
                   className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105 sm:h-80 lg:h-96 xl:h-[500px]"
                 />
                 {/* Subtle overlay on hover */}

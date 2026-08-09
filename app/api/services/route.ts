@@ -1,51 +1,29 @@
-// app/api/admin/services/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import {prisma} from '@/lib/db';
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError } from "zod";
+import { getCurrentUser } from "@/lib/session";
+import { adminRouteGuard } from "@/lib/http/authorization-response";
+import { serviceModule } from "@/lib/services/service-module";
 
 export async function GET() {
   try {
-    const services = await prisma.service.findMany({
-      orderBy: { order: 'asc' }
-    });
-    return NextResponse.json(services);
+    const user = await getCurrentUser();
+    const isAdmin = user?.role === "ADMIN";
+    const response = NextResponse.json(isAdmin ? await serviceModule.listEditor() : await serviceModule.listPublic());
+    response.headers.set("Cache-Control", isAdmin ? "private, no-store" : "public, s-maxage=300, stale-while-revalidate=600");
+    return response;
   } catch (error) {
-    console.error('Error fetching services:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch services' }, 
-      { status: 500 }
-    );
+    console.error("Failed to fetch services:", error);
+    return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const denied = await adminRouteGuard();
+  if (denied) return denied;
   try {
-    const data = await request.json();
-    
-    // Validate required fields
-    if (!data.title || !data.description) {
-      return NextResponse.json(
-        { error: 'Title and description are required' },
-        { status: 400 }
-      );
-    }
-
-    const service = await prisma.service.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        image: data.image || '',
-        features: data.features || [],
-        order: data.order || 0,
-        enabled: data.enabled !== undefined ? data.enabled : true,
-      }
-    });
-    
-    return NextResponse.json(service);
+    return NextResponse.json(await serviceModule.create(await request.json()), { status: 201 });
   } catch (error) {
-    console.error('Error creating service:', error);
-    return NextResponse.json(
-      { error: 'Failed to create service' }, 
-      { status: 500 }
-    );
+    if (error instanceof ZodError) return NextResponse.json({ error: "Invalid service", details: error.errors }, { status: 400 });
+    return NextResponse.json({ error: "Failed to create service" }, { status: 500 });
   }
 }

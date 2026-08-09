@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { inquiryModule } from "@/lib/inquiries/inquiry-module";
 import { LeadsTable } from "@/components/admin/leads-table";
 import { LeadsPagination } from "@/components/admin/leads-pagination";
 
@@ -12,18 +12,7 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
   const resolvedSearchParams = await Promise.resolve(searchParams);
   const currentPage = Math.max(1, parseInt(resolvedSearchParams.page || "1", 10));
   const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-
-  // Fetch paginated leads and total count
-  const [rawLeads, totalCount] = await Promise.all([
-    db.interest.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      skip,
-      take: ITEMS_PER_PAGE,
-    }),
-    db.interest.count(),
-  ]);
+  const { items: rawLeads, total: totalCount } = await inquiryModule.list({ kind: "LANDING_LEAD", page: currentPage, pageSize: ITEMS_PER_PAGE });
 
   // Serialize dates to strings to avoid hydration mismatches and serialization warnings
   const leads = rawLeads.map(lead => ({
@@ -47,7 +36,7 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
         )}
       </div>
       
-      <LeadsTable leads={leads} totalCount={totalCount} />
+      <LeadsTable leads={leads} />
       
       <LeadsPagination currentPage={currentPage} totalPages={totalPages} />
     </div>

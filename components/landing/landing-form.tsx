@@ -73,10 +73,10 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
 
   if (isSuccess) {
       return (
-        <Card className="w-[80%] sm:w-full max-w-md border-none shadow-xl bg-white/95 backdrop-blur-sm relative pt-12 sm:pt-14 overflow-visible mx-auto">
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
+        <Card className="w-4/5 sm:w-full max-w-md border-none shadow-xl bg-white/95 backdrop-blur-sm relative pt-12 sm:pt-14 overflow-visible mx-auto">
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 size-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDCFDc0Hgy8bYAKU3WZvrs21Ej4GIk76MmOXao" alt="Logo" className="w-full h-full object-cover" />
+              <img src="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDCFDc0Hgy8bYAKU3WZvrs21Ej4GIk76MmOXao" alt="Logo" className="size-full object-cover" />
              </div>
              <CardHeader className="relative space-y-2 text-center pb-6 mt-6 sm:mt-8 px-4 sm:px-6">
                 <h2 className="text-xl sm:text-2xl font-bold text-green-600">{t("thankYou", {defaultMessage: "Thank You!"})}</h2>
@@ -89,20 +89,20 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
   }
 
   return (
-    <Card className="w-[80%] sm:w-full max-w-md border-none shadow-xl bg-white/95 backdrop-blur-sm relative pt-12 sm:pt-14 overflow-visible mx-auto">
-       <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
+    <Card className="w-4/5 sm:w-full max-w-md border-none shadow-xl bg-white/95 backdrop-blur-sm relative pt-12 sm:pt-14 overflow-visible mx-auto">
+       <div className="absolute -top-12 left-1/2 -translate-x-1/2 size-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-black flex items-center justify-center z-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDCFDc0Hgy8bYAKU3WZvrs21Ej4GIk76MmOXao" alt="Logo" className="w-full h-full object-cover" />
+          <img src="https://lxlnvkv63w.ufs.sh/f/mB2esVAwkuPDCFDc0Hgy8bYAKU3WZvrs21Ej4GIk76MmOXao" alt="Logo" className="size-full object-cover" />
        </div>
       <CardHeader className="relative space-y-2 text-center pb-2 mt-6 sm:mt-8 px-4 sm:px-6">
          {onClose && (
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-2 top-2 h-8 w-8 text-muted-foreground"
+            className="absolute right-2 top-2 size-8 text-muted-foreground"
             onClick={onClose}
           >
-            <X className="h-4 w-4" />
+            <X className="size-4" />
             <span className="sr-only">Close</span>
           </Button>
         )}
@@ -161,7 +161,7 @@ export function LandingForm({ onClose, source = "Landing Page", title, subtitle 
             >
               {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="mr-2 size-5 animate-spin" />
                     {t("submitting", {defaultMessage: "Submitting..."})}
                   </>
               ) : (

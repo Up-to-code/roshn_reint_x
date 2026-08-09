@@ -1,24 +1,18 @@
 "use server";
 
-import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/authorization";
+import { inquiryModule } from "@/lib/inquiries/inquiry-module";
 
 export async function deleteLead(leadId: string) {
   try {
-    await db.interest.delete({
-      where: {
-        id: leadId,
-      },
-    });
+    await requireAdmin();
+    const deleted = await inquiryModule.delete(leadId, "LANDING_LEAD");
+    if (!deleted) return { success: false, error: "Lead not found" };
 
     // Revalidate all pages that display interests/leads
-    revalidatePath("/dashboard/leads");
-    revalidatePath("/dashboard/interests");
-    // Revalidate the localized protected dashboard routes
-    revalidatePath("/ar/dashboard/leads");
-    revalidatePath("/en/dashboard/leads");
-    revalidatePath("/ar/dashboard/interests");
-    revalidatePath("/en/dashboard/interests");
+    revalidatePath("/[locale]/dashboard/leads", "page");
+    revalidatePath("/[locale]/dashboard/interests", "page");
     
     return { success: true };
   } catch (error) {

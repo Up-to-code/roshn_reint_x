@@ -1,5 +1,5 @@
 // app/[locale]/properties/page.tsx
-import { PropertiesServerService } from '@/lib/api/properties-server';
+import { propertyModule } from '@/lib/properties/property-module';
 import RealEstateListings from './properties-listing';
 
 interface PropertiesPageProps {
@@ -16,26 +16,14 @@ interface PropertiesPageProps {
 export default async function PropertiesPage({ params, searchParams }: PropertiesPageProps) {
   const { locale } = params;
   
-  let properties;
-  
   try {
-    if (searchParams.search) {
-      properties = await PropertiesServerService.search(searchParams.search);
-    
-    } else if (searchParams.city) {
-      properties = await PropertiesServerService.getByCity(searchParams.city);
-    } else {
-      properties = await PropertiesServerService.getAll();
-    }
+    const properties = await propertyModule.list({
+      query: searchParams.search,
+      city: searchParams.search ? undefined : searchParams.city,
+    });
+    return <RealEstateListings locale={locale} initialProperties={properties} />;
   } catch (error) {
     console.error('Error fetching properties:', error);
-    properties = [];
+    return <RealEstateListings locale={locale} initialProperties={[]} />;
   }
-
-  return (
-    <RealEstateListings 
-      locale={locale}
-      initialProperties={properties}
-    />
-  );
 }

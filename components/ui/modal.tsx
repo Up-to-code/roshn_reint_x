@@ -26,7 +26,6 @@ export function Modal({
   desktopOnly,
   preventDefaultClose,
 }: ModalProps) {
-  // const router = useRouter();
 
   const closeModal = ({ dragged }: { dragged?: boolean } = {}) => {
     if (preventDefaultClose && !dragged) {

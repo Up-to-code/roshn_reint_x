@@ -9,7 +9,7 @@ import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Trash2, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { validateVideoBucket, type VideoBucketValidation } from "@/lib/supabase";
+import { getMediaStatus } from "@/lib/media-storage/media-client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const defaultHero = {
@@ -25,26 +25,25 @@ export function HeroEditor() {
   const { data, currentLang, updateHero } = useHomePageStore();
   const content = data?.[currentLang];
   const hero = content?.hero || defaultHero;
-  const [bucketValidation, setBucketValidation] = useState<VideoBucketValidation | null>(null);
+  const [bucketValidation, setBucketValidation] = useState<Awaited<ReturnType<typeof getMediaStatus>> | null>(null);
   const [isValidating, setIsValidating] = useState(true);
 
   useEffect(() => {
     const checkBucket = async () => {
       setIsValidating(true);
       try {
-        const validation = await validateVideoBucket();
+        const validation = await getMediaStatus("VIDEOS");
         setBucketValidation(validation);
-        console.log('Video bucket validation result:', validation);
       } catch (error) {
         console.error('Failed to validate video bucket:', error);
         setBucketValidation({
+          key: "VIDEOS",
+          name: "videos",
           exists: false,
           isPublic: false,
           fileSizeLimitMB: 0,
           isValid: false,
-          errors: ['Failed to validate bucket'],
-          warnings: [],
-          canListBuckets: false,
+          expectedLimitMB: 100,
         });
       } finally {
         setIsValidating(false);
@@ -127,40 +126,23 @@ export function HeroEditor() {
             {/* Bucket Validation Status */}
             {!isValidating && bucketValidation && (
               <>
-                {bucketValidation.isValid && bucketValidation.warnings.length === 0 ? (
+                {bucketValidation.isValid ? (
                   <Alert className="border-green-200 bg-green-50">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <CheckCircle2 className="size-4 text-green-600" />
                     <AlertTitle className="text-green-800">Video Bucket Ready</AlertTitle>
                     <AlertDescription className="text-green-700">
                       Video bucket is configured correctly. Max file size: {bucketValidation.fileSizeLimitMB.toFixed(0)}MB
                     </AlertDescription>
                   </Alert>
                 ) : (
-                  <Alert variant={bucketValidation.errors.length > 0 ? "destructive" : "default"} className="border-yellow-200 bg-yellow-50">
-                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                  <Alert variant={!bucketValidation.exists ? "destructive" : "default"} className="border-yellow-200 bg-yellow-50">
+                    <AlertTriangle className="size-4 text-yellow-600" />
                     <AlertTitle className="text-yellow-800">Bucket Configuration Warning</AlertTitle>
                     <AlertDescription className="text-yellow-700">
                       <div className="space-y-1">
-                        {bucketValidation.errors.length > 0 && (
-                          <div>
-                            <strong>Errors:</strong>
-                            <ul className="list-disc list-inside ml-2">
-                              {bucketValidation.errors.map((error, i) => (
-                                <li key={i}>{error}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        {bucketValidation.warnings.length > 0 && (
-                          <div>
-                            <strong>Warnings:</strong>
-                            <ul className="list-disc list-inside ml-2">
-                              {bucketValidation.warnings.map((warning, i) => (
-                                <li key={i}>{warning}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        {!bucketValidation.exists && <div>The videos bucket has not been provisioned.</div>}
+                        {bucketValidation.exists && !bucketValidation.isPublic && <div>The videos bucket must be public for playback.</div>}
+                        {bucketValidation.exists && bucketValidation.fileSizeLimitMB < bucketValidation.expectedLimitMB && <div>The configured file limit is below the application policy.</div>}
                         <div className="mt-2 text-xs">
                           Current limit: {bucketValidation.fileSizeLimitMB.toFixed(2)}MB | 
                           Recommended: 100MB+
@@ -187,7 +169,7 @@ export function HeroEditor() {
                   onClick={handleRemoveVideo}
                   title="Remove video"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="size-4" />
                 </Button>
               )}
             </div>
@@ -214,7 +196,7 @@ export function HeroEditor() {
                         size="sm"
                         onClick={() => window.open(hero.backgroundVideo, '_blank')}
                       >
-                        <ExternalLink className="mr-2 h-4 w-4" />
+                        <ExternalLink className="mr-2 size-4" />
                         Open in New Tab
                       </Button>
                     </div>
@@ -222,7 +204,7 @@ export function HeroEditor() {
                       <video
                         src={hero.backgroundVideo}
                         controls
-                        className="h-full w-full object-contain"
+                        className="size-full object-contain"
                         preload="metadata"
                       >
                         Your browser does not support the video tag.

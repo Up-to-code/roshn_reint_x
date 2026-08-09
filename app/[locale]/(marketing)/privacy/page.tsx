@@ -60,7 +60,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
                   ? "قد نقوم بجمع وتخزين واستخدام المعلومات التالية:"
                   : "We may collect, store, and use the following types of personal information:"}
               </p>
-              <ul className="list-disc space-y-2 pr-6 pl-6">
+              <ul className="list-disc space-y-2 px-6">
                 {isRTL ? (
                   <>
                     <li>معلومات عن جهازك ونشاط التصفح (عنوان IP، الموقع الجغرافي، نوع وإصدار المتصفح، نظام التشغيل).</li>
@@ -95,7 +95,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
                   ? "نستخدم بياناتك الشخصية للأغراض التالية:"
                   : "We use personal data for the following purposes:"}
               </p>
-              <ul className="list-disc space-y-2 pr-6 pl-6">
+              <ul className="list-disc space-y-2 px-6">
                 {isRTL ? (
                   <>
                     <li>تشغيل وإدارة موقعنا وخدماتنا.</li>
@@ -136,7 +136,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
                   ? "قد نفصح عن بياناتك الشخصية:"
                   : "We may disclose personal data:"}
               </p>
-              <ul className="list-disc space-y-2 pr-6 pl-6">
+              <ul className="list-disc space-y-2 px-6">
                 {isRTL ? (
                   <>
                     <li>لموظفينا أو وكلائنا أو مستشارينا أو مزودي الخدمات حسب الحاجة.</li>
@@ -184,7 +184,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
                   ? "يحق لك:"
                   : "You have the right to:"}
               </p>
-              <ul className="list-disc space-y-2 pr-6 pl-6">
+              <ul className="list-disc space-y-2 px-6">
                 {isRTL ? (
                   <>
                     <li>طلب الوصول إلى بياناتك الشخصية.</li>

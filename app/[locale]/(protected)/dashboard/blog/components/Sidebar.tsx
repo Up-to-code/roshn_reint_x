@@ -12,7 +12,7 @@ export function Sidebar({ isOpen, onToggle, currentPost, posts = [], onPostSelec
 
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+    post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const getStatusColor = (status: string) => {

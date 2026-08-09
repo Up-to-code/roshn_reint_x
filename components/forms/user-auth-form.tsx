@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, signUp } from "@/lib/auth-client";
 import { useForm } from "react-hook-form";
@@ -37,30 +37,15 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
   });
   
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [mounted, setMounted] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const router = useRouter();
-  
-  // Use prop locale if provided, otherwise detect from URL on client
-  const [locale, setLocale] = React.useState(propLocale || "en");
-  
-  React.useEffect(() => {
-    setMounted(true);
-    // Only detect locale from URL if not provided as prop
-    if (!propLocale && typeof window !== "undefined") {
-      const pathLocale = window.location.pathname.split("/")[1];
-      if (pathLocale === "ar" || pathLocale === "en") {
-        setLocale(pathLocale);
-      }
-    }
-  }, [propLocale]);
+  const locale = propLocale === "ar" ? "ar" : "en";
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
     setIsLoading(true);
 
     try {
       if (isRegister) {
-        const { data: registerData, error } = await signUp.email({
+        const { error } = await signUp.email({
           email: (data as RegisterFormData).email,
           password: (data as RegisterFormData).password,
           name: (data as RegisterFormData).name,
@@ -79,13 +64,6 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
           description: "Welcome! Redirecting to dashboard...",
         });
 
-        // Wait a bit longer to ensure cookie is set and propagated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Refresh router to ensure session is recognized
-        router.refresh();
-        
-        // Use hard redirect to ensure cookie is sent with request
         window.location.href = `/${locale}/dashboard`;
       } else {
         const { error } = await signIn.email({
@@ -105,16 +83,9 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
           description: "Redirecting to dashboard...",
         });
 
-        // Wait a bit longer to ensure cookie is set and propagated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Refresh router to ensure session is recognized
-        router.refresh();
-        
-        // Use hard redirect to ensure cookie is sent with request
         window.location.href = `/${locale}/dashboard`;
       }
-    } catch (error) {
+    } catch {
       setIsLoading(false);
       return toast.error("Something went wrong", {
         description: "Please try again later.",
@@ -140,9 +111,9 @@ export function UserAuthForm({ className, type = "login", locale: propLocale, ..
                 disabled={isLoading}
                 {...register("name")}
               />
-              {isRegister && (errors as any).name && (
+              {"name" in errors && errors.name && (
                 <p className="px-1 text-xs text-red-600">
-                  {(errors as any).name.message}
+                  {errors.name.message}
                 </p>
               )}
             </div>

@@ -4,23 +4,22 @@ import Link from "next/link";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PropertyImageGallery from "./PropertyImageGallery";
-import { PropertiesServerService } from "@/lib/api/properties-server";
-import { PropertyUtils } from "@/lib/api/properties-service";
-import { Property } from "@prisma/client";
+import {
+  getLocalizedPropertyDescription,
+  getLocalizedPropertyTitle,
+  type PropertyRecord,
+} from "@/lib/properties/property-core";
+import { propertyModule } from "@/lib/properties/property-module";
 import InterestForm from "./InterestForm";
-import { prisma } from "@/lib/db";
 
 // Generate static params for ISR
 export async function generateStaticParams() {
   try {
-    const properties = await prisma.property.findMany({
-      select: { id: true },
-      take: 100, // Limit to first 100 for build time
-    });
+    const propertyIds = await propertyModule.listIds(100);
 
-    return properties.flatMap((property) =>
+    return propertyIds.flatMap((id) =>
       ['en', 'ar'].map((locale) => ({
-        id: property.id,
+        id,
         locale,
       }))
     );
@@ -41,7 +40,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   try {
     const { id, locale } = params;
-    const property = await PropertiesServerService.getById(id);
+    const property = await propertyModule.getById(id);
     if (!property) {
       return {
         title: "Property Not Found",
@@ -49,15 +48,15 @@ export async function generateMetadata({
       };
     }
     
-    const title = PropertyUtils.getLocalizedTitle(property, locale);
-    const description = PropertyUtils.getLocalizedDescription(property, locale);
+    const title = getLocalizedPropertyTitle(property, locale);
+    const description = getLocalizedPropertyDescription(property, locale);
 
     return {
       title: `${title} | Real Estate`,
-      description,
+      description: description ?? undefined,
       openGraph: {
         title,
-        description,
+        description: description ?? undefined,
         images: property.images?.slice(0, 1) || [],
       },
     };
@@ -105,9 +104,9 @@ export default async function PropertyDetailPage({
   const { id, locale } = params;
   const isRTL = locale === "ar";
 
-  let property: Property | null;
+  let property: PropertyRecord | null;
   try {
-    property = await PropertiesServerService.getById(id);
+    property = await propertyModule.getById(id);
     if (!property) {
       notFound();
     }
@@ -121,8 +120,8 @@ export default async function PropertyDetailPage({
     notFound();
   }
 
-  const title = PropertyUtils.getLocalizedTitle(property, locale);
-  const description = PropertyUtils.getLocalizedDescription(property, locale);
+  const title = getLocalizedPropertyTitle(property, locale);
+  const description = getLocalizedPropertyDescription(property, locale);
 
   return (
     <div

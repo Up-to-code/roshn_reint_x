@@ -1,25 +1,24 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useTransition, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
 import { Building, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { stripHtml } from "@/lib/utils";
 
 interface Property {
   id: string;
-  titleEn: string;
+  titleEn: string | null;
   titleAr: string;
   descriptionEn?: string | null;
   descriptionAr?: string | null;
   images: string[];
   price?: number;
   title?: string;
-  city?: string;
-  district?: string;
+  city?: string | null;
+  district?: string | null;
   href?: string;
   standalone?: boolean;
 }
@@ -32,51 +31,13 @@ interface HomePropertiesGridProps {
 const ITEMS_PER_PAGE = 12;
 
 export default function HomePropertiesGrid({ locale, initialProperties }: HomePropertiesGridProps) {
-  const [properties, setProperties] = useState<Property[]>(initialProperties || []);
-  const [isPending, startTransition] = useTransition();
+  const properties = useMemo<Property[]>(() => (initialProperties || []).map(item => ({
+    ...item,
+    title: (locale === "ar" ? item.titleAr || item.titleEn : item.titleEn || item.titleAr) || "",
+  })), [initialProperties, locale]);
   const [currentPage, setCurrentPage] = useState(1);
   const gridRef = useRef<HTMLDivElement>(null);
   const isRTL = locale === "ar";
-
-  const fetchProperties = useCallback(async () => {
-    try {
-      const res = await fetch("/api/properties", {
-        next: { revalidate: 60 },
-      });
-      if (!res.ok) throw new Error("Failed to load properties");
-
-      const data: Property[] = await res.json();
-
-      const localizedData = data.map((item) => ({
-        ...item,
-        title:
-          locale === "ar"
-            ? item.titleAr || item.titleEn
-            : item.titleEn || item.titleAr,
-      }));
-
-      setProperties(localizedData);
-    } catch (error) {
-      console.error("Error fetching properties:", error);
-    }
-  }, [locale]);
-
-  useEffect(() => {
-    if (!initialProperties || initialProperties.length === 0) {
-      startTransition(() => {
-        fetchProperties();
-      });
-    } else {
-      const localizedData = initialProperties.map((item) => ({
-        ...item,
-        title:
-          locale === "ar"
-            ? item.titleAr || item.titleEn
-            : item.titleEn || item.titleAr,
-      }));
-      setProperties(localizedData);
-    }
-  }, [initialProperties, locale, fetchProperties]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -104,10 +65,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
     }
   }, [properties, currentPage]);
 
-  const visibleProperties = useMemo(
-    () => properties,
-    [properties]
-  );
+  const visibleProperties = properties;
 
   // Pagination calculations
   const totalPages = Math.ceil(visibleProperties.length / ITEMS_PER_PAGE);
@@ -117,17 +75,6 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
     () => visibleProperties.slice(startIndex, endIndex),
     [visibleProperties, startIndex, endIndex]
   );
-
-  const SkeletonCard = () => (
-    <div className="animate-pulse overflow-hidden rounded-2xl bg-white shadow-sm">
-      <div className="aspect-[1/1.4] w-full bg-slate-200" />
-      <div className="p-4">
-        <div className="h-5 w-3/4 rounded bg-slate-200" />
-      </div>
-    </div>
-  );
-
-  const isLoading = isPending && visibleProperties.length === 0;
 
   return (
     <section
@@ -148,13 +95,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
         </div>
 
         {/* Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-          </div>
-        ) : paginatedProperties.length > 0 ? (
+        {paginatedProperties.length > 0 ? (
           <>
             <div ref={gridRef} className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {paginatedProperties.map((property) => (
@@ -193,7 +134,7 @@ export default function HomePropertiesGrid({ locale, initialProperties }: HomePr
                     )}
 
                     {/* Title */}
-                    <div className="absolute bottom-5 left-5 right-5 z-20">
+                    <div className="absolute bottom-5 inset-x-5 z-20">
                       <h3 className="line-clamp-1 text-lg font-semibold text-white drop-shadow-lg">
                         {property.title}
                       </h3>

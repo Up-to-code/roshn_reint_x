@@ -19,43 +19,29 @@ import { useRouter } from "next/navigation";
 interface Lead {
   id: string;
   name: string;
-  email?: string;
+  email: string | null;
   phone: string;
-  message?: string;
-  propertyTitle: string; 
+  message: string | null;
+  propertyTitle: string | null;
   read?: boolean;
   createdAt: Date | string;
 }
 
 interface LeadsTableProps {
   leads: Lead[];
-  allLeads?: Lead[]; // Optional: all leads for export
-  totalCount?: number; // Total count for display
 }
 
-export function LeadsTable({ leads, allLeads, totalCount }: LeadsTableProps) {
+export function LeadsTable({ leads }: LeadsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [exporting, setExporting] = useState(false);
   const router = useRouter();
 
-  const handleExport = async () => {
-    setExporting(true);
+  const handleExport = () => {
     try {
-      let leadsToExport = allLeads || leads;
-      
-      // If we don't have all leads, fetch them from API
-      if (!allLeads && totalCount && totalCount > leads.length) {
-        const res = await fetch("/api/interests");
-        if (res.ok) {
-          leadsToExport = await res.json();
-        }
-      }
-      
       // Define CSV headers
       const headers = ["Name", "Email", "Phone", "Property/Source", "Message", "Date", "Status"];
       
       // Map data to CSV rows with all available fields
-      const rows = leadsToExport.map(lead => [
+      const rows = leads.map(lead => [
         lead.name || "",
         lead.email || "",
         lead.phone || "",
@@ -82,12 +68,10 @@ export function LeadsTable({ leads, allLeads, totalCount }: LeadsTableProps) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      toast.success("Leads exported successfully");
+      toast.success("Visible leads exported successfully");
     } catch (error) {
       console.error("Export error:", error);
       toast.error("Failed to export leads");
-    } finally {
-      setExporting(false);
     }
   };
 
@@ -116,7 +100,7 @@ export function LeadsTable({ leads, allLeads, totalCount }: LeadsTableProps) {
       <div className="space-y-4">
          <div className="flex justify-end">
              <Button variant="outline" disabled>
-                <Download className="mr-2 h-4 w-4" />
+                <Download className="mr-2 size-4" />
                 Export CSV
              </Button>
          </div>
@@ -132,10 +116,9 @@ export function LeadsTable({ leads, allLeads, totalCount }: LeadsTableProps) {
           onClick={handleExport} 
           variant="outline" 
           className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
-          disabled={exporting}
         >
-          <Download className={`mr-2 h-4 w-4 ${exporting ? 'animate-spin' : ''}`} />
-          {exporting ? 'Exporting...' : `Export CSV${totalCount ? ` (${totalCount})` : ` (${leads.length})`}`}
+          <Download className="mr-2 size-4" />
+          Export visible CSV ({leads.length})
         </Button>
       </div>
 
@@ -172,9 +155,9 @@ export function LeadsTable({ leads, allLeads, totalCount }: LeadsTableProps) {
                     className="text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     {deletingId === lead.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="size-4 animate-spin" />
                     ) : (
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="size-4" />
                     )}
                   </Button>
                 </TableCell>

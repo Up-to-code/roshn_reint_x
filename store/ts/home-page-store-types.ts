@@ -11,23 +11,16 @@ import {
   Stat,
   ContactFormField,
   TestimonialsSection,
+  Partner,
 } from "@/types/home-page";
-
-export interface Partner {
-  id: string;
-  src: string;
-  alt: string;
-}
 
 export interface HomePageStore {
   data: HomePageData;
   currentLang: "en" | "ar";
-  isLoading: boolean;
   isSaving: boolean;
 
   // Actions
   setCurrentLang: (lang: "en" | "ar") => void;
-  loadData: () => Promise<void>;
   saveData: () => Promise<boolean>;
   updateData: (updates: Partial<HomePageContent>, lang?: "en" | "ar") => void;
   setData: (newData: HomePageData) => void;

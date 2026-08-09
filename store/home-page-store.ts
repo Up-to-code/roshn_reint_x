@@ -1,480 +1,187 @@
 import { create } from "zustand";
-import { HomePageStore } from "./ts/home-page-store-types";
-import { defaultData } from "./constants/home-page-store-constants";
 
-export const useHomePageStore = create<HomePageStore>((set, get) => ({
-  data: defaultData,
-  currentLang: "en",
-  isLoading: false,
-  isSaving: false,
+import { defaultData } from "@/lib/site-content/home-page-defaults";
+import type { HomePageContent } from "@/types/home-page";
 
-  setCurrentLang: (lang) => set({ currentLang: lang }),
+import type { HomePageStore } from "./ts/home-page-store-types";
 
-  setData: (newData) => set({ data: newData }),
+type Lang = HomePageStore["currentLang"];
+type Identified = { id: string };
 
-  // Load Data
-  loadData: async () => {
-    set({ isLoading: true });
-    try {
-      const response = await fetch("/api/home-page");
-      const result = await response.json();
+const append = <T>(items: T[], item: T) => [...items, item];
+const updateById = <T extends Identified>(items: T[], id: string, updates: Partial<T>) =>
+  items.map((item) => item.id === id ? { ...item, ...updates } : item);
+const removeById = <T extends Identified>(items: T[], id: string) =>
+  items.filter((item) => item.id !== id);
 
-      if (result.success) {
-        set({ data: result.data, isLoading: false });
-        return result.data;
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      console.error("Error loading data:", error);
-      set({ isLoading: false });
-      throw error;
-    }
-  },
+export const useHomePageStore = create<HomePageStore>((set, get) => {
+  const currentLang = (lang?: Lang) => lang ?? get().currentLang;
+  const updateContent = (lang: Lang | undefined, update: (content: HomePageContent) => HomePageContent) =>
+    set((state) => {
+      const locale = currentLang(lang);
+      return { data: { ...state.data, [locale]: update(state.data[locale]) } };
+    });
 
-  // Save Data
-  saveData: async () => {
-    set({ isSaving: true });
-    try {
-      const { data } = get();
+  return {
+    data: defaultData,
+    currentLang: "en",
+    isSaving: false,
 
-      // Log what we're about to save
-      console.log('Saving home page data:', {
-        hasEn: !!data.en,
-        hasAr: !!data.ar,
-        currentLang: get().currentLang,
-        enHero: data.en?.hero ? {
-          title: data.en.hero.title,
-          backgroundVideo: data.en.hero.backgroundVideo,
-        } : null,
-        arHero: data.ar?.hero ? {
-          title: data.ar.hero.title,
-          backgroundVideo: data.ar.hero.backgroundVideo,
-        } : null,
-      });
+    setCurrentLang: (lang) => set({ currentLang: lang }),
+    setData: (data) => set({ data }),
 
-      // Ensure data structure is complete
-      if (!data.en || !data.ar) {
-        console.error('Invalid data structure - missing en or ar');
-        throw new Error('Invalid data structure');
-      }
-
-      // Ensure hero objects exist and have all required fields
-      if (!data.en.hero) {
-        data.en.hero = { 
-          title: '', 
-          backgroundVideo: '', 
-          overlayColor: 'rgba(0,0,0,0.4)', 
-          formFields: [],
-          primaryButton: { text: '', link: '', variant: 'primary' },
-          secondaryButton: { text: '', link: '', variant: 'secondary' },
-        };
-      } else {
-        // Ensure backgroundVideo exists (can be empty string)
-        if (data.en.hero.backgroundVideo === undefined || data.en.hero.backgroundVideo === null) {
-          data.en.hero.backgroundVideo = '';
-        }
-        // Ensure formFields exists
-        if (!data.en.hero.formFields) {
-          data.en.hero.formFields = [];
-        }
-        // Ensure overlayColor exists
-        if (!data.en.hero.overlayColor) {
-          data.en.hero.overlayColor = 'rgba(0,0,0,0.4)';
-        }
-      }
-
-      if (!data.ar.hero) {
-        data.ar.hero = { 
-          title: '', 
-          backgroundVideo: '', 
-          overlayColor: 'rgba(0,0,0,0.4)', 
-          formFields: [],
-          primaryButton: { text: '', link: '', variant: 'primary' },
-          secondaryButton: { text: '', link: '', variant: 'secondary' },
-        };
-      } else {
-        // Ensure backgroundVideo exists (can be empty string)
-        if (data.ar.hero.backgroundVideo === undefined || data.ar.hero.backgroundVideo === null) {
-          data.ar.hero.backgroundVideo = '';
-        }
-        // Ensure formFields exists
-        if (!data.ar.hero.formFields) {
-          data.ar.hero.formFields = [];
-        }
-        // Ensure overlayColor exists
-        if (!data.ar.hero.overlayColor) {
-          data.ar.hero.overlayColor = 'rgba(0,0,0,0.4)';
-        }
-      }
-
-      const response = await fetch("/api/home-page", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API response error:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText,
+    async saveData() {
+      if (get().isSaving) return false;
+      set({ isSaving: true });
+      try {
+        const response = await fetch("/api/home-page", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(get().data),
         });
-        throw new Error(`Failed to save: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      if (result.success) {
-        console.log('Data saved successfully');
-        set({ isSaving: false });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || "Failed to save homepage");
+        set({ data: result.data });
         return true;
-      } else {
-        console.error('Save failed:', result.error);
-        throw new Error(result.error || 'Failed to save data');
+      } catch (error) {
+        console.error("Error saving homepage:", error);
+        return false;
+      } finally {
+        set({ isSaving: false });
       }
-    } catch (error) {
-      console.error("Error saving data:", error);
-      if (error instanceof Error) {
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-        });
-      }
-      set({ isSaving: false });
-      return false;
-    }
-  },
+    },
 
-  // Generic Update
-  updateData: (updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: { ...state.data, [lang]: { ...state.data[lang], ...updates } },
+    updateData: (updates, lang) => updateContent(lang, (content) => ({ ...content, ...updates })),
+    updateHero: (updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      hero: { ...content.hero, ...updates },
+    })),
+    updateHeroButton: (type, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      hero: {
+        ...content.hero,
+        [`${type}Button`]: { ...content.hero[`${type}Button`], ...updates },
+      },
     })),
 
-  // Hero
-  updateHero: (updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          hero: { ...state.data[lang].hero, ...updates },
+    addBanner: (banner, lang) => updateContent(lang, (content) => ({
+      ...content,
+      banners: append(content.banners, banner),
+    })),
+    updateBanner: (id, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      banners: updateById(content.banners, id, updates),
+    })),
+    removeBanner: (id, lang) => updateContent(lang, (content) => ({
+      ...content,
+      banners: removeById(content.banners, id),
+    })),
+
+    addPartner: (partner, lang) => updateContent(lang, (content) => ({
+      ...content,
+      partners: append(content.partners, partner),
+    })),
+    updatePartner: (id, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      partners: updateById(content.partners, id, updates),
+    })),
+    removePartner: (id, lang) => updateContent(lang, (content) => ({
+      ...content,
+      partners: removeById(content.partners, id),
+    })),
+
+    updateWhyUs: (updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      whyUs: { ...content.whyUs, ...updates },
+    })),
+    addFeature: (feature, lang) => updateContent(lang, (content) => ({
+      ...content,
+      whyUs: { ...content.whyUs, features: append(content.whyUs.features, feature) },
+    })),
+    updateFeature: (id, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      whyUs: { ...content.whyUs, features: updateById(content.whyUs.features, id, updates) },
+    })),
+    removeFeature: (id, lang) => updateContent(lang, (content) => ({
+      ...content,
+      whyUs: { ...content.whyUs, features: removeById(content.whyUs.features, id) },
+    })),
+
+    updateTestimonials: (updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      testimonials: { ...content.testimonials, ...updates },
+    })),
+    addTestimonial: (testimonial, lang) => updateContent(lang, (content) => ({
+      ...content,
+      testimonials: {
+        ...content.testimonials,
+        testimonials: append(content.testimonials.testimonials, testimonial),
+      },
+    })),
+    updateTestimonial: (id, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      testimonials: {
+        ...content.testimonials,
+        testimonials: updateById(content.testimonials.testimonials, id, updates),
+      },
+    })),
+    removeTestimonial: (id, lang) => updateContent(lang, (content) => ({
+      ...content,
+      testimonials: {
+        ...content.testimonials,
+        testimonials: removeById(content.testimonials.testimonials, id),
+      },
+    })),
+
+    updateAboutUs: (updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      aboutUs: { ...content.aboutUs, ...updates },
+    })),
+    addStat: (stat, lang) => updateContent(lang, (content) => ({
+      ...content,
+      aboutUs: { ...content.aboutUs, stats: append(content.aboutUs.stats, stat) },
+    })),
+    updateStat: (id, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      aboutUs: { ...content.aboutUs, stats: updateById(content.aboutUs.stats, id, updates) },
+    })),
+    removeStat: (id, lang) => updateContent(lang, (content) => ({
+      ...content,
+      aboutUs: { ...content.aboutUs, stats: removeById(content.aboutUs.stats, id) },
+    })),
+
+    updateContactUs: (updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      contactUs: { ...content.contactUs, ...updates },
+    })),
+    updateContactData: (contactUs, lang) => updateContent(lang, (content) => ({ ...content, contactUs })),
+    addContactFormField: (field, lang) => updateContent(lang, (content) => ({
+      ...content,
+      contactUs: {
+        ...content.contactUs,
+        form: { ...content.contactUs.form, fields: append(content.contactUs.form.fields, field) },
+      },
+    })),
+    updateContactFormField: (index, updates, lang) => updateContent(lang, (content) => ({
+      ...content,
+      contactUs: {
+        ...content.contactUs,
+        form: {
+          ...content.contactUs.form,
+          fields: content.contactUs.form.fields.map((field, fieldIndex) =>
+            fieldIndex === index ? { ...field, ...updates } : field),
         },
       },
     })),
-
-  updateHeroButton: (type, updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          hero: {
-            ...state.data[lang].hero,
-            [`${type}Button`]: {
-              ...state.data[lang].hero[`${type}Button`],
-              ...updates,
-            },
-          },
+    removeContactFormField: (index, lang) => updateContent(lang, (content) => ({
+      ...content,
+      contactUs: {
+        ...content.contactUs,
+        form: {
+          ...content.contactUs.form,
+          fields: content.contactUs.form.fields.filter((_, fieldIndex) => fieldIndex !== index),
         },
       },
     })),
-
-  // Banners
-  addBanner: (banner, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          banners: [...state.data[lang].banners, banner],
-        },
-      },
-    })),
-
-  updateBanner: (id, updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          banners: state.data[lang].banners.map((b) =>
-            b.id === id ? { ...b, ...updates } : b
-          ),
-        },
-      },
-    })),
-
-  removeBanner: (id, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          banners: state.data[lang].banners.filter((b) => b.id !== id),
-        },
-      },
-    })),
-
-  // Partners
-  addPartner: (partner, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          partners: [...(state.data[lang].partners || []), partner],
-        },
-      },
-    })),
-
-  updatePartner: (id, updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          partners: (state.data[lang].partners || []).map((p) =>
-            p.id === id ? { ...p, ...updates } : p
-          ),
-        },
-      },
-    })),
-
-  removePartner: (id, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          partners: (state.data[lang].partners || []).filter((p) => p.id !== id),
-        },
-      },
-    })),
-
-  // Why Us
-  updateWhyUs: (updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: { ...state.data[lang], whyUs: { ...state.data[lang].whyUs, ...updates } },
-      },
-    })),
-
-  addFeature: (feature, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          whyUs: {
-            ...state.data[lang].whyUs,
-            features: [...state.data[lang].whyUs.features, feature],
-          },
-        },
-      },
-    })),
-
-  updateFeature: (id, updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          whyUs: {
-            ...state.data[lang].whyUs,
-            features: state.data[lang].whyUs.features.map((f) =>
-              f.id === id ? { ...f, ...updates } : f
-            ),
-          },
-        },
-      },
-    })),
-
-  removeFeature: (id, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          whyUs: {
-            ...state.data[lang].whyUs,
-            features: state.data[lang].whyUs.features.filter((f) => f.id !== id),
-          },
-        },
-      },
-    })),
-
-  // Testimonials
-  updateTestimonials: (updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          testimonials: { ...state.data[lang].testimonials, ...updates },
-        },
-      },
-    })),
-
-  addTestimonial: (testimonial, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          testimonials: {
-            ...state.data[lang].testimonials,
-            testimonials: [...state.data[lang].testimonials.testimonials, testimonial],
-          },
-        },
-      },
-    })),
-
-  updateTestimonial: (id, updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          testimonials: {
-            ...state.data[lang].testimonials,
-            testimonials: state.data[lang].testimonials.testimonials.map((t) =>
-              t.id === id ? { ...t, ...updates } : t
-            ),
-          },
-        },
-      },
-    })),
-
-  removeTestimonial: (id, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          testimonials: {
-            ...state.data[lang].testimonials,
-            testimonials: state.data[lang].testimonials.testimonials.filter(
-              (t) => t.id !== id
-            ),
-          },
-        },
-      },
-    })),
-
-  // About Us
-  updateAboutUs: (updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: { ...state.data[lang], aboutUs: { ...state.data[lang].aboutUs, ...updates } },
-      },
-    })),
-
-  addStat: (stat, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          aboutUs: { ...state.data[lang].aboutUs, stats: [...state.data[lang].aboutUs.stats, stat] },
-        },
-      },
-    })),
-
-  updateStat: (id, updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          aboutUs: {
-            ...state.data[lang].aboutUs,
-            stats: state.data[lang].aboutUs.stats.map((s) =>
-              s.id === id ? { ...s, ...updates } : s
-            ),
-          },
-        },
-      },
-    })),
-
-  removeStat: (id, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          aboutUs: {
-            ...state.data[lang].aboutUs,
-            stats: state.data[lang].aboutUs.stats.filter((s) => s.id !== id),
-          },
-        },
-      },
-    })),
-
-  // Contact Us
-  updateContactUs: (updates, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: { ...state.data[lang], contactUs: { ...state.data[lang].contactUs, ...updates } },
-      },
-    })),
-
-  updateContactData: (contactData, lang = get().currentLang) =>
-    set((state) => ({
-      data: { ...state.data, [lang]: { ...state.data[lang], contactUs: contactData } },
-    })),
-
-  addContactFormField: (field, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          contactUs: {
-            ...state.data[lang].contactUs,
-            form: {
-              ...state.data[lang].contactUs.form,
-              fields: [...state.data[lang].contactUs.form.fields, field],
-            },
-          },
-        },
-      },
-    })),
-
-  updateContactFormField: (index, updates, lang = get().currentLang) => {
-    const updatedFields = [...get().data[lang].contactUs.form.fields];
-    updatedFields[index] = { ...updatedFields[index], ...updates };
-
-    return set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          contactUs: { ...state.data[lang].contactUs, form: { ...state.data[lang].contactUs.form, fields: updatedFields } },
-        },
-      },
-    }));
-  },
-
-  removeContactFormField: (index, lang = get().currentLang) =>
-    set((state) => ({
-      data: {
-        ...state.data,
-        [lang]: {
-          ...state.data[lang],
-          contactUs: {
-            ...state.data[lang].contactUs,
-            form: {
-              ...state.data[lang].contactUs.form,
-              fields: state.data[lang].contactUs.form.fields.filter((_, i) => i !== index),
-            },
-          },
-        },
-      },
-    })),
-}));
+  };
+});

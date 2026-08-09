@@ -69,9 +69,32 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    background-color: #F0EDE8;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-color: #F0EDE8;
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+
+  body.page-transition-enter {
+    opacity: 0.72;
+    transform: translateY(10px);
+    filter: saturate(0.96);
+  }
+
+  body.page-transition-exit {
+    opacity: 0.9;
+  }
+
+  body.page-transition-ready {
+    opacity: 1;
+    transform: translateY(0);
+    filter: none;
   }
 }
 
@@ -88,15 +111,6 @@
 }
 
  
-html {
-  scroll-behavior: smooth;
-  background-color: #F0EDE8;
-}
-
-body {
-  background-color: #F0EDE8;
-}
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

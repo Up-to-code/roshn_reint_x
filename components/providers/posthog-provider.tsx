@@ -42,7 +42,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     posthog.identify(user.id, {
       email: user.email,
       name: user.name,
-      role: (user as any).role,
+      role: user.role,
     });
   }, [session]);
 

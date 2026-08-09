@@ -1,6 +1,7 @@
 // API route for cache revalidation
 import { revalidateTag, revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
+import { adminRouteGuard } from '@/lib/http/authorization-response';
 
 // Mark as dynamic since it uses request.url
 export const dynamic = 'force-dynamic';
@@ -10,21 +11,18 @@ export const dynamic = 'force-dynamic';
  * Usage: POST /api/revalidate?tag=properties&path=/p
  * 
  * Example:
- * POST /api/revalidate?tag=properties&path=/p&secret=your-secret
+ * Send REVALIDATE_SECRET in the x-revalidate-secret header, or use an admin session.
  */
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const tag = searchParams.get('tag');
     const path = searchParams.get('path');
-    const secret = searchParams.get('secret');
-
-    // Verify secret token (optional but recommended)
-    if (secret && secret !== process.env.REVALIDATE_SECRET) {
-      return NextResponse.json(
-        { error: 'Invalid secret' },
-        { status: 401 }
-      );
+    const configuredSecret = process.env.REVALIDATE_SECRET;
+    const suppliedSecret = request.headers.get('x-revalidate-secret');
+    if (!configuredSecret || suppliedSecret !== configuredSecret) {
+      const denied = await adminRouteGuard();
+      if (denied) return denied;
     }
 
     if (tag) {
@@ -48,4 +46,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
