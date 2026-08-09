@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { defaultGlobalSettings } from "@/lib/site-content/global-settings-defaults";
 import type { GlobalSettings } from "@/lib/site-content/global-settings-types";
-import { defaultData } from "@/lib/site-content/home-page-defaults";
+import { defaultData, legacyDemoData } from "@/lib/site-content/home-page-defaults";
 import type { HomePageContent, HomePageData } from "@/types/home-page";
 
 const menuItemSchema = z.object({
@@ -64,7 +64,7 @@ const homePageSchema = z.object({ en: contentSchema, ar: contentSchema });
 
 type JsonRecord = Record<string, unknown>;
 export interface SiteContentDocument extends GlobalSettings {
-  schemaVersion: 1;
+  schemaVersion: 2;
   homePage: HomePageData;
 }
 
@@ -88,12 +88,55 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
+const HOME_PAGE_SECTIONS = [
+  "partners",
+  "hero",
+  "banners",
+  "whyUs",
+  "testimonials",
+  "aboutUs",
+  "contactUs",
+] as const;
+
+function sameValue(left: unknown, right: unknown): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function withoutLegacyDemoSections(input: unknown, schemaVersion: unknown): unknown {
+  if (typeof schemaVersion === "number" && schemaVersion >= 2) return input;
+  if (!isRecord(input)) return input;
+
+  const migrated = clone(input);
+  for (const locale of ["en", "ar"] as const) {
+    const localized = migrated[locale];
+    if (!isRecord(localized)) continue;
+
+    for (const section of HOME_PAGE_SECTIONS) {
+      let isLegacyDemo = sameValue(localized[section], legacyDemoData[locale][section]);
+
+      // The first production seed used the nonexistent legacy about image;
+      // later code briefly changed only that path before schema v2 existed.
+      if (section === "aboutUs" && isRecord(localized[section])) {
+        const candidate = { ...localized[section], image: legacyDemoData[locale].aboutUs.image };
+        isLegacyDemo ||= sameValue(candidate, legacyDemoData[locale].aboutUs);
+      }
+
+      if (isLegacyDemo) localized[section] = clone(defaultData[locale][section]);
+    }
+  }
+  return migrated;
+}
+
 function deepMerge<T>(base: T, override: unknown): T {
   if (Array.isArray(base)) return (Array.isArray(override) ? clone(override) : clone(base)) as T;
   if (isRecord(base)) {
     const source = isRecord(override) ? override : {};
+    const keys = new Set([...Object.keys(base), ...Object.keys(source)]);
     return Object.fromEntries(
-      Object.entries(base).map(([key, value]) => [key, deepMerge(value, source[key])]),
+      Array.from(keys).map((key) => [
+        key,
+        key in base ? deepMerge(base[key], source[key]) : clone(source[key]),
+      ]),
     ) as T;
   }
   return (override === undefined ? base : override) as T;
@@ -122,7 +165,7 @@ function normalizeHomePage(input: unknown): HomePageData {
 }
 
 export function createDefaultSiteContent(): SiteContentDocument {
-  return { schemaVersion: 1, ...clone(defaultGlobalSettings), homePage: clone(defaultData) };
+  return { schemaVersion: 2, ...clone(defaultGlobalSettings), homePage: clone(defaultData) };
 }
 
 export function createSiteContentModule(repository: SiteContentRepository) {
@@ -130,9 +173,9 @@ export function createSiteContentModule(repository: SiteContentRepository) {
     const raw = await repository.read();
     const source = isRecord(raw) ? raw : {};
     return {
-      schemaVersion: 1,
+      schemaVersion: 2,
       ...parseGlobal(source, true),
-      homePage: parseHomePage(source.homePage, true),
+      homePage: parseHomePage(withoutLegacyDemoSections(source.homePage, source.schemaVersion), true),
     };
   }
 
@@ -149,17 +192,17 @@ export function createSiteContentModule(repository: SiteContentRepository) {
     },
     async saveGlobalSettings(input: unknown): Promise<GlobalSettings> {
       const settings = parseGlobal(input, false);
-      await repository.patch({ ...settings, schemaVersion: 1 });
+      await repository.patch({ ...settings, schemaVersion: 2 });
       return settings;
     },
     async saveHomePage(input: unknown): Promise<HomePageData> {
       const homePage = parseHomePage(input, false);
-      await repository.patch({ homePage, schemaVersion: 1 });
+      await repository.patch({ homePage, schemaVersion: 2 });
       return homePage;
     },
     async resetGlobalSettings(): Promise<GlobalSettings> {
       const settings = clone(defaultGlobalSettings);
-      await repository.patch({ ...settings, schemaVersion: 1 });
+      await repository.patch({ ...settings, schemaVersion: 2 });
       return settings;
     },
   };

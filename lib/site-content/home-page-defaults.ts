@@ -241,7 +241,65 @@ const arabicContent: HomePageContent = {
   }
 };
 
-export const defaultData: HomePageData = {
+// Kept only so schema v1 documents can identify and discard untouched demo
+// sections without affecting content an administrator has actually edited.
+export const legacyDemoData: HomePageData = {
   en: deepCopy(defaultContent),
   ar: deepCopy(arabicContent)
+};
+
+const emptyContent = (): HomePageContent => ({
+  partners: [],
+  hero: {
+    title: "",
+    subtitle: "",
+  },
+  banners: [],
+  whyUs: {
+    title: "",
+    subtitle: "",
+    features: [],
+  },
+  testimonials: {
+    title: "",
+    subtitle: "",
+    testimonials: [],
+  },
+  aboutUs: {
+    title: "",
+    content: "",
+    image: "",
+    stats: [],
+  },
+  contactUs: {
+    title: "",
+    subtitle: "",
+    description: "",
+    enabled: false,
+    email: "",
+    phone: "",
+    address: "",
+    formEnabled: false,
+    contactInfo: {
+      address: "",
+      phone: "",
+      email: "",
+      workingHours: "",
+    },
+    form: {
+      enabled: false,
+      fields: [],
+    },
+    map: {
+      enabled: false,
+      embedCode: "",
+    },
+  },
+});
+
+// New installations start empty. Homepage content is owned exclusively by
+// the dashboard and is never populated with sample marketing copy.
+export const defaultData: HomePageData = {
+  en: emptyContent(),
+  ar: emptyContent(),
 };

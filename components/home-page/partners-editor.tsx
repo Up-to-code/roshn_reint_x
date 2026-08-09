@@ -133,7 +133,7 @@ export function PartnersEditor() {
                   <Input
                     id={`partner-src-${partner.id}`}
                     value={String(partner.src || '')}
-                    onChange={(e) => updatePartner(partner.id, { src: e.target.value })}
+                    onChange={(e) => updatePartner(partner.id, { src: e.target.value, logo: e.target.value })}
                     placeholder="https://example.com/logo.png"
                     className="text-sm"
                   />
@@ -143,7 +143,7 @@ export function PartnersEditor() {
                       <Label className="text-sm font-medium">Upload Logo</Label>
                       <CustomUploader
                         bucket="IMAGES"
-                        onUploadComplete={(url) => updatePartner(partner.id, { src: url })}
+                        onUploadComplete={(url) => updatePartner(partner.id, { src: url, logo: url })}
                         acceptedFileTypes="image"
                         buttonText="Choose Image"
                         maxSize={10}

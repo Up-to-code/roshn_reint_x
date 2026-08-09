@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import { defaultGlobalSettings } from "../../lib/site-content/global-settings-defaults";
-import { defaultData } from "../../lib/site-content/home-page-defaults";
+import { defaultData, legacyDemoData } from "../../lib/site-content/home-page-defaults";
 import {
   createDefaultSiteContent,
   createSiteContentModule,
@@ -35,7 +35,7 @@ describe("Site Content module", () => {
     const homepage = await context.siteContentModule.getHomePage();
     expect(homepage.en.hero.title).toBe("Custom title");
     expect(homepage.en.hero.backgroundVideo).toBe("/custom.mp4");
-    expect(homepage.en.contactUs.form.fields.length).toBeGreaterThan(0);
+    expect(homepage.en.contactUs.form.fields).toEqual([]);
     expect(homepage.ar.hero.title).toBe(defaultData.ar.hero.title);
   });
 
@@ -72,13 +72,27 @@ describe("Site Content module", () => {
     );
   });
 
-  test("canonical defaults contain the current Roshn partner assets", async () => {
+  test("new documents do not inject demo homepage data", async () => {
     const context = harness(null);
     const homepage = await context.siteContentModule.getHomePage();
-    expect(homepage.en.partners[0]).toMatchObject({
-      src: "/jeddah-skyline.png",
-      logo: "/logo.png",
-      name: "Roshn Reit",
-    });
+    expect(homepage.en.partners).toEqual([]);
+    expect(homepage.ar.whyUs.features).toEqual([]);
+    expect(homepage.ar.aboutUs.stats).toEqual([]);
+  });
+
+  test("schema v1 removes untouched demo sections but preserves dashboard edits", async () => {
+    const legacy = {
+      schemaVersion: 1,
+      ...defaultGlobalSettings,
+      homePage: structuredClone(legacyDemoData),
+    };
+    legacy.homePage.ar.hero.title = "عنوان محفوظ من لوحة التحكم";
+    const context = harness(legacy);
+
+    const homepage = await context.siteContentModule.getHomePage();
+    expect(homepage.ar.hero.title).toBe("عنوان محفوظ من لوحة التحكم");
+    expect(homepage.ar.partners).toEqual([]);
+    expect(homepage.ar.whyUs.features).toEqual([]);
+    expect(homepage.ar.aboutUs.stats).toEqual([]);
   });
 });

@@ -23,11 +23,13 @@ export default async function Home({ params }: { params: { locale: string } }) {
       {content.partners.length > 0 && (
         <>
           <div className="h-[10px]" />
-          <PartnersBanner logos={content.partners.map(partner => ({ src: partner.logo || partner.src || "", alt: partner.alt || partner.name || "Partner" }))} />
+          <PartnersBanner logos={content.partners.map(partner => ({ src: partner.src || partner.logo || "", alt: partner.alt || partner.name || "Partner" }))} />
         </>
       )}
-      <WhyUsSection content={content.whyUs} />
-      <AboutUsSection content={content.aboutUs} />
+      {content.whyUs.features.length > 0 && <WhyUsSection content={content.whyUs} />}
+      {(content.aboutUs.title || content.aboutUs.content || content.aboutUs.image || content.aboutUs.stats.length > 0) && (
+        <AboutUsSection content={content.aboutUs} />
+      )}
       <ContactUsSection content={content.contactUs} locale={locale} />
     </div>
   );
