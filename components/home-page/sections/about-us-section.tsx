@@ -7,6 +7,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
+const LEGACY_ABOUT_IMAGE = "/images/about-us.jpg";
+const DEFAULT_ABOUT_IMAGE = "/jeddah-skyline.png";
+
 interface AboutUsSectionProps {
   content: AboutUsSectionType;
 }
@@ -55,6 +58,9 @@ export function AboutUsSection({ content }: AboutUsSectionProps) {
   }, [isRTL]);
 
   if (!content) return null;
+
+  // Existing production content may still contain the old default path.
+  const image = content.image === LEGACY_ABOUT_IMAGE ? DEFAULT_ABOUT_IMAGE : content.image;
 
   return (
     <section ref={sectionRef} className="bg-transparent py-16 md:py-24 overflow-hidden">
@@ -116,10 +122,10 @@ export function AboutUsSection({ content }: AboutUsSectionProps) {
 
           {/* Image Section */}
           <div ref={imageRef} className={`${isRTL ? "lg:order-1" : "lg:order-2"} opacity-0`}>
-            {typeof content.image === 'string' && content.image && (
+            {typeof image === 'string' && image && (
               <div className="group relative overflow-hidden rounded-xl">
                 <Image
-                  src={content.image}
+                  src={image}
                   alt={typeof content.title === 'string' ? content.title : ''}
                   width={960}
                   height={640}
