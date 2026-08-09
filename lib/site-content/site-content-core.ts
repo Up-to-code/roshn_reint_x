@@ -127,6 +127,31 @@ function withoutLegacyDemoSections(input: unknown, schemaVersion: unknown): unkn
   return migrated;
 }
 
+function normalizeLegacyHomePage(input: unknown): unknown {
+  if (!isRecord(input)) return input;
+  const normalized = clone(input);
+
+  for (const locale of ["en", "ar"] as const) {
+    const localized = normalized[locale];
+    if (!isRecord(localized) || !Array.isArray(localized.partners)) continue;
+
+    localized.partners = localized.partners.map((partner) => {
+      if (!isRecord(partner)) return partner;
+      const src = typeof partner.src === "string" ? partner.src : "";
+      const alt = typeof partner.alt === "string" ? partner.alt : "";
+      return {
+        ...partner,
+        src,
+        alt,
+        name: typeof partner.name === "string" ? partner.name : alt,
+        logo: typeof partner.logo === "string" ? partner.logo : src,
+      };
+    });
+  }
+
+  return normalized;
+}
+
 function deepMerge<T>(base: T, override: unknown): T {
   if (Array.isArray(base)) return (Array.isArray(override) ? clone(override) : clone(base)) as T;
   if (isRecord(base)) {
@@ -175,7 +200,10 @@ export function createSiteContentModule(repository: SiteContentRepository) {
     return {
       schemaVersion: 2,
       ...parseGlobal(source, true),
-      homePage: parseHomePage(withoutLegacyDemoSections(source.homePage, source.schemaVersion), true),
+      homePage: parseHomePage(
+        normalizeLegacyHomePage(withoutLegacyDemoSections(source.homePage, source.schemaVersion)),
+        true,
+      ),
     };
   }
 

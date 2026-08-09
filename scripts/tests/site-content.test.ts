@@ -95,4 +95,33 @@ describe("Site Content module", () => {
     expect(homepage.ar.whyUs.features).toEqual([]);
     expect(homepage.ar.aboutUs.stats).toEqual([]);
   });
+
+  test("upgrades old dashboard partners without discarding real homepage content", async () => {
+    const legacy = {
+      schemaVersion: 1,
+      ...defaultGlobalSettings,
+      homePage: structuredClone(legacyDemoData),
+    };
+    legacy.homePage.ar.whyUs.title = "لماذا تختار روشن ريت؟";
+    legacy.homePage.ar.partners = [
+      {
+        id: "saved-partner",
+        src: "https://cdn.example.com/partner.png",
+        alt: "شريك محفوظ",
+      } as typeof legacy.homePage.ar.partners[number],
+    ];
+    const context = harness(legacy);
+
+    const homepage = await context.siteContentModule.getHomePage();
+    expect(homepage.ar.whyUs.title).toBe("لماذا تختار روشن ريت؟");
+    expect(homepage.ar.partners).toEqual([
+      {
+        id: "saved-partner",
+        src: "https://cdn.example.com/partner.png",
+        alt: "شريك محفوظ",
+        name: "شريك محفوظ",
+        logo: "https://cdn.example.com/partner.png",
+      },
+    ]);
+  });
 });
